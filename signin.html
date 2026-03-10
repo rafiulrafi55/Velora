@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0f172a;
+            background-image:
+                radial-gradient(circle at 15% 20%, rgba(56, 189, 248, 0.35), transparent 30%),
+                radial-gradient(circle at 85% 15%, rgba(244, 114, 182, 0.28), transparent 35%),
+                radial-gradient(circle at 50% 85%, rgba(99, 102, 241, 0.35), transparent 40%),
+                linear-gradient(145deg, #0f172a 0%, #1e293b 45%, #111827 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 28px;
+            position: relative;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            inset: -20%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::before {
+            background:
+                repeating-linear-gradient(
+                    120deg,
+                    rgba(148, 163, 184, 0.08) 0,
+                    rgba(148, 163, 184, 0.08) 2px,
+                    transparent 2px,
+                    transparent 22px
+                );
+            mix-blend-mode: soft-light;
+            transform: rotate(-8deg);
+        }
+
+        body::after {
+            background:
+                radial-gradient(circle at 25% 30%, rgba(34, 211, 238, 0.22), transparent 30%),
+                radial-gradient(circle at 80% 75%, rgba(250, 204, 21, 0.15), transparent 28%);
+            filter: blur(24px);
+        }
+
+        .signin-container {
+            background: white;
+            padding: 34px 30px;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 460px;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 6px;
+            color: #333;
+        }
+
+        .subtitle {
+            text-align: center;
+            margin-bottom: 22px;
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            display: block;
+            color: #374151;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        input::placeholder {
+            color: #9ca3af;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .hint {
+            color: #6b7280;
+            font-size: 12px;
+            line-height: 1.35;
+        }
+
+        .utility-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-top: -2px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #4b5563;
+            font-size: 13px;
+        }
+
+        .remember-me input {
+            width: auto;
+        }
+
+        .utility-link {
+            font-size: 13px;
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .utility-link:hover {
+            text-decoration: underline;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 4px;
+        }
+
+        button:hover {
+            background: #5568d3;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #777;
+        }
+
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .footer-links {
+            margin-top: 14px;
+            text-align: center;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .footer-links a {
+            color: #667eea;
+            text-decoration: none;
+            margin: 0 6px;
+        }
+
+        @media (max-width: 520px) {
+            body {
+                padding: 16px;
+            }
+
+            .signin-container {
+                padding: 28px 22px;
+            }
+
+            .utility-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="signin-container">
+        <h1>Sign In</h1>
+        <p class="subtitle">Access your Velora dashboard and stay in sync with guest updates.</p>
+        <form>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="you@company.com" required>
+                <span class="hint">Use the email address tied to your WGMS account.</span>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+
+            <div class="utility-row">
+                <label class="remember-me" for="remember">
+                    <input type="checkbox" id="remember" name="remember">
+                    Remember me on this device
+                </label>
+                <a class="utility-link" href="privacy-policy.html">Forgot password?</a>
+            </div>
+
+            <button type="submit">Sign In</button>
+        </form>
+        <div class="footer">
+            Don't have an account? <a href="signup.html">Sign Up</a>
+        </div>
+        <div class="footer-links">
+            <a href="privacy-policy.html">Privacy Policy</a> |
+            <a href="privacy-policy.html">Terms of Service</a>
+        </div>
+    </div>
+</body>
+</html>
