@@ -34,5 +34,5 @@ npm start
 ## Contributing
 Contributions are welcome. Please submit pull requests with clear descriptions.
 
-## License
-[Your license]
+
+
