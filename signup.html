@@ -53,8 +53,10 @@
 
         body::after {
             background:
-                radial-gradient(circle at 25% 30%, rgba(34, 211, 238, 0.22), transparent 30%),
-                radial-gradient(circle at 80% 75%, rgba(250, 204, 21, 0.15), transparent 28%);
+                 radial-gradient(circle at 20% 50%, rgba(30, 100, 180, 0.4), transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(20, 80, 150, 0.35), transparent 45%),
+                radial-gradient(circle at 50% 100%, rgba(25, 90, 160, 0.3), transparent 50%),
+                linear-gradient(135deg, #0a0f1f 0%, #0d1428 50%, #09091a 100%);
             filter: blur(24px);
         }
         
@@ -208,7 +210,7 @@
     <div class="container">
         <h1>Sign Up</h1>
         <p class="subtitle">Create your profile and set up secure access in less than a minute.</p>
-        <form>
+        <form action="registration-data.php" method="post">
             <div class="section-title full-row">Profile</div>
             <div class="form-group">
                 <label for="name">Full Name</label>
@@ -224,7 +226,7 @@
 
             <div class="form-group">
                 <label for="phone">Phone Number</label>
-                <input type="tel" id="phone" name="phone" placeholder="+1 555 123 4567" required>
+                <input type="tel" id="phone" name="phone" placeholder="+880 123 456 789" required>
                 <span class="hint">Needed for login verification and urgent account notices.</span>
             </div>
 
@@ -232,8 +234,7 @@
                 <label for="role">Account Type</label>
                 <select id="role" name="role" required>
                     <option value="" selected disabled>Select account type</option>
-                    <option value="student">Student</option>
-                    <option value="instructor">Instructor</option>
+                    <option value="user">User</option>
                     <option value="admin">Administrator</option>
                 </select>
             </div>
