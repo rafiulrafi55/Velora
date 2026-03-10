@@ -198,6 +198,89 @@
             margin: 0 6px;
         }
 
+        /* Success popup */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-overlay.visible {
+            display: flex;
+        }
+
+        .popup-box {
+            background: white;
+            border-radius: 14px;
+            padding: 36px 32px;
+            max-width: 380px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            animation: popIn 0.25s ease;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.85); opacity: 0; }
+            to   { transform: scale(1);    opacity: 1; }
+        }
+
+        .popup-icon {
+            font-size: 48px;
+            margin-bottom: 14px;
+        }
+
+        .popup-box h2 {
+            color: #111827;
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .popup-box p {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .popup-btn {
+            display: inline-block;
+            padding: 11px 32px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            width: auto;
+        }
+
+        .popup-btn:hover {
+            background: #5568d3;
+        }
+
+        .signin-error-banner {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: #fef2f2;
+            border: 1px solid #fca5a5;
+            border-radius: 8px;
+            color: #b91c1c;
+            font-size: 13px;
+            line-height: 1.5;
+            padding: 12px 14px;
+            margin-bottom: 18px;
+        }
+
+        .signin-error-banner.hidden {
+            display: none;
+        }
+
         @media (max-width: 520px) {
             body {
                 padding: 16px;
@@ -215,10 +298,23 @@
     </style>
 </head>
 <body>
+    <div class="popup-overlay" id="success-overlay">
+        <div class="popup-box">
+            <div class="popup-icon">&#10003;</div>
+            <h2>Account Created!</h2>
+            <p>Your account has been successfully created. You can now sign in.</p>
+            <button class="popup-btn" onclick="closePopup()">Go to Sign In</button>
+        </div>
+    </div>
+
     <div class="signin-container">
         <h1>Sign In</h1>
         <p class="subtitle">Access your Velora dashboard and stay in sync with guest updates.</p>
-        <form>
+        <div id="signin-error-banner" class="signin-error-banner hidden">
+            <span>&#9888;&nbsp;</span>
+            <span id="signin-error-msg"></span>
+        </div>
+        <form action="login-validation.php" method="POST">
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" placeholder="you@company.com" required>
@@ -247,5 +343,33 @@
             <a href="privacy-policy.html">Terms of Service</a>
         </div>
     </div>
+    <script>
+        (function () {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('registered') === '1') {
+                document.getElementById('success-overlay').classList.add('visible');
+                history.replaceState(null, '', window.location.pathname);
+            }
+
+            const error = params.get('error');
+            if (error) {
+                const banner = document.getElementById('signin-error-banner');
+                const msg    = document.getElementById('signin-error-msg');
+                if (error === 'invalid') {
+                    msg.textContent = 'Invalid email or password. Please try again.';
+                } else if (error === 'server') {
+                    msg.textContent = 'A server error occurred. Please try again later.';
+                } else {
+                    msg.textContent = 'An unexpected error occurred. Please try again.';
+                }
+                banner.classList.remove('hidden');
+                history.replaceState(null, '', window.location.pathname);
+            }
+        })();
+
+        function closePopup() {
+            document.getElementById('success-overlay').classList.remove('visible');
+        }
+    </script>
 </body>
 </html>
