@@ -27,9 +27,9 @@ npm start
 ```
 
 ## Tech Stack
-- Frontend: [Your framework]
-- Backend: [Your framework]
-- Database: [Your database]
+- Frontend: HTML
+- Backend: Java script and php
+- Database: mySQL
 
 ## Contributing
 Contributions are welcome. Please submit pull requests with clear descriptions.
