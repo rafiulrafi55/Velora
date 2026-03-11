@@ -89,7 +89,7 @@ try {
 
     mysqli_stmt_close($stmt);
     mysqli_close($conn);
-    header("Location: homepage.html?registered=1");
+    header("Location: index.html?registered=1");
     exit;
 } catch (mysqli_sql_exception $e) {
     if ((int)$e->getCode() === 1062) {
