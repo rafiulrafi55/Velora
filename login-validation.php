@@ -11,7 +11,7 @@ if (empty($email) || empty($password)) {
     exit;
 }
 
-$sql  = "SELECT id, name, email, phone, countryCode, customCode, role, adminKey, password FROM registration WHERE email = ? LIMIT 1";
+$sql  = "SELECT id, name, email, phone, countryCode, role, adminKey, password FROM registration WHERE email = ? LIMIT 1";
 $stmt = mysqli_stmt_init($conn);
 
 if (!mysqli_stmt_prepare($stmt, $sql)) {
@@ -23,19 +23,16 @@ if (!mysqli_stmt_prepare($stmt, $sql)) {
 mysqli_stmt_bind_param($stmt, "s", $email);
 mysqli_stmt_execute($stmt);
 
-mysqli_stmt_bind_result($stmt, $db_id, $db_name, $db_email, $db_phone, $db_countryCode, $db_customCode, $db_role, $db_adminKey, $db_password);
+mysqli_stmt_bind_result($stmt, $db_id, $db_name, $db_email, $db_phone, $db_countryCode, $db_role, $db_adminKey, $db_password);
 
 if (mysqli_stmt_fetch($stmt)) {
     $verified = password_verify($password, $db_password);
 
-    // Fallback: plaintext password stored before hashing was introduced
     if (!$verified && $password === $db_password) {
-        // Free the open result set before running a second query
         mysqli_stmt_free_result($stmt);
         mysqli_stmt_close($stmt);
         $stmt = null;
 
-        // Migrate to hashed password on the fly
         $new_hash = password_hash($password, PASSWORD_DEFAULT);
         $upd      = mysqli_prepare($conn, "UPDATE registration SET password = ? WHERE id = ?");
         if ($upd) {
@@ -57,7 +54,6 @@ if (mysqli_stmt_fetch($stmt)) {
         $_SESSION['email']       = $db_email;
         $_SESSION['phone']       = $db_phone;
         $_SESSION['countryCode'] = $db_countryCode;
-        $_SESSION['customCode']  = $db_customCode;
 
         if ($db_role === 'admin') {
             $_SESSION['adminKey'] = $db_adminKey;

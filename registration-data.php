@@ -4,9 +4,8 @@ $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL) ?? '';
 $country_code = filter_input(INPUT_POST, 'country_code', FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? '';
 $custom_code = filter_input(INPUT_POST, 'custom_code', FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? '';
 
-
 if ($country_code === 'custom') {
-    $country_code = $custom_code;
+    $country_code = trim($custom_code);
 }
 
 $password = $_POST['password'] ?? '';
@@ -23,6 +22,8 @@ $captcha_expected = filter_input(INPUT_POST, 'captcha_expected', FILTER_VALIDATE
 $errors = [];
 if (empty($name)) $errors[] = 'Name is required';
 if (empty($email)) $errors[] = 'Valid email is required';
+if (empty($country_code)) $errors[] = 'Country code is required';
+if (!preg_match('/^\+\d{1,5}$/', $country_code)) $errors[] = 'Country code must look like +880';
 if (empty($password)) $errors[] = 'Password is required';
 if (!preg_match('/^\d{10}$/', $phone)) $errors[] = 'Phone must be exactly 10 digits';
 if ($role === 'admin' && empty($admin_key)) $errors[] = 'Administrator key is required';
@@ -73,8 +74,8 @@ function getDuplicateFieldFromError(string $errorMessage): string
     return $field;
 }
 
-$sql = "INSERT INTO registration ( name, email, countryCode, customCode, phone, role, adminKey, password) 
-VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+$sql = "INSERT INTO registration ( name, email, countryCode, phone, role, adminKey, password) 
+VALUES (?, ?, ?, ?, ?, ?, ?)";
 $stmt = mysqli_stmt_init($conn);
 
 try {
@@ -83,12 +84,12 @@ try {
     }
 
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-    mysqli_stmt_bind_param($stmt, "ssssssss", $name, $email, $country_code, $custom_code, $phone, $role, $admin_key, $hashed_password);
+    mysqli_stmt_bind_param($stmt, "sssssss", $name, $email, $country_code, $phone, $role, $admin_key, $hashed_password);
     mysqli_stmt_execute($stmt);
 
     mysqli_stmt_close($stmt);
     mysqli_close($conn);
-    header("Location: signin.html?registered=1");
+    header("Location: homepage.html?registered=1");
     exit;
 } catch (mysqli_sql_exception $e) {
     if ((int)$e->getCode() === 1062) {

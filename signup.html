@@ -1,556 +1,840 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sign Up</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(120deg, #081420, #0f2740);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 28px;
+        position: relative;
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+
+      body::before,
+      body::after {
+        content: none;
+      }
+
+      .container {
+        background: white;
+        padding: 42px 40px;
+        border-radius: 14px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 980px;
+        position: relative;
+        z-index: 1;
+        animation: authWindowIn 0.6s ease-out;
+      }
+
+      @keyframes authWindowIn {
+        from {
+          opacity: 0;
+          transform: translateY(18px) scale(0.98);
         }
-        
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 6px;
+        color: #333;
+      }
+
+      .subtitle {
+        text-align: center;
+        margin-bottom: 24px;
+        color: #6b7280;
+        font-size: 14px;
+        line-height: 1.4;
+      }
+
+      form {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .full-row {
+        grid-column: 1 / -1;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .section-title {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #64748b;
+        font-weight: bold;
+        margin-top: 4px;
+      }
+
+      label {
+        display: block;
+        color: #374151;
+        font-weight: bold;
+        font-size: 13px;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 11px 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+      }
+
+      input::placeholder {
+        color: #9ca3af;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+      }
+
+      .hint {
+        color: #6b7280;
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
+      .check-row {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        margin-top: 4px;
+      }
+
+      .check-row input {
+        width: auto;
+        margin-top: 2px;
+      }
+
+      .check-row label {
+        font-size: 12px;
+        font-weight: normal;
+        line-height: 1.4;
+        color: #4b5563;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .password-match {
+        font-size: 12px;
+        margin-top: 4px;
+        font-weight: bold;
+      }
+
+      .password-match.success {
+        color: #10b981;
+      }
+
+      .password-match.error {
+        color: #ef4444;
+      }
+
+      .captcha-box {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .captcha-question {
+        font-size: 18px;
+        font-weight: bold;
+        color: #374151;
+        background: #f1f5f9;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px 16px;
+        letter-spacing: 2px;
+        user-select: none;
+        min-width: 110px;
+        text-align: center;
+      }
+
+      .captcha-box input {
+        width: 90px;
+      }
+
+      .captcha-refresh {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #667eea;
+        font-size: 20px;
+        padding: 4px;
+        width: auto;
+        margin-top: 0;
+      }
+
+      .captcha-refresh:hover {
+        color: #764ba2;
+        background: none;
+      }
+
+      .field-error input,
+      .field-error select {
+        border-color: #ef4444;
+        box-shadow: 0 0 5px rgba(239, 68, 68, 0.4);
+        animation: shake 0.3s ease;
+      }
+
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-6px);
+        }
+        75% {
+          transform: translateX(6px);
+        }
+      }
+
+      @media (max-width: 720px) {
         body {
-            font-family: Arial, sans-serif;
-            background-color: #0f172a;
-            background-image:
-                radial-gradient(circle at 15% 20%, rgba(56, 189, 248, 0.35), transparent 30%),
-                radial-gradient(circle at 85% 15%, rgba(244, 114, 182, 0.28), transparent 35%),
-                radial-gradient(circle at 50% 85%, rgba(99, 102, 241, 0.35), transparent 40%),
-                linear-gradient(145deg, #0f172a 0%, #1e293b 45%, #111827 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 28px;
-            position: relative;
-            overflow-x: hidden;
-            overflow-y: auto;
+          padding: 16px;
         }
 
-        body::before,
-        body::after {
-            content: "";
-            position: fixed;
-            inset: -20%;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        body::before {
-            background:
-                repeating-linear-gradient(
-                    120deg,
-                    rgba(148, 163, 184, 0.08) 0,
-                    rgba(148, 163, 184, 0.08) 2px,
-                    transparent 2px,
-                    transparent 22px
-                );
-            mix-blend-mode: soft-light;
-            transform: rotate(-8deg);
-        }
-
-        body::after {
-            background:
-                 radial-gradient(circle at 20% 50%, rgba(30, 100, 180, 0.4), transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(20, 80, 150, 0.35), transparent 45%),
-                radial-gradient(circle at 50% 100%, rgba(25, 90, 160, 0.3), transparent 50%),
-                linear-gradient(135deg, #0a0f1f 0%, #0d1428 50%, #09091a 100%);
-            filter: blur(24px);
-        }
-        
         .container {
-            background: white;
-            padding: 42px 40px;
-            border-radius: 14px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 980px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        h1 {
-            text-align: center;
-            margin-bottom: 6px;
-            color: #333;
-        }
-
-        .subtitle {
-            text-align: center;
-            margin-bottom: 24px;
-            color: #6b7280;
-            font-size: 14px;
-            line-height: 1.4;
+          max-width: 420px;
+          padding: 30px 22px;
         }
 
         form {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 14px;
+          grid-template-columns: 1fr;
         }
+      }
 
-        .full-row {
-            grid-column: 1 / -1;
-        }
-        
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
+      button {
+        width: 100%;
+        padding: 12px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s;
+        margin-top: 6px;
+      }
 
-        .section-title {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: #64748b;
-            font-weight: bold;
-            margin-top: 4px;
-        }
-        
-        label {
-            display: block;
-            color: #374151;
-            font-weight: bold;
-            font-size: 13px;
-        }
-        
-        input,
-        select {
-            width: 100%;
-            padding: 11px 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-        }
+      button:hover {
+        background: #764ba2;
+      }
 
-        input::placeholder {
-            color: #9ca3af;
-        }
-        
-        input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
-        }
+      .server-error-banner {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        background: #fef2f2;
+        border: 1px solid #fca5a5;
+        border-radius: 8px;
+        color: #b91c1c;
+        font-size: 13px;
+        line-height: 1.5;
+        padding: 12px 14px;
+        margin-bottom: 18px;
+      }
 
-        .hint {
-            color: #6b7280;
-            font-size: 12px;
-            line-height: 1.35;
-        }
+      .server-error-banner.hidden {
+        display: none;
+      }
 
-        .check-row {
-            display: flex;
-            gap: 10px;
-            align-items: flex-start;
-            margin-top: 4px;
-        }
+      .server-error-banner .banner-icon {
+        font-size: 16px;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
 
-        .check-row input {
-            width: auto;
-            margin-top: 2px;
-        }
+      .popup-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 100;
+        justify-content: center;
+        align-items: center;
+      }
 
-        .check-row label {
-            font-size: 12px;
-            font-weight: normal;
-            line-height: 1.4;
-            color: #4b5563;
-        }
+      .popup-overlay.visible {
+        display: flex;
+      }
 
-        .hidden {
-            display: none;
-        }
+      .popup-box {
+        background: white;
+        border-radius: 14px;
+        padding: 36px 32px;
+        max-width: 380px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        animation: popIn 0.25s ease;
+      }
 
-        .password-match {
-            font-size: 12px;
-            margin-top: 4px;
-            font-weight: bold;
+      @keyframes popIn {
+        from {
+          transform: scale(0.85);
+          opacity: 0;
         }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
 
-        .password-match.success {
-            color: #10b981;
-        }
+      .popup-icon {
+        font-size: 48px;
+        margin-bottom: 14px;
+      }
 
-        .password-match.error {
-            color: #ef4444;
-        }
+      .popup-box h2 {
+        color: #111827;
+        font-size: 20px;
+        margin-bottom: 8px;
+      }
 
-        .captcha-box {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
+      .popup-box p {
+        color: #6b7280;
+        font-size: 14px;
+        margin-bottom: 24px;
+      }
 
-        .captcha-question {
-            font-size: 18px;
-            font-weight: bold;
-            color: #374151;
-            background: #f1f5f9;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 10px 16px;
-            letter-spacing: 2px;
-            user-select: none;
-            min-width: 110px;
-            text-align: center;
-        }
+      .popup-btn {
+        display: inline-block;
+        padding: 11px 32px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        width: auto;
+      }
 
-        .captcha-box input {
-            width: 90px;
-        }
+      .popup-btn:hover {
+        background: #5568d3;
+      }
 
-        .captcha-refresh {
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #667eea;
-            font-size: 20px;
-            padding: 4px;
-            width: auto;
-            margin-top: 0;
-        }
+      p {
+        text-align: center;
+        margin-top: 20px;
+        color: #666;
+      }
 
-        .captcha-refresh:hover {
-            color: #764ba2;
-            background: none;
-        }
-
-        .field-error input,
-        .field-error select {
-            border-color: #ef4444;
-            box-shadow: 0 0 5px rgba(239, 68, 68, 0.4);
-            animation: shake 0.3s ease;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-6px); }
-            75% { transform: translateX(6px); }
-        }
-
-        @media (max-width: 720px) {
-            body {
-                padding: 16px;
-            }
-
-            .container {
-                max-width: 420px;
-                padding: 30px 22px;
-            }
-
-            form {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        button {
-            width: 100%;
-            padding: 12px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s;
-            margin-top: 6px;
-        }
-        
-        button:hover {
-            background: #764ba2;
-        }
-
-        .server-error-banner {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            background: #fef2f2;
-            border: 1px solid #fca5a5;
-            border-radius: 8px;
-            color: #b91c1c;
-            font-size: 13px;
-            line-height: 1.5;
-            padding: 12px 14px;
-            margin-bottom: 18px;
-        }
-
-        .server-error-banner.hidden {
-            display: none;
-        }
-
-        .server-error-banner .banner-icon {
-            font-size: 16px;
-            flex-shrink: 0;
-            margin-top: 1px;
-        }
-
-        p {
-            text-align: center;
-            margin-top: 20px;
-            color: #666;
-        }
-        
-        a {
-            color: #667eea;
-            text-decoration: none;
-        }
+      a {
+        color: #667eea;
+        text-decoration: none;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
+    <div class="popup-overlay" id="success-overlay">
+      <div class="popup-box">
+        <div class="popup-icon">&#10003;</div>
+        <h2>Account Created!</h2>
+        <p>Your account has been successfully created.</p>
+        <button class="popup-btn" onclick="closePopup()">Continue</button>
+      </div>
+    </div>
+
     <div class="container">
-        <h1>Sign Up</h1>
-        <p class="subtitle">Create your profile and set up secure access in less than a minute.</p>
-            <div id="server-error-banner" class="server-error-banner hidden">
-                <span class="banner-icon">&#9888;</span>
-                <span id="server-error-msg"></span>
-            </div>
-        <form action="registration-data.php" method="post" onsubmit="return handleSubmit(event)">
-            <div class="section-title full-row">Profile</div>
-            <div class="form-group">
-                <label for="name">Full Name</label>
-                <input type="text" id="name" name="name" placeholder="e.g. Alex Rivera" required oninput="validateForm(); clearError(this)">
-                <span class="hint">Use your legal name for account verification.</span>
-            </div>
-            
-            <div class="form-group full-row">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="you@company.com" pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" title="Please enter a valid email address" required oninput="validateForm(); clearError(this)">
-                <span class="hint">We will send account alerts and password reset links here.</span>
-            </div>
+      <h1>Sign Up</h1>
+      <p class="subtitle">
+        Create your profile and set up secure access in less than a minute.
+      </p>
+      <div id="server-error-banner" class="server-error-banner hidden">
+        <span class="banner-icon">&#9888;</span>
+        <span id="server-error-msg"></span>
+      </div>
+      <form
+        action="registration-data.php"
+        method="post"
+        onsubmit="return handleSubmit(event);"
+      >
+        <div class="section-title full-row">Profile</div>
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="e.g. Alex Rivera"
+            required
+            oninput="
+              validateForm();
+              clearError(this);
+            "
+          />
+          <span class="hint"
+            >Use your legal name for account verification.</span
+          >
+        </div>
 
-            <div class="form-group">
-                <label for="country_code">Country Code</label>
-                <select id="country_code" name="country_code" required onchange="toggleCustomCode(); validateForm(); clearError(this);">
-                    <option value="" selected disabled>Select country code</option>
-                    <option value="+1">+1 (USA/Canada)</option>
-                    <option value="+44">+44 (UK)</option>
-                    <option value="+91">+91 (India)</option>
-                    <option value="+880">+880 (Bangladesh)</option>
-                    <option value="+86">+86 (China)</option>
-                    <option value="+81">+81 (Japan)</option>
-                    <option value="+33">+33 (France)</option>
-                    <option value="+49">+49 (Germany)</option>
-                    <option value="+39">+39 (Italy)</option>
-                    <option value="+34">+34 (Spain)</option>
-                    <option value="+61">+61 (Australia)</option>
-                    <option value="+64">+64 (New Zealand)</option>
-                    <option value="custom">Custom</option>
-                </select>
-            </div>
+        <div class="form-group full-row">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="you@company.com"
+            pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
+            title="Please enter a valid email address"
+            required
+            oninput="
+              validateForm();
+              clearError(this);
+            "
+          />
+          <span class="hint"
+            >We will send account alerts and password reset links here.</span
+          >
+        </div>
 
-            <div class="form-group hidden" id="custom_code_group">
-                <label for="custom_code">Enter Country Code</label>
-                <input type="text" id="custom_code" name="custom_code" placeholder="e.g. +1 or +44" maxlength="5" oninput="validateForm(); clearError(this)">
-            </div>
+        <div class="form-group">
+          <label for="country_code">Country Code</label>
+          <select
+            id="country_code"
+            name="country_code"
+            required
+            onchange="
+              toggleCustomCode();
+              validateForm();
+              clearError(this);
+            "
+          >
+            <option value="" selected disabled>Select country code</option>
+            <option value="+1">+1 (USA/Canada)</option>
+            <option value="+44">+44 (UK)</option>
+            <option value="+91">+91 (India)</option>
+            <option value="+880">+880 (Bangladesh)</option>
+            <option value="+86">+86 (China)</option>
+            <option value="+81">+81 (Japan)</option>
+            <option value="+33">+33 (France)</option>
+            <option value="+49">+49 (Germany)</option>
+            <option value="+39">+39 (Italy)</option>
+            <option value="+34">+34 (Spain)</option>
+            <option value="+61">+61 (Australia)</option>
+            <option value="+64">+64 (New Zealand)</option>
+            <option value="custom">Custom</option>
+          </select>
+        </div>
 
-            <div class="form-group">
-                <label for="phone">Phone Number</label>
-                <input type="tel" id="phone" name="phone" placeholder="1234567890" maxlength="10" pattern="\d{10}" title="Enter valid phone number" required oninput="validateForm(); clearError(this)">
-                <span class="hint">Needed for login verification and urgent account notices.</span>
-            </div>
+        <div class="form-group hidden" id="custom_code_group">
+          <label for="custom_code">Enter Country Code</label>
+          <input
+            type="text"
+            id="custom_code"
+            name="custom_code"
+            placeholder="e.g. +1 or +44"
+            maxlength="6"
+            oninput="
+              validateForm();
+              clearError(this);
+            "
+          />
+        </div>
 
-            <div class="form-group">
-                <label for="role">Account Type</label>
-                <select id="role" name="role" required onchange="toggleAdminKey(); validateForm(); clearError(this);">
-                    <option value="" selected disabled>Select account type</option>
-                    <option value="user">User</option>
-                    <option value="admin">Administrator</option>
-                </select>
-            </div>
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            placeholder="1234567890"
+            maxlength="10"
+            pattern="\d{10}"
+            title="Enter valid phone number"
+            required
+            oninput="
+              validateForm();
+              clearError(this);
+            "
+          />
+          <span class="hint"
+            >Needed for login verification and urgent account notices.</span
+          >
+        </div>
 
-            <div class="form-group full-row hidden" id="admin_key_group">
-                <label for="admin_key">Administrator Key</label>
-                <input type="password" id="admin_key" name="admin_key" placeholder="Enter the administrator key" oninput="validateForm(); clearError(this)">
-                <span class="hint">A valid administrator key is required to register as an admin.</span>
-            </div>
+        <div class="form-group">
+          <label for="role">Account Type</label>
+          <select
+            id="role"
+            name="role"
+            required
+            onchange="
+              toggleAdminKey();
+              validateForm();
+              clearError(this);
+            "
+          >
+            <option value="" selected disabled>Select account type</option>
+            <option value="user">User</option>
+            <option value="admin">Administrator</option>
+          </select>
+        </div>
 
-            <div class="section-title full-row">Security</div>
-            
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Create a strong password" required oninput="checkPasswordMatch(); validateForm(); clearError(this);">
-                <span class="hint">At least 8 characters with uppercase, number, and symbol.</span>
-            </div>
-            
-            <div class="form-group">
-                <label for="confirm">Confirm Password</label>
-                <input type="password" id="confirm" placeholder="Re-enter your password" required oninput="checkPasswordMatch(); validateForm(); clearError(this);">
-                <span id="password-feedback" class="password-match hidden"></span>
-            </div>
+        <div class="form-group full-row hidden" id="admin_key_group">
+          <label for="admin_key">Administrator Key</label>
+          <input
+            type="password"
+            id="admin_key"
+            name="admin_key"
+            placeholder="Enter the administrator key"
+            oninput="
+              validateForm();
+              clearError(this);
+            "
+          />
+          <span class="hint"
+            >A valid administrator key is required to register as an
+            admin.</span
+          >
+        </div>
 
-            <div class="check-row full-row">
-                <input type="checkbox" id="terms" name="terms" required onchange="validateForm(); clearError(this);">
-                <label for="terms">I agree to the <a href="privacy-policy.html">Terms of Service</a> and <a href="privacy-policy.html">Privacy Policy</a>, and I consent to account-related notifications.</label>
-            </div>
+        <div class="section-title full-row">Security</div>
 
-            <div class="form-group full-row" id="captcha_group">
-                <label>Security Check</label>
-                <div class="captcha-box">
-                    <span class="captcha-question" id="captcha-question"></span>
-                    <input type="number" id="captcha_answer" name="captcha_answer" placeholder="Answer" min="0" oninput="validateForm(); clearError(this)">
-                    <button type="button" class="captcha-refresh" onclick="generateCaptcha()" title="New question">&#8635;</button>
-                </div>
-                <input type="hidden" id="captcha_expected" name="captcha_expected">
-            </div>
-            
-            <button class="full-row" id="submit-btn" type="submit">Sign Up</button>
-        </form>
-        
-        <p>Already have an account? <a href="login.html">Log in</a></p>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Create a strong password"
+            required
+            oninput="
+              checkPasswordMatch();
+              validateForm();
+              clearError(this);
+            "
+          />
+          <span class="hint"
+            >At least 8 characters with uppercase, number, and symbol.</span
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="confirm">Confirm Password</label>
+          <input
+            type="password"
+            id="confirm"
+            placeholder="Re-enter your password"
+            required
+            oninput="
+              checkPasswordMatch();
+              validateForm();
+              clearError(this);
+            "
+          />
+          <span id="password-feedback" class="password-match hidden"></span>
+        </div>
+
+        <div class="check-row full-row">
+          <input
+            type="checkbox"
+            id="terms"
+            name="terms"
+            required
+            onchange="
+              validateForm();
+              clearError(this);
+            "
+          />
+          <label for="terms"
+            >I agree to the
+            <a href="privacy-policy.html">Terms of Service</a> and
+            <a href="privacy-policy.html">Privacy Policy</a>, and I consent to
+            account-related notifications.</label
+          >
+        </div>
+
+        <div class="form-group full-row" id="captcha_group">
+          <label>Security Check</label>
+          <div class="captcha-box">
+            <span class="captcha-question" id="captcha-question"></span>
+            <input
+              type="number"
+              id="captcha_answer"
+              name="captcha_answer"
+              placeholder="Answer"
+              min="0"
+              oninput="
+                validateForm();
+                clearError(this);
+              "
+            />
+            <button
+              type="button"
+              class="captcha-refresh"
+              onclick="generateCaptcha()"
+              title="New question"
+            >
+              &#8635;
+            </button>
+          </div>
+          <input type="hidden" id="captcha_expected" name="captcha_expected" />
+        </div>
+
+        <button class="full-row" id="submit-btn" type="submit">Sign Up</button>
+      </form>
+
+      <p>Already have an account? <a href="signin.html">Log in</a></p>
     </div>
 
     <script>
-        function toggleCustomCode() {
-            const countryCode = document.getElementById('country_code');
-            const customCodeGroup = document.getElementById('custom_code_group');
-            const customCodeInput = document.getElementById('custom_code');
-            
-            if (countryCode.value === 'custom') {
-                customCodeGroup.classList.remove('hidden');
-                customCodeInput.required = true;
-            } else {
-                customCodeGroup.classList.add('hidden');
-                customCodeInput.required = false;
-                customCodeInput.value = '';
-            }
+      function toggleCustomCode() {
+        const countryCode = document.getElementById("country_code");
+        const customCodeGroup = document.getElementById("custom_code_group");
+        const customCodeInput = document.getElementById("custom_code");
+
+        if (countryCode.value === "custom") {
+          customCodeGroup.classList.remove("hidden");
+          customCodeInput.required = true;
+        } else {
+          customCodeGroup.classList.add("hidden");
+          customCodeInput.required = false;
+          customCodeInput.value = "";
+        }
+      }
+
+      function clearError(el) {
+        el.closest(".form-group, .check-row").classList.remove("field-error");
+      }
+
+      function toggleAdminKey() {
+        const role = document.getElementById("role").value;
+        const adminKeyGroup = document.getElementById("admin_key_group");
+        const adminKeyInput = document.getElementById("admin_key");
+
+        if (role === "admin") {
+          adminKeyGroup.classList.remove("hidden");
+          adminKeyInput.required = true;
+        } else {
+          adminKeyGroup.classList.add("hidden");
+          adminKeyInput.required = false;
+          adminKeyInput.value = "";
+        }
+      }
+
+      function checkPasswordMatch() {
+        const password = document.getElementById("password").value;
+        const confirm = document.getElementById("confirm").value;
+        const feedback = document.getElementById("password-feedback");
+
+        if (confirm === "") {
+          feedback.classList.add("hidden");
+          return;
         }
 
-        function clearError(el) {
-            el.closest('.form-group, .check-row').classList.remove('field-error');
+        if (password === confirm) {
+          feedback.textContent = "✓ Passwords match";
+          feedback.classList.remove("hidden", "error");
+          feedback.classList.add("success");
+        } else {
+          feedback.textContent = "✗ Passwords do not match";
+          feedback.classList.remove("hidden", "success");
+          feedback.classList.add("error");
+        }
+      }
+
+      function generateCaptcha() {
+        const a = Math.floor(Math.random() * 10) + 1;
+        const b = Math.floor(Math.random() * 10) + 1;
+        document.getElementById("captcha-question").textContent =
+          a + " + " + b + " = ?";
+        document.getElementById("captcha_expected").value = a + b;
+        document.getElementById("captcha_answer").value = "";
+      }
+
+      function validateForm() {
+        const name = document.getElementById("name").value.trim();
+        const emailInput = document.getElementById("email");
+        const emailValid =
+          emailInput.checkValidity() && emailInput.value.trim() !== "";
+        const countryCode = document.getElementById("country_code").value;
+        const customCode = document.getElementById("custom_code").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const phoneOk = /^\d{10}$/.test(phone);
+        const role = document.getElementById("role").value;
+        const password = document.getElementById("password").value;
+        const confirm = document.getElementById("confirm").value;
+        const terms = document.getElementById("terms").checked;
+        const adminKey = document.getElementById("admin_key").value.trim();
+        const captchaAnswer = document
+          .getElementById("captcha_answer")
+          .value.trim();
+        const captchaExpected =
+          document.getElementById("captcha_expected").value;
+
+        const passwordsMatch = password !== "" && password === confirm;
+        const adminKeyOk = role !== "admin" || adminKey !== "";
+        const captchaOk =
+          captchaAnswer !== "" &&
+          parseInt(captchaAnswer) === parseInt(captchaExpected);
+        const customCodeOk = countryCode !== "custom" || customCode !== "";
+
+        return (
+          name &&
+          emailValid &&
+          countryCode &&
+          customCodeOk &&
+          phoneOk &&
+          role &&
+          adminKeyOk &&
+          passwordsMatch &&
+          terms &&
+          captchaOk
+        );
+      }
+
+      function handleSubmit(e) {
+        const checks = [
+          {
+            id: "name",
+            isEmpty: () => document.getElementById("name").value.trim() === "",
+          },
+          {
+            id: "email",
+            isEmpty: () =>
+              !document.getElementById("email").checkValidity() ||
+              document.getElementById("email").value.trim() === "",
+          },
+          {
+            id: "country_code",
+            isEmpty: () => document.getElementById("country_code").value === "",
+          },
+          {
+            id: "custom_code",
+            isEmpty: () =>
+              document.getElementById("country_code").value === "custom" &&
+              document.getElementById("custom_code").value.trim() === "",
+          },
+          {
+            id: "phone",
+            isEmpty: () =>
+              !/^\d{10}$/.test(document.getElementById("phone").value.trim()),
+          },
+          {
+            id: "role",
+            isEmpty: () => document.getElementById("role").value === "",
+          },
+          {
+            id: "admin_key",
+            isEmpty: () =>
+              document.getElementById("role").value === "admin" &&
+              document.getElementById("admin_key").value.trim() === "",
+          },
+          {
+            id: "password",
+            isEmpty: () => document.getElementById("password").value === "",
+          },
+          {
+            id: "confirm",
+            isEmpty: () =>
+              document.getElementById("confirm").value === "" ||
+              document.getElementById("password").value !==
+                document.getElementById("confirm").value,
+          },
+          {
+            id: "terms",
+            isEmpty: () => !document.getElementById("terms").checked,
+          },
+          {
+            id: "captcha_answer",
+            isEmpty: () =>
+              document.getElementById("captcha_answer").value.trim() === "" ||
+              parseInt(document.getElementById("captcha_answer").value) !==
+                parseInt(document.getElementById("captcha_expected").value),
+          },
+        ];
+
+        document
+          .querySelectorAll(".field-error")
+          .forEach((el) => el.classList.remove("field-error"));
+
+        const firstInvalid = checks.find((c) => c.isEmpty());
+        if (firstInvalid) {
+          e.preventDefault();
+          const el = document.getElementById(firstInvalid.id);
+          el.closest(".form-group, .check-row").classList.add("field-error");
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          el.focus();
+          return false;
+        }
+        return true;
+      }
+
+      generateCaptcha();
+
+      (function () {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("registered") === "1") {
+          document.getElementById("success-overlay").classList.add("visible");
+          history.replaceState(null, "", window.location.pathname);
         }
 
-        function toggleAdminKey() {
-            const role = document.getElementById('role').value;
-            const adminKeyGroup = document.getElementById('admin_key_group');
-            const adminKeyInput = document.getElementById('admin_key');
+        const error = params.get("error");
+        if (error) {
+          const banner = document.getElementById("server-error-banner");
+          const msg = document.getElementById("server-error-msg");
+          if (error === "duplicate") {
+            const field = (params.get("field") || "field").toLowerCase().trim();
+            const duplicateMessages = {
+              email: "This email is already registered.",
+              "admin key": "This admin key is already in use.",
+              "phone number": "This phone number is already registered.",
+            };
 
-            if (role === 'admin') {
-                adminKeyGroup.classList.remove('hidden');
-                adminKeyInput.required = true;
-            } else {
-                adminKeyGroup.classList.add('hidden');
-                adminKeyInput.required = false;
-                adminKeyInput.value = '';
-            }
+            msg.textContent =
+              duplicateMessages[field] ||
+              "This " +
+                field +
+                " already exists. Please use a different value.";
+          } else {
+            msg.textContent =
+              "This account already exists. Please sign in or use different details.";
+          }
+          banner.classList.remove("hidden");
+          banner.scrollIntoView({ behavior: "smooth", block: "center" });
+          history.replaceState(null, "", window.location.pathname);
         }
-        
-        function checkPasswordMatch() {
-            const password = document.getElementById('password').value;
-            const confirm = document.getElementById('confirm').value;
-            const feedback = document.getElementById('password-feedback');
+      })();
 
-            if (confirm === '') {
-                feedback.classList.add('hidden');
-                return;
-            }
-
-            if (password === confirm) {
-                feedback.textContent = '✓ Passwords match';
-                feedback.classList.remove('hidden', 'error');
-                feedback.classList.add('success');
-            } else {
-                feedback.textContent = '✗ Passwords do not match';
-                feedback.classList.remove('hidden', 'success');
-                feedback.classList.add('error');
-            }
-        }
-
-        function generateCaptcha() {
-            const a = Math.floor(Math.random() * 10) + 1;
-            const b = Math.floor(Math.random() * 10) + 1;
-            document.getElementById('captcha-question').textContent = a + ' + ' + b + ' = ?';
-            document.getElementById('captcha_expected').value = a + b;
-            document.getElementById('captcha_answer').value = '';
-        }
-
-        function validateForm() {
-            const name = document.getElementById('name').value.trim();
-            const emailInput = document.getElementById('email');
-            const emailValid = emailInput.checkValidity() && emailInput.value.trim() !== '';
-            const countryCode = document.getElementById('country_code').value;
-            const customCode = document.getElementById('custom_code').value.trim();
-            const phone = document.getElementById('phone').value.trim();
-            const phoneOk = /^\d{10}$/.test(phone);
-            const role = document.getElementById('role').value;
-            const password = document.getElementById('password').value;
-            const confirm = document.getElementById('confirm').value;
-            const terms = document.getElementById('terms').checked;
-            const adminKey = document.getElementById('admin_key').value.trim();
-            const captchaAnswer = document.getElementById('captcha_answer').value.trim();
-            const captchaExpected = document.getElementById('captcha_expected').value;
-
-            const customCodeOk = countryCode !== 'custom' || customCode !== '';
-            const passwordsMatch = password !== '' && password === confirm;
-            const adminKeyOk = role !== 'admin' || adminKey !== '';
-            const captchaOk = captchaAnswer !== '' && parseInt(captchaAnswer) === parseInt(captchaExpected);
-
-            return name && emailValid && countryCode && customCodeOk
-                && phoneOk && role && adminKeyOk && passwordsMatch && terms && captchaOk;
-        }
-
-        function handleSubmit(e) {
-            const checks = [
-                { id: 'name',         isEmpty: () => document.getElementById('name').value.trim() === '' },
-                { id: 'email',        isEmpty: () => !document.getElementById('email').checkValidity() || document.getElementById('email').value.trim() === '' },
-                { id: 'country_code', isEmpty: () => document.getElementById('country_code').value === '' },
-                { id: 'custom_code',  isEmpty: () => document.getElementById('country_code').value === 'custom' && document.getElementById('custom_code').value.trim() === '' },
-                { id: 'phone',        isEmpty: () => !/^\d{10}$/.test(document.getElementById('phone').value.trim()) },
-                { id: 'role',         isEmpty: () => document.getElementById('role').value === '' },
-                { id: 'admin_key',    isEmpty: () => document.getElementById('role').value === 'admin' && document.getElementById('admin_key').value.trim() === '' },
-                { id: 'password',     isEmpty: () => document.getElementById('password').value === '' },
-                { id: 'confirm',      isEmpty: () => document.getElementById('confirm').value === '' || document.getElementById('password').value !== document.getElementById('confirm').value },
-                { id: 'terms',        isEmpty: () => !document.getElementById('terms').checked },
-                { id: 'captcha_answer', isEmpty: () => document.getElementById('captcha_answer').value.trim() === '' || parseInt(document.getElementById('captcha_answer').value) !== parseInt(document.getElementById('captcha_expected').value) }
-            ];
-
-            // Clear previous error highlights
-            document.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
-
-            const firstInvalid = checks.find(c => c.isEmpty());
-            if (firstInvalid) {
-                e.preventDefault();
-                const el = document.getElementById(firstInvalid.id);
-                el.closest('.form-group, .check-row').classList.add('field-error');
-                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                el.focus();
-                return false;
-            }
-            return true;
-        }
-
-        // Generate CAPTCHA on page load
-        generateCaptcha();
-
-            // Show server-side error banner if redirected back with ?error=
-            (function () {
-                const params = new URLSearchParams(window.location.search);
-                const error = params.get('error');
-                if (error) {
-                    const banner = document.getElementById('server-error-banner');
-                    const msg = document.getElementById('server-error-msg');
-                    if (error === 'duplicate') {
-                        const field = (params.get('field') || 'field').toLowerCase().trim();
-                        const duplicateMessages = {
-                            email: 'This email is already registered.',
-                            'admin key': 'This admin key is already in use.',
-                            'phone number': 'This phone number is already registered.'
-                        };
-
-                        msg.textContent = duplicateMessages[field] || ('This ' + field + ' already exists. Please use a different value.');
-                    } else {
-                        msg.textContent = 'This account already exists. Please sign in or use different details.';
-                    }
-                    banner.classList.remove('hidden');
-                    banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    history.replaceState(null, '', window.location.pathname);
-                }
-            })();
+      function closePopup() {
+        window.location.href = "homepage.html";
+      }
     </script>
-</body>
+  </body>
 </html>

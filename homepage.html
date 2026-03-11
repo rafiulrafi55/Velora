@@ -1,0 +1,1514 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Velora</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      body {
+        background: #0d1b2a;
+        color: white;
+      }
+
+      nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 60px;
+        background: #111;
+      }
+
+      footer {
+        display: none;
+        justify-content: center;
+        align-items: center;
+        gap: 24px;
+        padding: 18px 16px;
+        background: #111;
+        border-top: 1px solid #1f2d3f;
+      }
+
+      footer a {
+        color: #ccc;
+        text-decoration: none;
+        font-size: 15px;
+      }
+
+      footer a:hover {
+        color: #f59e0b;
+      }
+
+      .logo {
+        font-size: 24px;
+        font-weight: bold;
+      }
+
+      .logo span {
+        color: #f59e0b;
+      }
+
+      nav ul {
+        display: flex;
+        list-style: none;
+        gap: 30px;
+      }
+
+      nav ul li {
+        cursor: pointer;
+        color: #ccc;
+      }
+
+      .about-dropdown {
+        position: relative;
+        user-select: none;
+      }
+
+      .contact-dropdown {
+        position: relative;
+        user-select: none;
+      }
+
+      .about-card {
+        display: none;
+        position: absolute;
+        top: calc(100% + 10px);
+        left: 0;
+        width: 290px;
+        background: #13263f;
+        border: 1px solid #2a3a52;
+        border-radius: 12px;
+        padding: 14px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+        z-index: 210;
+      }
+
+      .about-card.open {
+        display: block;
+      }
+
+      .about-top {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .about-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: 2px solid #f59e0b;
+        object-fit: cover;
+        background: #0d1b2a;
+      }
+
+      .about-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .about-name {
+        color: #fff;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .about-handle {
+        color: #9ca3af;
+        font-size: 12px;
+      }
+
+      .about-role {
+        color: #f59e0b;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        margin-top: 2px;
+      }
+
+      .about-bio {
+        color: #cbd5e1;
+        font-size: 12px;
+        line-height: 1.45;
+        margin-bottom: 10px;
+      }
+
+      .about-stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+
+      .about-stat {
+        background: #0f1f33;
+        border: 1px solid #22354d;
+        border-radius: 8px;
+        padding: 6px;
+        text-align: center;
+      }
+
+      .about-stat .value {
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+        display: block;
+      }
+
+      .about-stat .label {
+        color: #94a3b8;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .about-location {
+        color: #94a3b8;
+        font-size: 12px;
+      }
+
+      .contact-card {
+        display: none;
+        position: absolute;
+        top: calc(100% + 10px);
+        left: 0;
+        width: 290px;
+        background: #13263f;
+        border: 1px solid #2a3a52;
+        border-radius: 12px;
+        padding: 14px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+        z-index: 210;
+      }
+
+      .contact-card.open {
+        display: block;
+      }
+
+      .contact-title {
+        color: #fff;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+
+      .contact-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #cbd5e1;
+        font-size: 12px;
+        line-height: 1.4;
+      }
+
+      .contact-icon {
+        width: 18px;
+        text-align: center;
+      }
+
+      .facebook-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #1877f2;
+        color: #fff;
+        font-weight: 700;
+        font-size: 12px;
+        line-height: 1;
+      }
+
+      .contact-item a {
+        color: #93c5fd;
+        text-decoration: none;
+      }
+
+      .contact-item a:hover {
+        text-decoration: underline;
+      }
+
+      .login-btn {
+        background: #f59e0b;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+        color: rgb(19, 18, 18);
+        transition:
+          background 0.2s ease,
+          color 0.2s ease,
+          border-color 0.2s ease;
+      }
+
+      .login-btn:hover,
+      .login-btn:active {
+        background: #22324b;
+        color: #fff;
+      }
+
+      .hero {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 40px;
+        padding: 80px 80px;
+        min-height: 90vh;
+        background: linear-gradient(120deg, #081420, #0f2740);
+      }
+
+      .hero-text {
+        max-width: 600px;
+      }
+
+      .hero-text h1 {
+        font-size: 60px;
+        line-height: 1.1;
+        margin-bottom: 20px;
+      }
+
+      .hero-text h1 span {
+        color: #f59e0b;
+      }
+
+      .hero-text h1 span.headline-main {
+        font-size: 52px;
+        color: white;
+      }
+
+      .hero-text p {
+        color: #a0aec0;
+        margin-bottom: 30px;
+        font-size: 18px;
+        line-height: 1.6;
+      }
+
+      .hero-buttons {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 25px;
+      }
+
+      .signup-btn {
+        background: #f59e0b;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        color: rgb(19, 18, 18);
+        transition:
+          background 0.2s ease,
+          color 0.2s ease,
+          border-color 0.2s ease;
+      }
+
+      .secondary-btn {
+        border: 1px solid #555;
+        padding: 14px 28px;
+        border-radius: 8px;
+        background: transparent;
+        color: white;
+        transition:
+          background 0.2s ease,
+          color 0.2s ease,
+          border-color 0.2s ease;
+      }
+
+      .signup-btn:hover,
+      .secondary-btn:hover,
+      .signup-btn:active,
+      .secondary-btn:active {
+        background: #22324b;
+        color: #fff;
+        border-color: #22324b;
+      }
+
+      .status {
+        background: #1b263b;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border-radius: 30px;
+        color: #ccc;
+        font-size: 14px;
+        text-decoration: none;
+        transition:
+          background 0.2s ease,
+          color 0.2s ease;
+      }
+
+      .status:hover {
+        background: #22324b;
+        color: #fff;
+      }
+
+      .status svg {
+        width: 16px;
+        height: 16px;
+        fill: currentColor;
+      }
+
+      .status-mobile {
+        display: none;
+      }
+
+      .popup-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 200;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .popup-overlay.visible {
+        display: flex;
+      }
+
+      .popup-box {
+        background: white;
+        border-radius: 14px;
+        padding: 36px 32px;
+        max-width: 380px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        animation: popIn 0.25s ease;
+      }
+
+      @keyframes popIn {
+        from {
+          transform: scale(0.85);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .popup-icon {
+        font-size: 48px;
+        margin-bottom: 14px;
+      }
+
+      .popup-box h2 {
+        color: #111827;
+        font-size: 20px;
+        margin-bottom: 8px;
+      }
+
+      .popup-box p {
+        color: #6b7280;
+        font-size: 14px;
+        margin-bottom: 24px;
+      }
+
+      .popup-btn {
+        display: inline-block;
+        padding: 11px 32px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        width: auto;
+      }
+
+      .popup-btn:hover {
+        background: #5568d3;
+      }
+
+      .features-modal {
+        background: #13263f;
+        border: 1px solid #2a3a52;
+        border-radius: 16px;
+        width: min(900px, 92vw);
+        max-height: 82vh;
+        overflow: auto;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+        color: #dbe7f5;
+        animation: featuresModalIn 0.28s ease-out;
+      }
+
+      @keyframes featuresModalIn {
+        from {
+          opacity: 0;
+          transform: translateY(18px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .features-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 18px 22px;
+        border-bottom: 1px solid #2a3a52;
+      }
+
+      .features-modal-title {
+        margin: 0;
+        color: #fff;
+        font-size: 22px;
+      }
+
+      .features-close-btn {
+        border: 1px solid #334b67;
+        background: #1a314b;
+        color: #dbe7f5;
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 18px;
+      }
+
+      .features-modal-body {
+        padding: 20px 22px 24px;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .feature-detail {
+        background: #0f1f33;
+        border: 1px solid #22354d;
+        border-radius: 12px;
+        padding: 14px;
+      }
+
+      .feature-detail h3 {
+        margin: 0 0 6px;
+        color: #f8fafc;
+        font-size: 15px;
+      }
+
+      .feature-detail p {
+        margin: 0;
+        color: #9fb2c7;
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .booking {
+        background: #142236;
+        padding: 30px;
+        border-radius: 16px;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      }
+
+      @keyframes featuresWindowIn {
+        from {
+          opacity: 0;
+          transform: translateY(24px) scale(0.98);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .booking h2 {
+        margin-bottom: 5px;
+      }
+
+      .booking p {
+        color: #9ca3af;
+        margin-bottom: 20px;
+      }
+
+      .step {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .step span {
+        background: #f59e0b;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+      }
+
+      .service {
+        border: 1px solid #2a3a52;
+        padding: 14px 16px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: default;
+        pointer-events: none;
+      }
+
+      .service:hover {
+        border-color: #2a3a52;
+      }
+
+      .price {
+        color: #f59e0b;
+        font-weight: bold;
+      }
+
+      .next-btn {
+        width: 100%;
+        margin-top: 15px;
+        background: #f59e0b;
+        border: none;
+        padding: 14px;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        color: rgb(19, 18, 18);
+        transition:
+          background 0.2s ease,
+          color 0.2s ease,
+          border-color 0.2s ease;
+      }
+
+      .next-btn:hover,
+      .next-btn:active {
+        background: #22324b;
+        color: #fff;
+      }
+
+      @media (max-width: 1024px) {
+        nav {
+          padding: 16px 24px;
+        }
+
+        .hero {
+          padding: 56px 24px;
+          gap: 28px;
+        }
+
+        .hero-text h1 {
+          font-size: 48px;
+        }
+
+        .hero-text h1 span.headline-main {
+          font-size: 42px;
+        }
+      }
+
+      @media (min-width: 1025px) {
+        .hero-text h1 {
+          animation: slideUpIn 0.65s ease-out both;
+        }
+
+        .hero-text p {
+          animation: slideUpIn 0.65s ease-out 0.1s both;
+        }
+
+        .hero-buttons {
+          animation: slideUpIn 0.65s ease-out 0.2s both;
+        }
+
+        .hero-text .status {
+          animation: slideUpIn 0.65s ease-out 0.3s both;
+        }
+
+        .booking {
+          animation: featuresWindowIn 0.8s ease-out 0.15s both;
+        }
+
+        .booking h2 {
+          animation: slideUpIn 0.5s ease-out 0.3s both;
+        }
+
+        .booking p {
+          animation: slideUpIn 0.5s ease-out 0.35s both;
+        }
+
+        .step {
+          animation: slideUpIn 0.5s ease-out 0.4s both;
+        }
+
+        .service:nth-of-type(1) {
+          animation: slideUpIn 0.5s ease-out 0.45s both;
+        }
+
+        .service:nth-of-type(2) {
+          animation: slideUpIn 0.5s ease-out 0.5s both;
+        }
+
+        .service:nth-of-type(3) {
+          animation: slideUpIn 0.5s ease-out 0.55s both;
+        }
+
+        .service:nth-of-type(4) {
+          animation: slideUpIn 0.5s ease-out 0.6s both;
+        }
+
+        .next-btn {
+          animation: slideUpIn 0.5s ease-out 0.65s both;
+        }
+      }
+
+      @keyframes slideUpIn {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes slideRightIn {
+        from {
+          opacity: 0;
+          transform: translateX(22px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @media (max-width: 768px) {
+        nav {
+          flex-wrap: wrap;
+          gap: 12px;
+        }
+
+        .logo {
+          order: 1;
+        }
+
+        .login-btn {
+          order: 2;
+          margin-left: auto;
+          width: auto;
+          padding: 8px 14px;
+          font-size: 14px;
+        }
+
+        nav ul {
+          display: none;
+        }
+
+        .hero {
+          flex-direction: column;
+          align-items: stretch;
+          padding: 36px 16px;
+          min-height: auto;
+        }
+
+        footer {
+          display: flex;
+          justify-content: flex-start;
+          padding: 16px;
+        }
+
+        .hero-text {
+          max-width: none;
+        }
+
+        .hero-text h1 {
+          font-size: 36px;
+          line-height: 1.2;
+        }
+
+        .hero-text h1 span.headline-main {
+          font-size: 32px;
+        }
+
+        .hero-text p {
+          font-size: 16px;
+        }
+
+        .hero-buttons {
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .signup-btn,
+        .secondary-btn {
+          width: 100%;
+        }
+
+        .booking {
+          padding: 20px;
+          max-width: none;
+        }
+
+        .service {
+          align-items: flex-start;
+          gap: 10px;
+        }
+
+        .hero-text .status {
+          display: none;
+        }
+
+        .status-mobile {
+          display: inline-flex;
+          margin-top: 8px;
+          align-self: flex-start;
+        }
+
+        footer {
+          display: flex;
+          justify-content: flex-start;
+          padding: 16px;
+          gap: 16px;
+          flex-wrap: wrap;
+          align-items: center;
+        }
+
+        footer a {
+          color: #ccc;
+          text-decoration: none;
+          font-size: 13px;
+        }
+
+        footer a:hover {
+          color: #f59e0b;
+        }
+
+        .mobile-scroll-animate {
+          opacity: 0;
+          transform: translateX(22px);
+        }
+
+        .mobile-scroll-animate.in-view {
+          animation: slideRightIn 0.55s ease-out both;
+          animation-delay: var(--mobile-delay, 0s);
+        }
+
+        .hero-text.mobile-scroll-animate {
+          --mobile-delay: 0s;
+        }
+
+        .booking.mobile-scroll-animate {
+          --mobile-delay: 0.08s;
+        }
+
+        .status-mobile.mobile-scroll-animate {
+          --mobile-delay: 0.12s;
+        }
+
+        footer.mobile-scroll-animate {
+          --mobile-delay: 0.16s;
+          opacity: 1 !important;
+          transform: translateX(0) !important;
+        }
+
+        .about-card,
+        .contact-card {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 90vw;
+          max-width: 320px;
+          background: #13263f;
+          border: 1px solid #2a3a52;
+          border-radius: 12px;
+          padding: 16px;
+          box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+          z-index: 220;
+          max-height: 80vh;
+          overflow-y: auto;
+        }
+
+        body.popup-open {
+          position: fixed;
+          overflow: hidden;
+        }
+
+        body.popup-open::after {
+          content: "";
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.6);
+          z-index: 210;
+        }
+
+        .features-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .features-modal {
+          width: 94vw;
+          max-height: 88vh;
+          border-radius: 12px;
+        }
+
+        .features-modal-header {
+          padding: 14px 16px;
+        }
+
+        .features-modal-title {
+          font-size: 18px;
+        }
+
+        .features-close-btn {
+          width: 36px;
+          height: 36px;
+        }
+
+        .features-modal-body {
+          padding: 14px 16px 18px;
+        }
+
+        .feature-detail {
+          padding: 12px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="popup-overlay" id="success-overlay">
+      <div class="popup-box">
+        <div class="popup-icon">&#10003;</div>
+        <h2>Account Created!</h2>
+        <p>Your account has been successfully created.</p>
+        <button
+          class="popup-btn"
+          onclick="window.location.href = 'signin.html'"
+        >
+          Sign In
+        </button>
+      </div>
+    </div>
+
+    <div class="popup-overlay" id="features-overlay">
+      <div
+        class="features-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Feature details"
+      >
+        <div class="features-modal-header">
+          <h2 class="features-modal-title">Platform Features</h2>
+          <button
+            class="features-close-btn"
+            id="features-close-btn"
+            aria-label="Close features"
+          >
+            ×
+          </button>
+        </div>
+        <div class="features-modal-body">
+          <div class="features-grid">
+            <div class="feature-detail">
+              <h3>Guest List Builder</h3>
+              <p>
+                Create segmented guest groups, import contacts, and organize
+                invitees by event type, priority, or family side.
+              </p>
+            </div>
+            <div class="feature-detail">
+              <h3>Email Invite Sender</h3>
+              <p>
+                Send branded invitation emails in batches with personalized
+                names, custom templates, and delivery tracking.
+              </p>
+            </div>
+            <div class="feature-detail">
+              <h3>RSVP Tracking</h3>
+              <p>
+                Monitor accepted, declined, and pending responses in real time
+                with clear status tags and quick filters.
+              </p>
+            </div>
+            <div class="feature-detail">
+              <h3>Reminder Automation</h3>
+              <p>
+                Schedule reminder workflows before event day to reduce no-shows
+                and keep attendance confirmations updated.
+              </p>
+            </div>
+            <div class="feature-detail">
+              <h3>Seating Coordination</h3>
+              <p>
+                Assign seats by household, relation, or preference and prevent
+                duplicate placements with simple table planning.
+              </p>
+            </div>
+            <div class="feature-detail">
+              <h3>Event Insights</h3>
+              <p>
+                View response summaries, attendance trends, and communication
+                activity to make faster planning decisions.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <nav>
+      <div class="logo">Velora</div>
+
+      <ul>
+        <li class="about-dropdown" id="about-dropdown">
+          <span id="about-trigger">About Us</span>
+          <div
+            class="about-card"
+            id="about-card"
+            aria-label="GitHub profile preview"
+          >
+            <div class="about-top">
+              <img
+                class="about-avatar"
+                id="about-avatar"
+                src="https://github.com/identicons/rafiulrafi55.png"
+                alt="Profile picture"
+              />
+              <div class="about-meta">
+                <span class="about-name" id="about-name">Loading...</span>
+                <span class="about-handle" id="about-handle"
+                  >@rafiulrafi55</span
+                >
+                <span class="about-role">Lead Developer</span>
+              </div>
+            </div>
+
+            <p class="about-bio" id="about-bio">Loading profile details...</p>
+
+            <div class="about-stats">
+              <div class="about-stat">
+                <span class="value" id="about-repos">0</span>
+                <span class="label">Repos</span>
+              </div>
+              <div class="about-stat">
+                <span class="value" id="about-followers">0</span>
+                <span class="label">Followers</span>
+              </div>
+              <div class="about-stat">
+                <span class="value" id="about-following">0</span>
+                <span class="label">Following</span>
+              </div>
+            </div>
+
+            <p class="about-location" id="about-location">
+              Location: Updating...
+            </p>
+          </div>
+        </li>
+        <li class="contact-dropdown" id="contact-dropdown">
+          <span id="contact-trigger">Contact</span>
+          <div
+            class="contact-card"
+            id="contact-card"
+            aria-label="GitHub contact details"
+          >
+            <p class="contact-title">Contact Details</p>
+            <ul class="contact-list">
+              <li class="contact-item">
+                <span class="contact-icon">✉</span>
+                <span id="contact-email">Loading...</span>
+              </li>
+              <li class="contact-item">
+                <span class="contact-icon facebook-icon">f</span>
+                <a
+                  href="https://www.facebook.com/ar.vi.1291"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >ar.vi.1291</a
+                >
+              </li>
+              <li class="contact-item">
+                <span class="contact-icon">🌐</span>
+                <span id="contact-blog">Loading...</span>
+              </li>
+              <li class="contact-item">
+                <span class="contact-icon">📍</span>
+                <span id="contact-location">Loading...</span>
+              </li>
+              <li class="contact-item">
+                <span class="contact-icon">🔗</span>
+                <a
+                  id="contact-github"
+                  href="https://github.com/rafiulrafi55"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >GitHub Profile</a
+                >
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li onclick="window.location.href = 'privacy-policy.html'">
+          Privacy Policy
+        </li>
+      </ul>
+
+      <button class="login-btn" onclick="window.location.href = 'signin.html'">
+        Login
+      </button>
+    </nav>
+
+    <section class="hero">
+      <div class="hero-text mobile-scroll-animate">
+        <h1>
+          <span class="headline-main">Manage Guests On Your Event</span><br />
+          <span>Smartly</span>
+        </h1>
+
+        <p>
+          Plan and manage event invitations with ease from one smart dashboard.
+          Create guest lists, send invites, track responses, and stay organized
+          from start to finish.
+        </p>
+
+        <div class="hero-buttons">
+          <button
+            class="signup-btn"
+            onclick="window.location.href = 'signup.html'"
+          >
+            Make an Account
+          </button>
+          <button
+            class="secondary-btn"
+            onclick="window.location.href = 'mailto:rafiulrafi55@gmail.com'"
+          >
+            Email Us
+          </button>
+        </div>
+
+        <a
+          class="status"
+          href="https://github.com/rafiulrafi55"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Visit rafiulrafi55 on GitHub"
+        >
+          <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path
+              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8"
+            />
+          </svg>
+          Powered by GitHub
+        </a>
+      </div>
+
+      <div class="booking mobile-scroll-animate">
+        <h2>Velora Features</h2>
+        <p>Everything you need to manage event invites</p>
+
+        <div class="step"><span>1</span> Core Tools</div>
+
+        <div class="service">
+          Guest List Builder <small>Create and segment guests</small>
+        </div>
+
+        <div class="service">
+          Email Invite Sender <small>Send custom invitations fast</small>
+        </div>
+
+        <div class="service">
+          RSVP Tracking <small>Monitor accepted and pending replies</small>
+        </div>
+
+        <div class="service">
+          Reminder Automation <small>Auto follow-up before the event</small>
+        </div>
+
+        <button class="next-btn" id="explore-features-btn">
+          Explore Features
+        </button>
+      </div>
+
+      <a
+        class="status status-mobile mobile-scroll-animate"
+        href="https://github.com/rafiulrafi55"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Visit rafiulrafi55 on GitHub"
+      >
+        <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+          <path
+            d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8"
+          />
+        </svg>
+        Powered by GitHub
+      </a>
+    </section>
+
+    <footer class="mobile-scroll-animate">
+      <a href="#" id="footer-about-us">About Us</a>
+      <a href="#" id="footer-contact">Contact</a>
+    </footer>
+
+    <script>
+      (() => {
+        const successOverlay = document.getElementById("success-overlay");
+        const featuresOverlay = document.getElementById("features-overlay");
+        const exploreFeaturesBtn = document.getElementById(
+          "explore-features-btn",
+        );
+        const featuresCloseBtn = document.getElementById("features-close-btn");
+
+        if (exploreFeaturesBtn && featuresOverlay) {
+          exploreFeaturesBtn.addEventListener("click", () => {
+            featuresOverlay.classList.add("visible");
+          });
+        }
+
+        if (featuresCloseBtn && featuresOverlay) {
+          featuresCloseBtn.addEventListener("click", () => {
+            featuresOverlay.classList.remove("visible");
+          });
+        }
+
+        if (featuresOverlay) {
+          featuresOverlay.addEventListener("click", (event) => {
+            if (event.target === featuresOverlay) {
+              featuresOverlay.classList.remove("visible");
+            }
+          });
+        }
+        if (successOverlay) {
+          successOverlay.addEventListener("click", (event) => {
+            if (event.target === successOverlay) {
+              successOverlay.classList.remove("visible");
+            }
+          });
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("registered") === "1") {
+          successOverlay?.classList.add("visible");
+          history.replaceState(null, "", window.location.pathname);
+        }
+
+        const githubUser = "rafiulrafi55";
+        const aboutDropdown = document.getElementById("about-dropdown");
+        const aboutTrigger = document.getElementById("about-trigger");
+        const aboutCard = document.getElementById("about-card");
+        const aboutAvatar = document.getElementById("about-avatar");
+        const aboutName = document.getElementById("about-name");
+        const aboutHandle = document.getElementById("about-handle");
+        const aboutBio = document.getElementById("about-bio");
+        const aboutRepos = document.getElementById("about-repos");
+        const aboutFollowers = document.getElementById("about-followers");
+        const aboutFollowing = document.getElementById("about-following");
+        const aboutLocation = document.getElementById("about-location");
+        const contactDropdown = document.getElementById("contact-dropdown");
+        const contactTrigger = document.getElementById("contact-trigger");
+        const contactCard = document.getElementById("contact-card");
+        const contactEmail = document.getElementById("contact-email");
+        const contactBlog = document.getElementById("contact-blog");
+        const contactLocation = document.getElementById("contact-location");
+        const contactGithub = document.getElementById("contact-github");
+
+        const isMobileView = (el) =>
+          el && el.offsetParent === null
+            ? false
+            : window.matchMedia("(max-width: 768px)").matches;
+
+        const openAboutCard = () => {
+          aboutCard?.classList.add("open");
+          if (isMobileView()) document.body.classList.add("popup-open");
+        };
+        const closeAboutCard = () => {
+          aboutCard?.classList.remove("open");
+          if (!contactCard?.classList.contains("open"))
+            document.body.classList.remove("popup-open");
+        };
+        const openContactCard = () => {
+          contactCard?.classList.add("open");
+          if (isMobileView()) document.body.classList.add("popup-open");
+        };
+        const closeContactCard = () => {
+          contactCard?.classList.remove("open");
+          if (!aboutCard?.classList.contains("open"))
+            document.body.classList.remove("popup-open");
+        };
+
+        if (aboutTrigger && aboutDropdown) {
+          const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+          if (isMobile) {
+            aboutTrigger.addEventListener("click", (event) => {
+              event.stopPropagation();
+              if (aboutCard?.classList.contains("open")) {
+                closeAboutCard();
+              } else {
+                openAboutCard();
+                closeContactCard();
+              }
+            });
+
+            if (contactTrigger && contactDropdown) {
+              contactTrigger.addEventListener("click", (event) => {
+                event.stopPropagation();
+                if (contactCard?.classList.contains("open")) {
+                  closeContactCard();
+                } else {
+                  openContactCard();
+                  closeAboutCard();
+                }
+              });
+            }
+
+            document.addEventListener("click", (event) => {
+              if (!aboutDropdown.contains(event.target)) {
+                closeAboutCard();
+              }
+              if (contactDropdown && !contactDropdown.contains(event.target)) {
+                closeContactCard();
+              }
+            });
+          } else {
+            aboutDropdown.addEventListener("mouseenter", () => {
+              openAboutCard();
+              closeContactCard();
+            });
+
+            aboutDropdown.addEventListener("mouseleave", () => {
+              closeAboutCard();
+            });
+
+            if (contactTrigger && contactDropdown) {
+              contactDropdown.addEventListener("mouseenter", () => {
+                openContactCard();
+                closeAboutCard();
+              });
+
+              contactDropdown.addEventListener("mouseleave", () => {});
+
+              contactCard?.addEventListener("mouseenter", () => {
+                openContactCard();
+              });
+
+              contactCard?.addEventListener("mouseleave", () => {
+                closeContactCard();
+              });
+            }
+          }
+
+          document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+              closeAboutCard();
+              closeContactCard();
+              featuresOverlay?.classList.remove("visible");
+            }
+          });
+
+          const footerAboutBtn = document.getElementById("footer-about-us");
+          const footerContactBtn = document.getElementById("footer-contact");
+
+          if (footerAboutBtn) {
+            footerAboutBtn.addEventListener("click", (event) => {
+              event.preventDefault();
+              openAboutCard();
+              closeContactCard();
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            });
+          }
+
+          if (footerContactBtn) {
+            footerContactBtn.addEventListener("click", (event) => {
+              event.preventDefault();
+              openContactCard();
+              closeAboutCard();
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            });
+          }
+        }
+
+        fetch(`https://api.github.com/users/${githubUser}`)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Failed to fetch profile");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            if (aboutAvatar && data.avatar_url) {
+              aboutAvatar.src = data.avatar_url;
+            }
+            if (aboutName) {
+              aboutName.textContent = data.name || githubUser;
+            }
+            if (aboutHandle) {
+              aboutHandle.textContent = `@${data.login || githubUser}`;
+            }
+            if (aboutBio) {
+              aboutBio.textContent =
+                data.bio ||
+                "Building useful experiences with clean, modern code.";
+            }
+            if (aboutRepos) {
+              aboutRepos.textContent = String(data.public_repos ?? 0);
+            }
+            if (aboutFollowers) {
+              aboutFollowers.textContent = String(data.followers ?? 0);
+            }
+            if (aboutFollowing) {
+              aboutFollowing.textContent = String(data.following ?? 0);
+            }
+            if (aboutLocation) {
+              aboutLocation.textContent = `Location: ${data.location || "Bangladesh"}`;
+            }
+            if (contactEmail) {
+              contactEmail.textContent = data.email || "rafiulrafi55@gmail.com";
+            }
+            if (contactBlog) {
+              if (data.blog) {
+                const blogUrl = data.blog.startsWith("http")
+                  ? data.blog
+                  : `https://${data.blog}`;
+                contactBlog.innerHTML = `<a href="${blogUrl}" target="_blank" rel="noopener noreferrer">${data.blog}</a>`;
+              } else {
+                contactBlog.textContent = "Website not provided";
+              }
+            }
+            if (contactLocation) {
+              contactLocation.textContent =
+                data.location || "Location not public";
+            }
+            if (contactGithub) {
+              contactGithub.href =
+                data.html_url || `https://github.com/${githubUser}`;
+            }
+          })
+          .catch(() => {
+            if (aboutName) {
+              aboutName.textContent = "Rafiul";
+            }
+            if (aboutHandle) {
+              aboutHandle.textContent = "@rafiulrafi55";
+            }
+            if (aboutBio) {
+              aboutBio.textContent =
+                "Lead Developer focused on reliable and user-friendly systems.";
+            }
+            if (aboutRepos) {
+              aboutRepos.textContent = "--";
+            }
+            if (aboutFollowers) {
+              aboutFollowers.textContent = "--";
+            }
+            if (aboutFollowing) {
+              aboutFollowing.textContent = "--";
+            }
+            if (aboutLocation) {
+              aboutLocation.textContent = "Location: Bangladesh";
+            }
+            if (contactEmail) {
+              contactEmail.textContent = "rafiulrafi55@gmail.com";
+            }
+            if (contactBlog) {
+              contactBlog.textContent = "Website not available";
+            }
+            if (contactLocation) {
+              contactLocation.textContent = "Bangladesh";
+            }
+          });
+
+        const mobileQuery = window.matchMedia("(max-width: 768px)");
+        const animatedElements = document.querySelectorAll(
+          ".mobile-scroll-animate",
+        );
+
+        if (!animatedElements.length) {
+          return;
+        }
+
+        let observer;
+
+        const revealAll = () => {
+          animatedElements.forEach((element) =>
+            element.classList.add("in-view"),
+          );
+        };
+
+        const resetAll = () => {
+          animatedElements.forEach((element) =>
+            element.classList.remove("in-view"),
+          );
+        };
+
+        const setupObserver = () => {
+          if (observer) {
+            observer.disconnect();
+          }
+
+          resetAll();
+
+          if (!mobileQuery.matches || !("IntersectionObserver" in window)) {
+            revealAll();
+            return;
+          }
+
+          observer = new IntersectionObserver(
+            (entries, currentObserver) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add("in-view");
+                  currentObserver.unobserve(entry.target);
+                }
+              });
+            },
+            {
+              threshold: 0.2,
+              rootMargin: "0px 0px -8% 0px",
+            },
+          );
+
+          animatedElements.forEach((element) => observer.observe(element));
+        };
+
+        setupObserver();
+
+        if (typeof mobileQuery.addEventListener === "function") {
+          mobileQuery.addEventListener("change", setupObserver);
+        } else {
+          mobileQuery.addListener(setupObserver);
+        }
+      })();
+    </script>
+  </body>
+</html>
