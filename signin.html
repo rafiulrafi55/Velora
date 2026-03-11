@@ -1,375 +1,383 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sign In</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
+      body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(120deg, #081420, #0f2740);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 28px;
+        position: relative;
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+
+      body::before,
+      body::after {
+        content: none;
+      }
+
+      .signin-container {
+        background: white;
+        padding: 34px 30px;
+        border-radius: 14px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 460px;
+        position: relative;
+        z-index: 1;
+        animation: authWindowIn 0.6s ease-out;
+      }
+
+      @keyframes authWindowIn {
+        from {
+          opacity: 0;
+          transform: translateY(18px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 6px;
+        color: #333;
+      }
+
+      .subtitle {
+        text-align: center;
+        margin-bottom: 22px;
+        color: #6b7280;
+        font-size: 14px;
+        line-height: 1.4;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      label {
+        display: block;
+        color: #374151;
+        font-weight: bold;
+        font-size: 13px;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+      }
+
+      input::placeholder {
+        color: #9ca3af;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+      }
+
+      .hint {
+        color: #6b7280;
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
+      .utility-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-top: -2px;
+      }
+
+      .remember-me {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #4b5563;
+        font-size: 13px;
+      }
+
+      .remember-me input {
+        width: auto;
+      }
+
+      .utility-link {
+        font-size: 13px;
+        color: #667eea;
+        text-decoration: none;
+      }
+
+      .utility-link:hover {
+        text-decoration: underline;
+      }
+
+      button {
+        width: 100%;
+        padding: 12px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 4px;
+      }
+
+      button:hover {
+        background: #5568d3;
+      }
+
+      .footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 14px;
+        color: #777;
+      }
+
+      .footer a {
+        color: #667eea;
+        text-decoration: none;
+      }
+
+      .footer-links {
+        margin-top: 14px;
+        text-align: center;
+        font-size: 12px;
+        color: #6b7280;
+      }
+
+      .footer-links a {
+        color: #667eea;
+        text-decoration: none;
+        margin: 0 6px;
+      }
+
+      /* Success popup */
+      .popup-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 100;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .popup-overlay.visible {
+        display: flex;
+      }
+
+      .popup-box {
+        background: white;
+        border-radius: 14px;
+        padding: 36px 32px;
+        max-width: 380px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        animation: popIn 0.25s ease;
+      }
+
+      @keyframes popIn {
+        from {
+          transform: scale(0.85);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .popup-icon {
+        font-size: 48px;
+        margin-bottom: 14px;
+      }
+
+      .popup-box h2 {
+        color: #111827;
+        font-size: 20px;
+        margin-bottom: 8px;
+      }
+
+      .popup-box p {
+        color: #6b7280;
+        font-size: 14px;
+        margin-bottom: 24px;
+      }
+
+      .popup-btn {
+        display: inline-block;
+        padding: 11px 32px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        width: auto;
+      }
+
+      .popup-btn:hover {
+        background: #5568d3;
+      }
+
+      .signin-error-banner {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        background: #fef2f2;
+        border: 1px solid #fca5a5;
+        border-radius: 8px;
+        color: #b91c1c;
+        font-size: 13px;
+        line-height: 1.5;
+        padding: 12px 14px;
+        margin-bottom: 18px;
+      }
+
+      .signin-error-banner.hidden {
+        display: none;
+      }
+
+      @media (max-width: 520px) {
         body {
-            font-family: Arial, sans-serif;
-            background-color: #0a0f1f;
-            background-image:
-                radial-gradient(circle at 20% 50%, rgba(30, 100, 180, 0.4), transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(20, 80, 150, 0.35), transparent 45%),
-                radial-gradient(circle at 50% 100%, rgba(25, 90, 160, 0.3), transparent 50%),
-                linear-gradient(135deg, #0a0f1f 0%, #0d1428 50%, #09091a 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 28px;
-            position: relative;
-            overflow-x: hidden;
-            overflow-y: auto;
-        }
-
-        body::before,
-        body::after {
-            content: "";
-            position: fixed;
-            inset: -20%;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        body::before {
-            background:
-                repeating-linear-gradient(
-                    120deg,
-                    rgba(148, 163, 184, 0.08) 0,
-                    rgba(148, 163, 184, 0.08) 2px,
-                    transparent 2px,
-                    transparent 22px
-                );
-            mix-blend-mode: soft-light;
-            transform: rotate(-8deg);
-        }
-
-        body::after {
-            background:
-                radial-gradient(circle at 25% 30%, rgba(34, 211, 238, 0.22), transparent 30%),
-                radial-gradient(circle at 80% 75%, rgba(250, 204, 21, 0.15), transparent 28%);
-            filter: blur(24px);
+          padding: 16px;
         }
 
         .signin-container {
-            background: white;
-            padding: 34px 30px;
-            border-radius: 14px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 460px;
-            position: relative;
-            z-index: 1;
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 6px;
-            color: #333;
-        }
-
-        .subtitle {
-            text-align: center;
-            margin-bottom: 22px;
-            color: #6b7280;
-            font-size: 14px;
-            line-height: 1.4;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        label {
-            display: block;
-            color: #374151;
-            font-weight: bold;
-            font-size: 13px;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        input::placeholder {
-            color: #9ca3af;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
-        }
-
-        .hint {
-            color: #6b7280;
-            font-size: 12px;
-            line-height: 1.35;
+          padding: 28px 22px;
         }
 
         .utility-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            margin-top: -2px;
+          flex-direction: column;
+          align-items: flex-start;
         }
-
-        .remember-me {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #4b5563;
-            font-size: 13px;
-        }
-
-        .remember-me input {
-            width: auto;
-        }
-
-        .utility-link {
-            font-size: 13px;
-            color: #667eea;
-            text-decoration: none;
-        }
-
-        .utility-link:hover {
-            text-decoration: underline;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 4px;
-        }
-
-        button:hover {
-            background: #5568d3;
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 14px;
-            color: #777;
-        }
-
-        .footer a {
-            color: #667eea;
-            text-decoration: none;
-        }
-
-        .footer-links {
-            margin-top: 14px;
-            text-align: center;
-            font-size: 12px;
-            color: #6b7280;
-        }
-
-        .footer-links a {
-            color: #667eea;
-            text-decoration: none;
-            margin: 0 6px;
-        }
-
-        /* Success popup */
-        .popup-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.55);
-            z-index: 100;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .popup-overlay.visible {
-            display: flex;
-        }
-
-        .popup-box {
-            background: white;
-            border-radius: 14px;
-            padding: 36px 32px;
-            max-width: 380px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-            animation: popIn 0.25s ease;
-        }
-
-        @keyframes popIn {
-            from { transform: scale(0.85); opacity: 0; }
-            to   { transform: scale(1);    opacity: 1; }
-        }
-
-        .popup-icon {
-            font-size: 48px;
-            margin-bottom: 14px;
-        }
-
-        .popup-box h2 {
-            color: #111827;
-            font-size: 20px;
-            margin-bottom: 8px;
-        }
-
-        .popup-box p {
-            color: #6b7280;
-            font-size: 14px;
-            margin-bottom: 24px;
-        }
-
-        .popup-btn {
-            display: inline-block;
-            padding: 11px 32px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            width: auto;
-        }
-
-        .popup-btn:hover {
-            background: #5568d3;
-        }
-
-        .signin-error-banner {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            background: #fef2f2;
-            border: 1px solid #fca5a5;
-            border-radius: 8px;
-            color: #b91c1c;
-            font-size: 13px;
-            line-height: 1.5;
-            padding: 12px 14px;
-            margin-bottom: 18px;
-        }
-
-        .signin-error-banner.hidden {
-            display: none;
-        }
-
-        @media (max-width: 520px) {
-            body {
-                padding: 16px;
-            }
-
-            .signin-container {
-                padding: 28px 22px;
-            }
-
-            .utility-row {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="popup-overlay" id="success-overlay">
-        <div class="popup-box">
-            <div class="popup-icon">&#10003;</div>
-            <h2>Account Created!</h2>
-            <p>Your account has been successfully created. You can now sign in.</p>
-            <button class="popup-btn" onclick="closePopup()">Go to Sign In</button>
-        </div>
+      <div class="popup-box">
+        <div class="popup-icon">&#10003;</div>
+        <h2>Account Created!</h2>
+        <p>Your account has been successfully created. You can now sign in.</p>
+        <button class="popup-btn" onclick="closePopup()">Go to Sign In</button>
+      </div>
     </div>
 
     <div class="signin-container">
-        <h1>Sign In</h1>
-        <p class="subtitle">Access your Velora dashboard and stay in sync with guest updates.</p>
-        <div id="signin-error-banner" class="signin-error-banner hidden">
-            <span>&#9888;&nbsp;</span>
-            <span id="signin-error-msg"></span>
+      <h1>Sign In</h1>
+      <p class="subtitle">
+        Access your Velora dashboard and stay in sync with guest updates.
+      </p>
+      <div id="signin-error-banner" class="signin-error-banner hidden">
+        <span>&#9888;&nbsp;</span>
+        <span id="signin-error-msg"></span>
+      </div>
+      <form action="login-validation.php" method="POST">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="you@company.com"
+            required
+          />
+          <span class="hint"
+            >Use the email address tied to your Velora account.</span
+          >
         </div>
-        <form action="login-validation.php" method="POST">
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="you@company.com" required>
-                <span class="hint">Use the email address tied to your Velora account.</span>
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required>
-            </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter your password"
+            required
+          />
+        </div>
 
-            <div class="utility-row">
-                <label class="remember-me" for="remember">
-                    <input type="checkbox" id="remember" name="remember">
-                    Remember me on this device
-                </label>
-                <a class="utility-link" href="privacy-policy.html">Forgot password?</a>
-            </div>
+        <div class="utility-row">
+          <label class="remember-me" for="remember">
+            <input type="checkbox" id="remember" name="remember" />
+            Remember me on this device
+          </label>
+          <a class="utility-link" href="privacy-policy.html"
+            >Forgot password?</a
+          >
+        </div>
 
-            <button type="submit">Sign In</button>
-        </form>
-        <div class="footer">
-            Don't have an account? <a href="signup.html">Sign Up</a>
-        </div>
-        <div class="footer-links">
-            <a href="privacy-policy.html">Privacy Policy</a> |
-            <a href="privacy-policy.html">Terms of Service</a>
-        </div>
+        <button type="submit">Sign In</button>
+      </form>
+      <div class="footer">
+        Don't have an account? <a href="signup.html">Sign Up</a>
+      </div>
+      <div class="footer-links">
+        <a href="privacy-policy.html">Privacy Policy</a> |
+        <a href="privacy-policy.html">Terms of Service</a>
+      </div>
     </div>
     <script>
-        (function () {
-            const params = new URLSearchParams(window.location.search);
-            if (params.get('registered') === '1') {
-                document.getElementById('success-overlay').classList.add('visible');
-                history.replaceState(null, '', window.location.pathname);
-            }
-
-            const error = params.get('error');
-            if (error) {
-                const banner = document.getElementById('signin-error-banner');
-                const msg    = document.getElementById('signin-error-msg');
-                if (error === 'invalid') {
-                    msg.textContent = 'Invalid email or password. Please try again.';
-                } else if (error === 'server') {
-                    msg.textContent = 'A server error occurred. Please try again later.';
-                } else {
-                    msg.textContent = 'An unexpected error occurred. Please try again.';
-                }
-                banner.classList.remove('hidden');
-                history.replaceState(null, '', window.location.pathname);
-            }
-        })();
-
-        function closePopup() {
-            document.getElementById('success-overlay').classList.remove('visible');
+      (function () {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("registered") === "1") {
+          document.getElementById("success-overlay").classList.add("visible");
+          history.replaceState(null, "", window.location.pathname);
         }
+
+        const error = params.get("error");
+        if (error) {
+          const banner = document.getElementById("signin-error-banner");
+          const msg = document.getElementById("signin-error-msg");
+          if (error === "invalid") {
+            msg.textContent = "Invalid email or password. Please try again.";
+          } else if (error === "server") {
+            msg.textContent =
+              "A server error occurred. Please try again later.";
+          } else {
+            msg.textContent = "An unexpected error occurred. Please try again.";
+          }
+          banner.classList.remove("hidden");
+          history.replaceState(null, "", window.location.pathname);
+        }
+      })();
+
+      function closePopup() {
+        document.getElementById("success-overlay").classList.remove("visible");
+      }
     </script>
-</body>
+  </body>
 </html>
