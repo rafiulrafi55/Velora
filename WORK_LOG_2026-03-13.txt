@@ -1,0 +1,87 @@
+WGMS Work Log - 2026-03-13
+
+Project root: C:\CSIT\Projects\WGMS
+
+1) Authentication flow consolidation
+- Merged login and registration processing into one endpoint: login-validation.php.
+- Removed old split flow dependency and updated forms to use auth_action values.
+- Sign-in now posts with auth_action=login.
+- Sign-up now posts with auth_action=register.
+
+2) Redirect and page flow changes
+- Login success redirect changed to dashboard.
+- Added/updated access behavior:
+  - Logged-out users trying to open dashboard are redirected to home.
+  - Logged-in users are redirected away from signin/signup/privacy pages to dashboard.
+  - Home page remains accessible when logged in.
+
+3) Session-aware navigation behavior
+- Added auth-status.php endpoint to expose login state as JSON.
+- Navbar/home controls now react to session state:
+  - Login/Create Account switches to Logout for logged-in users.
+  - Dashboard navbar item only appears when logged in.
+- Moved Dashboard item to first position in index navbar when visible.
+
+4) Logout behavior
+- Added secure logout endpoint: logout.php.
+- Logout now clears session and session cookie, then redirects safely via allowlist.
+- Dashboard logout redirect target changed to index.
+- Added logout confirmation popup on dashboard.
+- Added matching logout confirmation popup operation on index (for both navbar and hero logout actions).
+
+5) Dashboard page setup and parity updates
+- Created dashboard page shell with matching index navbar/background colors.
+- Brought dashboard navbar elements in line with index (About, Contact, Privacy Policy, etc.) in a smart order.
+- Updated logo behavior so clicking "Velora" routes by session state.
+
+6) Session-aware home routing
+- Added home.php:
+  - If logged in -> redirects to dashboard.php.
+  - If logged out -> redirects to index.html.
+- Wired logo click on index and dashboard to home.php.
+
+7) Security hardening (pre-core-app)
+- Added session ID rotation on successful login:
+  - session_regenerate_id(true) in login-validation.php.
+- Added CSRF protection for auth forms:
+  - New endpoint csrf-token.php to issue token from session.
+  - csrf_token hidden input added to signin and signup forms.
+  - Server-side token validation added in login-validation.php.
+  - Security error routing/messages added for token failures.
+- Added production-style PHP error settings:
+  - display_errors=0, log_errors=1, error_reporting(E_ALL)
+  - Applied to auth/status/logout/token/protected dashboard/config files.
+- Improved DB connect failure handling in config.php:
+  - Internal details logged, user-facing response is generic.
+
+8) Server-side dashboard protection
+- Added dashboard.php as protected entry point:
+  - Requires active session.
+  - Redirects to index if not authenticated.
+  - Serves dashboard.html for authenticated users.
+- Updated relevant redirects/links to use dashboard.php where appropriate.
+
+9) UI/UX styling updates
+- Navbar text hover on index aligned with dashboard.
+- Velora title given same hover text effect as navbar items and pointer cursor on index/dashboard.
+- Cookie usage banner added on first load only, styled to match theme.
+
+10) Validation/testing performed during work
+- Repeated PHP lint checks run successfully after major edits:
+  - config.php
+  - login-validation.php
+  - auth-status.php
+  - logout.php
+  - csrf-token.php
+  - dashboard.php
+- Smoke checks performed with temporary local PHP server for:
+  - auth status endpoint behavior
+  - logout redirect behavior
+  - CSRF rejection without token
+  - CSRF token issuance endpoint
+
+Final state summary
+- Auth, session, logout, and dashboard gating are in place.
+- Navigation and logo routing are session-aware.
+- Logout confirmation UX is implemented on both index and dashboard.
+- Core pre-app hardening tasks were completed except role-based split redesign (intentionally excluded).

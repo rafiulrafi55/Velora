@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard | Velora</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      body {
+        min-height: 100vh;
+        background: #0d1b2a;
+        color: white;
+      }
+
+      body.auth-pending {
+        visibility: hidden;
+      }
+
+      nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 60px;
+        background: #111;
+      }
+
+      .logo {
+        font-size: 24px;
+        font-weight: bold;
+        color: #ccc;
+        cursor: pointer;
+      }
+
+      .logo:hover {
+        color: #f59e0b;
+      }
+
+      nav ul {
+        display: flex;
+        list-style: none;
+        gap: 30px;
+      }
+
+      nav ul li {
+        cursor: pointer;
+        color: #ccc;
+      }
+
+      nav ul li:hover {
+        color: #f59e0b;
+      }
+
+      .about-dropdown {
+        position: relative;
+        user-select: none;
+      }
+
+      .contact-dropdown {
+        position: relative;
+        user-select: none;
+      }
+
+      .about-card {
+        display: none;
+        position: absolute;
+        top: calc(100% + 10px);
+        left: 0;
+        width: 290px;
+        background: #13263f;
+        border: 1px solid #2a3a52;
+        border-radius: 12px;
+        padding: 14px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+        z-index: 210;
+      }
+
+      .about-card.open {
+        display: block;
+      }
+
+      .about-top {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .about-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: 2px solid #f59e0b;
+        object-fit: cover;
+        background: #0d1b2a;
+      }
+
+      .about-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .about-name {
+        color: #fff;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .about-handle {
+        color: #9ca3af;
+        font-size: 12px;
+      }
+
+      .about-role {
+        color: #f59e0b;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        margin-top: 2px;
+      }
+
+      .about-bio {
+        color: #cbd5e1;
+        font-size: 12px;
+        line-height: 1.45;
+        margin-bottom: 10px;
+      }
+
+      .about-stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+
+      .about-stat {
+        background: #0f1f33;
+        border: 1px solid #22354d;
+        border-radius: 8px;
+        padding: 6px;
+        text-align: center;
+      }
+
+      .about-stat .value {
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+        display: block;
+      }
+
+      .about-stat .label {
+        color: #94a3b8;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .about-location {
+        color: #94a3b8;
+        font-size: 12px;
+      }
+
+      .contact-card {
+        display: none;
+        position: absolute;
+        top: calc(100% + 10px);
+        left: 0;
+        width: 290px;
+        background: #13263f;
+        border: 1px solid #2a3a52;
+        border-radius: 12px;
+        padding: 14px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+        z-index: 210;
+      }
+
+      .contact-card.open {
+        display: block;
+      }
+
+      .contact-title {
+        color: #fff;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+
+      .contact-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #cbd5e1;
+        font-size: 12px;
+        line-height: 1.4;
+      }
+
+      .contact-icon {
+        width: 18px;
+        text-align: center;
+      }
+
+      .facebook-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #1877f2;
+        color: #fff;
+        font-weight: 700;
+        font-size: 12px;
+        line-height: 1;
+      }
+
+      .contact-item a {
+        color: #93c5fd;
+        text-decoration: none;
+      }
+
+      .contact-item a:hover {
+        text-decoration: underline;
+      }
+
+      .logout-btn {
+        background: #f59e0b;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 6px;
+        font-weight: bold;
+        color: #131212;
+        cursor: pointer;
+        transition:
+          background 0.2s ease,
+          color 0.2s ease;
+      }
+
+      .logout-btn:hover {
+        background: #22324b;
+        color: #fff;
+      }
+
+      /* Logout confirmation popup */
+      .popup-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 300;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .popup-overlay.visible {
+        display: flex;
+      }
+
+      .popup-box {
+        background: #13263f;
+        border: 1px solid #2a3a52;
+        border-radius: 14px;
+        padding: 36px 32px;
+        max-width: 360px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        animation: popIn 0.22s ease;
+      }
+
+      @keyframes popIn {
+        from {
+          transform: scale(0.88);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .popup-icon {
+        font-size: 42px;
+        margin-bottom: 14px;
+      }
+
+      .popup-box h2 {
+        color: #fff;
+        font-size: 20px;
+        margin-bottom: 8px;
+      }
+
+      .popup-box p {
+        color: #94a3b8;
+        font-size: 14px;
+        margin-bottom: 26px;
+        line-height: 1.5;
+      }
+
+      .popup-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+      }
+
+      .popup-confirm {
+        background: #f59e0b;
+        border: none;
+        padding: 10px 26px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: bold;
+        color: #131212;
+        cursor: pointer;
+        transition:
+          background 0.2s ease,
+          color 0.2s ease;
+      }
+
+      .popup-confirm:hover {
+        background: #d97706;
+      }
+
+      .popup-cancel {
+        background: #1e3a55;
+        border: 1px solid #2a3a52;
+        padding: 10px 26px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: bold;
+        color: #cbd5e1;
+        cursor: pointer;
+        transition:
+          background 0.2s ease,
+          color 0.2s ease;
+      }
+
+      .popup-cancel:hover {
+        background: #22324b;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body class="auth-pending">
+    <!-- Logout confirmation popup -->
+    <div class="popup-overlay" id="logout-overlay">
+      <div class="popup-box">
+        <div class="popup-icon">&#128274;</div>
+        <h2>Log Out?</h2>
+        <p>You will be logged out of your Velora account</p>
+        <div class="popup-actions">
+          <button class="popup-confirm" id="logout-confirm">Yes, Logout</button>
+          <button class="popup-cancel" id="logout-cancel">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <nav>
+      <div class="logo" onclick="window.location.href = 'home.php'">Velora</div>
+
+      <ul>
+        <li onclick="window.location.href = 'index.html'">Home</li>
+
+        <li class="about-dropdown" id="about-dropdown">
+          <span id="about-trigger">About Us</span>
+          <div
+            class="about-card"
+            id="about-card"
+            aria-label="GitHub profile preview"
+          >
+            <div class="about-top">
+              <img
+                class="about-avatar"
+                id="about-avatar"
+                src="https://github.com/identicons/rafiulrafi55.png"
+                alt="Profile picture"
+              />
+              <div class="about-meta">
+                <span class="about-name" id="about-name">Loading...</span>
+                <span class="about-handle" id="about-handle"
+                  >@rafiulrafi55</span
+                >
+                <span class="about-role">Lead Developer</span>
+              </div>
+            </div>
+            <p class="about-bio" id="about-bio">Loading profile details...</p>
+            <div class="about-stats">
+              <div class="about-stat">
+                <span class="value" id="about-repos">0</span>
+                <span class="label">Repos</span>
+              </div>
+              <div class="about-stat">
+                <span class="value" id="about-followers">0</span>
+                <span class="label">Followers</span>
+              </div>
+              <div class="about-stat">
+                <span class="value" id="about-following">0</span>
+                <span class="label">Following</span>
+              </div>
+            </div>
+            <p class="about-location" id="about-location">
+              Location: Updating...
+            </p>
+          </div>
+        </li>
+
+        <li class="contact-dropdown" id="contact-dropdown">
+          <span id="contact-trigger">Contact</span>
+          <div
+            class="contact-card"
+            id="contact-card"
+            aria-label="GitHub contact details"
+          >
+            <p class="contact-title">Contact Details</p>
+            <ul class="contact-list">
+              <li class="contact-item">
+                <span class="contact-icon">✉</span>
+                <span id="contact-email">Loading...</span>
+              </li>
+              <li class="contact-item">
+                <span class="contact-icon facebook-icon">f</span>
+                <a
+                  href="https://www.facebook.com/ar.vi.1291"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >ar.vi.1291</a
+                >
+              </li>
+              <li class="contact-item">
+                <span class="contact-icon">🌐</span>
+                <span id="contact-blog">Loading...</span>
+              </li>
+              <li class="contact-item">
+                <span class="contact-icon">📍</span>
+                <span id="contact-location">Loading...</span>
+              </li>
+              <li class="contact-item">
+                <span class="contact-icon">🔗</span>
+                <a
+                  id="contact-github"
+                  href="https://github.com/rafiulrafi55"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >GitHub Profile</a
+                >
+              </li>
+            </ul>
+          </div>
+        </li>
+
+        <li onclick="window.location.href = 'privacy-policy.html'">
+          Privacy Policy
+        </li>
+      </ul>
+
+      <button class="logout-btn" id="logout-btn">Logout</button>
+    </nav>
+
+    <script>
+      (() => {
+        // Logout confirmation popup
+        const logoutOverlay = document.getElementById("logout-overlay");
+        document.getElementById("logout-btn").addEventListener("click", () => {
+          logoutOverlay.classList.add("visible");
+        });
+        document
+          .getElementById("logout-confirm")
+          .addEventListener("click", () => {
+            window.location.href = "logout.php?redirect=index.html";
+          });
+        document
+          .getElementById("logout-cancel")
+          .addEventListener("click", () => {
+            logoutOverlay.classList.remove("visible");
+          });
+        logoutOverlay.addEventListener("click", (e) => {
+          if (e.target === logoutOverlay)
+            logoutOverlay.classList.remove("visible");
+        });
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") logoutOverlay.classList.remove("visible");
+        });
+
+        // Auth guard — redirect unauthenticated visitors to index
+        fetch("auth-status.php", {
+          method: "GET",
+          cache: "no-store",
+          credentials: "same-origin",
+        })
+          .then((response) => {
+            if (!response.ok) throw new Error("Auth check failed");
+            return response.json();
+          })
+          .then((data) => {
+            if (!data || data.loggedIn !== true) {
+              window.location.replace("index.html");
+              return;
+            }
+            document.body.classList.remove("auth-pending");
+          })
+          .catch(() => {
+            window.location.replace("index.html");
+          });
+
+        // Dropdown behaviour (About Us / Contact)
+        const aboutDropdown = document.getElementById("about-dropdown");
+        const aboutTrigger = document.getElementById("about-trigger");
+        const aboutCard = document.getElementById("about-card");
+        const aboutAvatar = document.getElementById("about-avatar");
+        const aboutName = document.getElementById("about-name");
+        const aboutHandle = document.getElementById("about-handle");
+        const aboutBio = document.getElementById("about-bio");
+        const aboutRepos = document.getElementById("about-repos");
+        const aboutFollowers = document.getElementById("about-followers");
+        const aboutFollowing = document.getElementById("about-following");
+        const aboutLocation = document.getElementById("about-location");
+        const contactDropdown = document.getElementById("contact-dropdown");
+        const contactTrigger = document.getElementById("contact-trigger");
+        const contactCard = document.getElementById("contact-card");
+        const contactEmail = document.getElementById("contact-email");
+        const contactBlog = document.getElementById("contact-blog");
+        const contactLocation = document.getElementById("contact-location");
+        const contactGithub = document.getElementById("contact-github");
+
+        const openAboutCard = () => aboutCard?.classList.add("open");
+        const closeAboutCard = () => aboutCard?.classList.remove("open");
+        const openContactCard = () => contactCard?.classList.add("open");
+        const closeContactCard = () => contactCard?.classList.remove("open");
+
+        if (aboutTrigger && aboutDropdown) {
+          const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+          if (isMobile) {
+            aboutTrigger.addEventListener("click", (e) => {
+              e.stopPropagation();
+              aboutCard?.classList.contains("open")
+                ? closeAboutCard()
+                : (openAboutCard(), closeContactCard());
+            });
+            contactTrigger?.addEventListener("click", (e) => {
+              e.stopPropagation();
+              contactCard?.classList.contains("open")
+                ? closeContactCard()
+                : (openContactCard(), closeAboutCard());
+            });
+            document.addEventListener("click", (e) => {
+              if (!aboutDropdown.contains(e.target)) closeAboutCard();
+              if (contactDropdown && !contactDropdown.contains(e.target))
+                closeContactCard();
+            });
+          } else {
+            aboutDropdown.addEventListener("mouseenter", () => {
+              openAboutCard();
+              closeContactCard();
+            });
+            aboutDropdown.addEventListener("mouseleave", closeAboutCard);
+
+            if (contactDropdown) {
+              contactDropdown.addEventListener("mouseenter", () => {
+                openContactCard();
+                closeAboutCard();
+              });
+              contactCard?.addEventListener("mouseenter", openContactCard);
+              contactCard?.addEventListener("mouseleave", closeContactCard);
+            }
+          }
+
+          document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+              closeAboutCard();
+              closeContactCard();
+            }
+          });
+        }
+
+        // GitHub profile fetch
+        const githubUser = "rafiulrafi55";
+        fetch(`https://api.github.com/users/${githubUser}`)
+          .then((r) => {
+            if (!r.ok) throw new Error("GitHub fetch failed");
+            return r.json();
+          })
+          .then((data) => {
+            if (aboutAvatar && data.avatar_url)
+              aboutAvatar.src = data.avatar_url;
+            if (aboutName) aboutName.textContent = data.name || githubUser;
+            if (aboutHandle)
+              aboutHandle.textContent = `@${data.login || githubUser}`;
+            if (aboutBio)
+              aboutBio.textContent =
+                data.bio ||
+                "Building useful experiences with clean, modern code.";
+            if (aboutRepos)
+              aboutRepos.textContent = String(data.public_repos ?? 0);
+            if (aboutFollowers)
+              aboutFollowers.textContent = String(data.followers ?? 0);
+            if (aboutFollowing)
+              aboutFollowing.textContent = String(data.following ?? 0);
+            if (aboutLocation)
+              aboutLocation.textContent = `Location: ${data.location || "Bangladesh"}`;
+            if (contactEmail)
+              contactEmail.textContent = data.email || "rafiulrafi55@gmail.com";
+            if (contactBlog) {
+              if (data.blog) {
+                const url = data.blog.startsWith("http")
+                  ? data.blog
+                  : `https://${data.blog}`;
+                contactBlog.innerHTML = `<a href="${url}" target="_blank" rel="noopener noreferrer">${data.blog}</a>`;
+              } else {
+                contactBlog.textContent = "Website not provided";
+              }
+            }
+            if (contactLocation)
+              contactLocation.textContent =
+                data.location || "Location not public";
+            if (contactGithub)
+              contactGithub.href =
+                data.html_url || `https://github.com/${githubUser}`;
+          })
+          .catch(() => {
+            if (aboutName) aboutName.textContent = "Rafiul";
+            if (aboutHandle) aboutHandle.textContent = "@rafiulrafi55";
+            if (aboutBio)
+              aboutBio.textContent =
+                "Lead Developer focused on reliable and user-friendly systems.";
+            if (aboutRepos) aboutRepos.textContent = "--";
+            if (aboutFollowers) aboutFollowers.textContent = "--";
+            if (aboutFollowing) aboutFollowing.textContent = "--";
+            if (aboutLocation)
+              aboutLocation.textContent = "Location: Bangladesh";
+            if (contactEmail)
+              contactEmail.textContent = "rafiulrafi55@gmail.com";
+            if (contactBlog) contactBlog.textContent = "Website not available";
+            if (contactLocation) contactLocation.textContent = "Bangladesh";
+          });
+      })();
+    </script>
+  </body>
+</html>

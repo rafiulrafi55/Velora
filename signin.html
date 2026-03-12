@@ -306,6 +306,8 @@
         <span id="signin-error-msg"></span>
       </div>
       <form action="login-validation.php" method="POST">
+        <input type="hidden" name="auth_action" value="login" />
+        <input type="hidden" id="csrf_token" name="csrf_token" value="" />
         <div class="form-group">
           <label for="email">Email</label>
           <input
@@ -364,6 +366,9 @@
           const msg = document.getElementById("signin-error-msg");
           if (error === "invalid") {
             msg.textContent = "Invalid email or password. Please try again.";
+          } else if (error === "security") {
+            msg.textContent =
+              "Security validation failed. Please refresh and try again.";
           } else if (error === "server") {
             msg.textContent =
               "A server error occurred. Please try again later.";
@@ -378,6 +383,34 @@
       function closePopup() {
         document.getElementById("success-overlay").classList.remove("visible");
       }
+    </script>
+
+    <script>
+      // Redirect already-logged-in users to dashboard
+      fetch("auth-status.php", {
+        method: "GET",
+        cache: "no-store",
+        credentials: "same-origin",
+      })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => {
+          if (data && data.loggedIn === true)
+            window.location.replace("dashboard.php");
+        })
+        .catch(() => {});
+
+      fetch("csrf-token.php", {
+        method: "GET",
+        cache: "no-store",
+        credentials: "same-origin",
+      })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => {
+          if (data && data.csrfToken) {
+            document.getElementById("csrf_token").value = data.csrfToken;
+          }
+        })
+        .catch(() => {});
     </script>
   </body>
 </html>

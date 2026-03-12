@@ -220,5 +220,20 @@
         </div>
       </section>
     </main>
+
+    <script>
+      // Redirect already-logged-in users to dashboard
+      fetch("auth-status.php", {
+        method: "GET",
+        cache: "no-store",
+        credentials: "same-origin",
+      })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => {
+          if (data && data.loggedIn === true)
+            window.location.replace("dashboard.php");
+        })
+        .catch(() => {});
+    </script>
   </body>
 </html>

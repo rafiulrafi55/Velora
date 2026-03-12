@@ -49,6 +49,12 @@
       .logo {
         font-size: 24px;
         font-weight: bold;
+        color: #ccc;
+        cursor: pointer;
+      }
+
+      .logo:hover {
+        color: #f59e0b;
       }
 
       .logo span {
@@ -64,6 +70,10 @@
       nav ul li {
         cursor: pointer;
         color: #ccc;
+      }
+
+      nav ul li:hover {
+        color: #f59e0b;
       }
 
       .about-dropdown {
@@ -902,6 +912,192 @@
           padding: 12px;
         }
       }
+
+      /* Cookie consent banner */
+      .cookie-banner {
+        position: fixed;
+        bottom: -120px;
+        left: 0;
+        right: 0;
+        z-index: 500;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        background: #13263f;
+        border-top: 1px solid #2a3a52;
+        padding: 16px 40px;
+        box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.4);
+        transition: bottom 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .cookie-banner.visible {
+        bottom: 0;
+      }
+
+      .cookie-banner-text {
+        color: #cbd5e1;
+        font-size: 13px;
+        line-height: 1.55;
+        flex: 1;
+        min-width: 220px;
+      }
+
+      .cookie-banner-text strong {
+        color: #fff;
+      }
+
+      .cookie-banner-text a {
+        color: #f59e0b;
+        text-decoration: none;
+      }
+
+      .cookie-banner-text a:hover {
+        text-decoration: underline;
+      }
+
+      .cookie-banner-actions {
+        display: flex;
+        gap: 10px;
+        flex-shrink: 0;
+      }
+
+      .cookie-accept {
+        background: #f59e0b;
+        border: none;
+        padding: 9px 22px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: bold;
+        color: #131212;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+
+      .cookie-accept:hover {
+        background: #d97706;
+      }
+
+      .cookie-dismiss {
+        background: transparent;
+        border: 1px solid #2a3a52;
+        padding: 9px 22px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: bold;
+        color: #94a3b8;
+        cursor: pointer;
+        transition:
+          background 0.2s ease,
+          color 0.2s ease;
+      }
+
+      .cookie-dismiss:hover {
+        background: #1e3a55;
+        color: #fff;
+      }
+
+      .logout-confirm-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 300;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .logout-confirm-overlay.visible {
+        display: flex;
+      }
+
+      .logout-confirm-box {
+        background: #13263f;
+        border: 1px solid #2a3a52;
+        border-radius: 14px;
+        padding: 36px 32px;
+        max-width: 360px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        animation: logoutPopIn 0.22s ease;
+      }
+
+      @keyframes logoutPopIn {
+        from {
+          transform: scale(0.88);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .logout-confirm-icon {
+        font-size: 42px;
+        margin-bottom: 14px;
+      }
+
+      .logout-confirm-title {
+        color: #fff;
+        font-size: 20px;
+        margin-bottom: 8px;
+      }
+
+      .logout-confirm-text {
+        color: #94a3b8;
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 26px;
+      }
+
+      .logout-confirm-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+      }
+
+      .logout-confirm-btn {
+        border: none;
+        border-radius: 8px;
+        padding: 10px 26px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        transition:
+          background 0.2s ease,
+          color 0.2s ease;
+      }
+
+      .logout-confirm-yes {
+        background: #f59e0b;
+        color: #131212;
+      }
+
+      .logout-confirm-yes:hover {
+        background: #d97706;
+      }
+
+      .logout-confirm-no {
+        background: #1e3a55;
+        border: 1px solid #2a3a52;
+        color: #cbd5e1;
+      }
+
+      .logout-confirm-no:hover {
+        background: #22324b;
+        color: #fff;
+      }
+
+      @media (max-width: 600px) {
+        .cookie-banner {
+          padding: 14px 20px;
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
     </style>
   </head>
 
@@ -986,10 +1182,43 @@
       </div>
     </div>
 
+    <div class="logout-confirm-overlay" id="logout-confirm-overlay">
+      <div class="logout-confirm-box">
+        <div class="logout-confirm-icon">&#128274;</div>
+        <h2 class="logout-confirm-title">Log Out?</h2>
+        <p class="logout-confirm-text">
+          You will be logged out of your Velora account
+        </p>
+        <div class="logout-confirm-actions">
+          <button
+            type="button"
+            class="logout-confirm-btn logout-confirm-yes"
+            id="logout-confirm-yes"
+          >
+            Yes, Logout
+          </button>
+          <button
+            type="button"
+            class="logout-confirm-btn logout-confirm-no"
+            id="logout-confirm-no"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
     <nav>
-      <div class="logo">Velora</div>
+      <div class="logo" onclick="window.location.href = 'home.php'">Velora</div>
 
       <ul>
+        <li
+          id="nav-dashboard-link"
+          onclick="window.location.href = 'dashboard.php'"
+          style="display: none"
+        >
+          Dashboard
+        </li>
         <li class="about-dropdown" id="about-dropdown">
           <span id="about-trigger">About Us</span>
           <div
@@ -1083,7 +1312,11 @@
         </li>
       </ul>
 
-      <button class="login-btn" onclick="window.location.href = 'signin.html'">
+      <button
+        id="nav-auth-btn"
+        class="login-btn"
+        onclick="window.location.href = 'signin.html'"
+      >
         Login
       </button>
     </nav>
@@ -1103,6 +1336,7 @@
 
         <div class="hero-buttons">
           <button
+            id="hero-auth-btn"
             class="signup-btn"
             onclick="window.location.href = 'signup.html'"
           >
@@ -1183,11 +1417,80 @@
     <script>
       (() => {
         const successOverlay = document.getElementById("success-overlay");
+        const navAuthBtn = document.getElementById("nav-auth-btn");
+        const heroAuthBtn = document.getElementById("hero-auth-btn");
         const featuresOverlay = document.getElementById("features-overlay");
+        const logoutConfirmOverlay = document.getElementById(
+          "logout-confirm-overlay",
+        );
+        const logoutConfirmYes = document.getElementById("logout-confirm-yes");
+        const logoutConfirmNo = document.getElementById("logout-confirm-no");
         const exploreFeaturesBtn = document.getElementById(
           "explore-features-btn",
         );
         const featuresCloseBtn = document.getElementById("features-close-btn");
+
+        const openLogoutConfirm = () => {
+          logoutConfirmOverlay?.classList.add("visible");
+        };
+
+        const closeLogoutConfirm = () => {
+          logoutConfirmOverlay?.classList.remove("visible");
+        };
+
+        logoutConfirmYes?.addEventListener("click", () => {
+          window.location.href = "logout.php?redirect=index.html";
+        });
+
+        logoutConfirmNo?.addEventListener("click", closeLogoutConfirm);
+
+        logoutConfirmOverlay?.addEventListener("click", (event) => {
+          if (event.target === logoutConfirmOverlay) {
+            closeLogoutConfirm();
+          }
+        });
+
+        const setAuthButtonsForLoggedIn = () => {
+          if (navAuthBtn) {
+            navAuthBtn.textContent = "Logout";
+            navAuthBtn.onclick = () => {
+              openLogoutConfirm();
+            };
+          }
+
+          if (heroAuthBtn) {
+            heroAuthBtn.textContent = "Logout";
+            heroAuthBtn.onclick = () => {
+              openLogoutConfirm();
+            };
+          }
+
+          const navDashboardLink =
+            document.getElementById("nav-dashboard-link");
+          if (navDashboardLink) {
+            navDashboardLink.style.display = "";
+          }
+        };
+
+        fetch("auth-status.php", {
+          method: "GET",
+          cache: "no-store",
+          credentials: "same-origin",
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Failed auth status check");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            if (data && data.loggedIn === true) {
+              setAuthButtonsForLoggedIn();
+            }
+          })
+          .catch(() => {
+            // Keep default sign-in/sign-up buttons if status check fails.
+          });
 
         if (exploreFeaturesBtn && featuresOverlay) {
           exploreFeaturesBtn.addEventListener("click", () => {
@@ -1333,6 +1636,7 @@
               closeAboutCard();
               closeContactCard();
               featuresOverlay?.classList.remove("visible");
+              closeLogoutConfirm();
             }
           });
 
@@ -1508,6 +1812,49 @@
         } else {
           mobileQuery.addListener(setupObserver);
         }
+      })();
+    </script>
+
+    <!-- Cookie consent banner -->
+    <div
+      class="cookie-banner"
+      id="cookie-banner"
+      role="region"
+      aria-label="Cookie notice"
+    >
+      <p class="cookie-banner-text">
+        <strong>&#127850; We use cookies.</strong>
+        This site uses a session cookie to keep you logged in. No tracking or
+        third-party cookies are used. See our
+        <a href="privacy-policy.html">Privacy Policy</a> for details.
+      </p>
+      <div class="cookie-banner-actions">
+        <button class="cookie-accept" id="cookie-accept">Got it</button>
+        <button class="cookie-dismiss" id="cookie-dismiss">Dismiss</button>
+      </div>
+    </div>
+
+    <script>
+      (() => {
+        const STORAGE_KEY = "velora_cookie_consent";
+        const banner = document.getElementById("cookie-banner");
+
+        if (!localStorage.getItem(STORAGE_KEY)) {
+          // Slight delay so the slide-in animation is visible
+          setTimeout(() => banner.classList.add("visible"), 600);
+        }
+
+        const dismiss = () => {
+          banner.classList.remove("visible");
+          localStorage.setItem(STORAGE_KEY, "1");
+        };
+
+        document
+          .getElementById("cookie-accept")
+          .addEventListener("click", dismiss);
+        document
+          .getElementById("cookie-dismiss")
+          .addEventListener("click", dismiss);
       })();
     </script>
   </body>

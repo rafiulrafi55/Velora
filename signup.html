@@ -380,10 +380,12 @@
         <span id="server-error-msg"></span>
       </div>
       <form
-        action="registration-data.php"
+        action="login-validation.php"
         method="post"
         onsubmit="return handleSubmit(event);"
       >
+        <input type="hidden" name="auth_action" value="register" />
+        <input type="hidden" id="csrf_token" name="csrf_token" value="" />
         <div class="section-title full-row">Profile</div>
         <div class="form-group">
           <label for="name">Full Name</label>
@@ -822,6 +824,9 @@
               "This " +
                 field +
                 " already exists. Please use a different value.";
+          } else if (error === "security") {
+            msg.textContent =
+              "Security validation failed. Please refresh and try again.";
           } else {
             msg.textContent =
               "This account already exists. Please sign in or use different details.";
@@ -835,6 +840,34 @@
       function closePopup() {
         window.location.href = "index.html";
       }
+    </script>
+
+    <script>
+      // Redirect already-logged-in users to dashboard
+      fetch("auth-status.php", {
+        method: "GET",
+        cache: "no-store",
+        credentials: "same-origin",
+      })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => {
+          if (data && data.loggedIn === true)
+            window.location.replace("dashboard.php");
+        })
+        .catch(() => {});
+
+      fetch("csrf-token.php", {
+        method: "GET",
+        cache: "no-store",
+        credentials: "same-origin",
+      })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => {
+          if (data && data.csrfToken) {
+            document.getElementById("csrf_token").value = data.csrfToken;
+          }
+        })
+        .catch(() => {});
     </script>
   </body>
 </html>
