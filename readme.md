@@ -62,6 +62,42 @@ The current implementation focuses on:
   - Apache (XAMPP/WAMP), or
   - PHP built-in server for local development
 
+## Gmail SMTP Setup
+
+This project now includes PHPMailer-based SMTP support:
+
+- `smtp-config.php`: SMTP configuration loader
+- `mailer.php`: reusable email sender function
+- `smtp-test.php`: CLI test script
+
+### 1. Gmail account preparation
+
+1. Enable 2-Step Verification on your Gmail account.
+2. Create an App Password (Google Account > Security > App passwords).
+3. Use the generated 16-character app password for SMTP.
+
+### 2. Configure SMTP credentials
+
+Edit `smtp-config.php` defaults or set these environment variables:
+
+- `SMTP_HOST` (default: `smtp.gmail.com`)
+- `SMTP_PORT` (default: `587`)
+- `SMTP_ENCRYPTION` (default: `tls`)
+- `SMTP_USERNAME` (your Gmail address)
+- `SMTP_PASSWORD` (your Gmail app password)
+- `SMTP_FROM_EMAIL` (usually same as username)
+- `SMTP_FROM_NAME` (default: `Velora`)
+
+### 3. Send a test email
+
+From the project folder:
+
+```bash
+php smtp-test.php your-email@example.com
+```
+
+If correctly configured, you should see success output and receive the test email.
+
 ## Quick Start (Windows)
 
 1. Place this project in your web root (for example XAMPP `htdocs`) or keep it in any folder for PHP built-in server.

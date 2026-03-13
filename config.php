@@ -14,4 +14,6 @@ if (mysqli_connect_errno()) {
     error_log('Database connection failed: ' . mysqli_connect_error());
     die('A server error occurred. Please try again later.');
 }
+
+mysqli_set_charset($conn, 'utf8mb4');
 ?>

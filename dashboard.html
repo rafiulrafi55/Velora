@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard | Velora</title>
+    <link rel="stylesheet" href="assets/css/profile-cards.css" />
     <style>
       * {
         margin: 0;
@@ -56,185 +57,6 @@
         color: #f59e0b;
       }
 
-      .about-dropdown {
-        position: relative;
-        user-select: none;
-      }
-
-      .contact-dropdown {
-        position: relative;
-        user-select: none;
-      }
-
-      .about-card {
-        display: none;
-        position: absolute;
-        top: calc(100% + 10px);
-        left: 0;
-        width: 290px;
-        background: #13263f;
-        border: 1px solid #2a3a52;
-        border-radius: 12px;
-        padding: 14px;
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
-        z-index: 210;
-      }
-
-      .about-card.open {
-        display: block;
-      }
-
-      .about-top {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 10px;
-      }
-
-      .about-avatar {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        border: 2px solid #f59e0b;
-        object-fit: cover;
-        background: #0d1b2a;
-      }
-
-      .about-meta {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-      }
-
-      .about-name {
-        color: #fff;
-        font-size: 14px;
-        font-weight: 700;
-      }
-
-      .about-handle {
-        color: #9ca3af;
-        font-size: 12px;
-      }
-
-      .about-role {
-        color: #f59e0b;
-        font-size: 12px;
-        font-weight: 700;
-        letter-spacing: 0.02em;
-        margin-top: 2px;
-      }
-
-      .about-bio {
-        color: #cbd5e1;
-        font-size: 12px;
-        line-height: 1.45;
-        margin-bottom: 10px;
-      }
-
-      .about-stats {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 8px;
-        margin-bottom: 10px;
-      }
-
-      .about-stat {
-        background: #0f1f33;
-        border: 1px solid #22354d;
-        border-radius: 8px;
-        padding: 6px;
-        text-align: center;
-      }
-
-      .about-stat .value {
-        color: #fff;
-        font-size: 13px;
-        font-weight: 700;
-        display: block;
-      }
-
-      .about-stat .label {
-        color: #94a3b8;
-        font-size: 10px;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-      }
-
-      .about-location {
-        color: #94a3b8;
-        font-size: 12px;
-      }
-
-      .contact-card {
-        display: none;
-        position: absolute;
-        top: calc(100% + 10px);
-        left: 0;
-        width: 290px;
-        background: #13263f;
-        border: 1px solid #2a3a52;
-        border-radius: 12px;
-        padding: 14px;
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
-        z-index: 210;
-      }
-
-      .contact-card.open {
-        display: block;
-      }
-
-      .contact-title {
-        color: #fff;
-        font-size: 14px;
-        font-weight: 700;
-        margin-bottom: 10px;
-      }
-
-      .contact-list {
-        list-style: none;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-
-      .contact-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: #cbd5e1;
-        font-size: 12px;
-        line-height: 1.4;
-      }
-
-      .contact-icon {
-        width: 18px;
-        text-align: center;
-      }
-
-      .facebook-icon {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        background: #1877f2;
-        color: #fff;
-        font-weight: 700;
-        font-size: 12px;
-        line-height: 1;
-      }
-
-      .contact-item a {
-        color: #93c5fd;
-        text-decoration: none;
-      }
-
-      .contact-item a:hover {
-        text-decoration: underline;
-      }
-
       .logout-btn {
         background: #f59e0b;
         border: none;
@@ -253,7 +75,6 @@
         color: #fff;
       }
 
-      /* Logout confirmation popup */
       .popup-overlay {
         display: none;
         position: fixed;
@@ -354,7 +175,6 @@
     </style>
   </head>
   <body class="auth-pending">
-    <!-- Logout confirmation popup -->
     <div class="popup-overlay" id="logout-overlay">
       <div class="popup-box">
         <div class="popup-icon">&#128274;</div>
@@ -468,9 +288,9 @@
       <button class="logout-btn" id="logout-btn">Logout</button>
     </nav>
 
+    <script src="assets/js/github-profile.js"></script>
     <script>
       (() => {
-        // Logout confirmation popup
         const logoutOverlay = document.getElementById("logout-overlay");
         document.getElementById("logout-btn").addEventListener("click", () => {
           logoutOverlay.classList.add("visible");
@@ -493,7 +313,6 @@
           if (e.key === "Escape") logoutOverlay.classList.remove("visible");
         });
 
-        // Auth guard — redirect unauthenticated visitors to index
         fetch("auth-status.php", {
           method: "GET",
           cache: "no-store",
@@ -514,7 +333,6 @@
             window.location.replace("index.html");
           });
 
-        // Dropdown behaviour (About Us / Contact)
         const aboutDropdown = document.getElementById("about-dropdown");
         const aboutTrigger = document.getElementById("about-trigger");
         const aboutCard = document.getElementById("about-card");
@@ -539,17 +357,115 @@
         const openContactCard = () => contactCard?.classList.add("open");
         const closeContactCard = () => contactCard?.classList.remove("open");
 
+        const githubUser = "rafiulrafi55";
+        let githubProfileLoaded = false;
+        const loadGithubProfile = () => {
+          if (githubProfileLoaded) {
+            return;
+          }
+          githubProfileLoaded = true;
+
+          window.VeloraGithubProfile?.load({
+            githubUser,
+            onData: (data) => {
+              if (aboutAvatar && data.avatar_url) {
+                aboutAvatar.src = data.avatar_url;
+              }
+              if (aboutName) {
+                aboutName.textContent = data.name || githubUser;
+              }
+              if (aboutHandle) {
+                aboutHandle.textContent = `@${data.login || githubUser}`;
+              }
+              if (aboutBio) {
+                aboutBio.textContent =
+                  data.bio ||
+                  "Building useful experiences with clean, modern code.";
+              }
+              if (aboutRepos) {
+                aboutRepos.textContent = String(data.public_repos ?? 0);
+              }
+              if (aboutFollowers) {
+                aboutFollowers.textContent = String(data.followers ?? 0);
+              }
+              if (aboutFollowing) {
+                aboutFollowing.textContent = String(data.following ?? 0);
+              }
+              if (aboutLocation) {
+                aboutLocation.textContent = `Location: ${data.location || "Bangladesh"}`;
+              }
+              if (contactEmail) {
+                contactEmail.textContent =
+                  data.email || "rafiulrafi55@gmail.com";
+              }
+              if (contactBlog) {
+                if (data.blog) {
+                  const url = data.blog.startsWith("http")
+                    ? data.blog
+                    : `https://${data.blog}`;
+                  contactBlog.innerHTML = `<a href="${url}" target="_blank" rel="noopener noreferrer">${data.blog}</a>`;
+                } else {
+                  contactBlog.textContent = "Website not provided";
+                }
+              }
+              if (contactLocation) {
+                contactLocation.textContent =
+                  data.location || "Location not public";
+              }
+              if (contactGithub) {
+                contactGithub.href =
+                  data.html_url || `https://github.com/${githubUser}`;
+              }
+            },
+            onFallback: () => {
+              if (aboutName) {
+                aboutName.textContent = "Rafiul";
+              }
+              if (aboutHandle) {
+                aboutHandle.textContent = "@rafiulrafi55";
+              }
+              if (aboutBio) {
+                aboutBio.textContent =
+                  "Lead Developer focused on reliable and user-friendly systems.";
+              }
+              if (aboutRepos) {
+                aboutRepos.textContent = "--";
+              }
+              if (aboutFollowers) {
+                aboutFollowers.textContent = "--";
+              }
+              if (aboutFollowing) {
+                aboutFollowing.textContent = "--";
+              }
+              if (aboutLocation) {
+                aboutLocation.textContent = "Location: Bangladesh";
+              }
+              if (contactEmail) {
+                contactEmail.textContent = "rafiulrafi55@gmail.com";
+              }
+              if (contactBlog) {
+                contactBlog.textContent = "Website not available";
+              }
+              if (contactLocation) {
+                contactLocation.textContent = "Bangladesh";
+              }
+            },
+          });
+        };
+
         if (aboutTrigger && aboutDropdown) {
           const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
           if (isMobile) {
             aboutTrigger.addEventListener("click", (e) => {
+              loadGithubProfile();
               e.stopPropagation();
               aboutCard?.classList.contains("open")
                 ? closeAboutCard()
                 : (openAboutCard(), closeContactCard());
             });
             contactTrigger?.addEventListener("click", (e) => {
+              loadGithubProfile();
               e.stopPropagation();
               contactCard?.classList.contains("open")
                 ? closeContactCard()
@@ -562,6 +478,7 @@
             });
           } else {
             aboutDropdown.addEventListener("mouseenter", () => {
+              loadGithubProfile();
               openAboutCard();
               closeContactCard();
             });
@@ -569,6 +486,7 @@
 
             if (contactDropdown) {
               contactDropdown.addEventListener("mouseenter", () => {
+                loadGithubProfile();
                 openContactCard();
                 closeAboutCard();
               });
@@ -585,66 +503,7 @@
           });
         }
 
-        // GitHub profile fetch
-        const githubUser = "rafiulrafi55";
-        fetch(`https://api.github.com/users/${githubUser}`)
-          .then((r) => {
-            if (!r.ok) throw new Error("GitHub fetch failed");
-            return r.json();
-          })
-          .then((data) => {
-            if (aboutAvatar && data.avatar_url)
-              aboutAvatar.src = data.avatar_url;
-            if (aboutName) aboutName.textContent = data.name || githubUser;
-            if (aboutHandle)
-              aboutHandle.textContent = `@${data.login || githubUser}`;
-            if (aboutBio)
-              aboutBio.textContent =
-                data.bio ||
-                "Building useful experiences with clean, modern code.";
-            if (aboutRepos)
-              aboutRepos.textContent = String(data.public_repos ?? 0);
-            if (aboutFollowers)
-              aboutFollowers.textContent = String(data.followers ?? 0);
-            if (aboutFollowing)
-              aboutFollowing.textContent = String(data.following ?? 0);
-            if (aboutLocation)
-              aboutLocation.textContent = `Location: ${data.location || "Bangladesh"}`;
-            if (contactEmail)
-              contactEmail.textContent = data.email || "rafiulrafi55@gmail.com";
-            if (contactBlog) {
-              if (data.blog) {
-                const url = data.blog.startsWith("http")
-                  ? data.blog
-                  : `https://${data.blog}`;
-                contactBlog.innerHTML = `<a href="${url}" target="_blank" rel="noopener noreferrer">${data.blog}</a>`;
-              } else {
-                contactBlog.textContent = "Website not provided";
-              }
-            }
-            if (contactLocation)
-              contactLocation.textContent =
-                data.location || "Location not public";
-            if (contactGithub)
-              contactGithub.href =
-                data.html_url || `https://github.com/${githubUser}`;
-          })
-          .catch(() => {
-            if (aboutName) aboutName.textContent = "Rafiul";
-            if (aboutHandle) aboutHandle.textContent = "@rafiulrafi55";
-            if (aboutBio)
-              aboutBio.textContent =
-                "Lead Developer focused on reliable and user-friendly systems.";
-            if (aboutRepos) aboutRepos.textContent = "--";
-            if (aboutFollowers) aboutFollowers.textContent = "--";
-            if (aboutFollowing) aboutFollowing.textContent = "--";
-            if (aboutLocation)
-              aboutLocation.textContent = "Location: Bangladesh";
-            if (contactEmail)
-              contactEmail.textContent = "rafiulrafi55@gmail.com";
-            if (contactBlog) contactBlog.textContent = "Website not available";
-            if (contactLocation) contactLocation.textContent = "Bangladesh";
-          });
+        setTimeout(loadGithubProfile, 1200);
       })();
     </script>
   </body>

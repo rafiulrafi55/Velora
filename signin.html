@@ -181,7 +181,6 @@
         margin: 0 6px;
       }
 
-      /* Success popup */
       .popup-overlay {
         display: none;
         position: fixed;
@@ -252,6 +251,170 @@
         background: #5568d3;
       }
 
+      .forgot-popup-box {
+        background: white;
+        border-radius: 14px;
+        padding: 28px 26px;
+        max-width: 420px;
+        width: 92%;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        animation: popIn 0.25s ease;
+        position: relative;
+      }
+
+      .forgot-close {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        border: none;
+        background: transparent;
+        color: #6b7280;
+        font-size: 20px;
+        line-height: 1;
+        cursor: pointer;
+        width: auto;
+        margin: 0;
+        padding: 4px 8px;
+      }
+
+      .forgot-close:hover {
+        color: #111827;
+        background: transparent;
+      }
+
+      .forgot-title {
+        color: #111827;
+        font-size: 22px;
+        margin-bottom: 8px;
+      }
+
+      .forgot-text {
+        color: #6b7280;
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 18px;
+      }
+
+      .forgot-form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .forgot-form label {
+        color: #374151;
+        font-size: 13px;
+        font-weight: bold;
+      }
+
+      .forgot-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 4px;
+      }
+
+      .forgot-btn-secondary {
+        width: 100%;
+        padding: 11px;
+        background: #f3f4f6;
+        color: #374151;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 0;
+      }
+
+      .forgot-btn-secondary:hover {
+        background: #e5e7eb;
+      }
+
+      .forgot-btn-primary {
+        width: 100%;
+        padding: 11px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 0;
+      }
+
+      .forgot-btn-primary:hover {
+        background: #5568d3;
+      }
+
+      .forgot-note {
+        color: #6b7280;
+        font-size: 12px;
+        line-height: 1.4;
+        margin-top: 10px;
+      }
+
+      .forgot-resend-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 6px;
+      }
+
+      .forgot-resend-hint {
+        color: #6b7280;
+        font-size: 12px;
+      }
+
+      .forgot-resend-btn {
+        border: none;
+        background: transparent;
+        color: #667eea;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: bold;
+        padding: 0;
+        margin: 0;
+        width: auto;
+      }
+
+      .forgot-resend-btn:disabled {
+        color: #9ca3af;
+        cursor: not-allowed;
+      }
+
+      .forgot-status {
+        display: none;
+        align-items: flex-start;
+        gap: 8px;
+        border-radius: 8px;
+        padding: 10px 12px;
+        margin-bottom: 12px;
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .forgot-status.visible {
+        display: flex;
+      }
+
+      .forgot-status.success {
+        background: #ecfdf3;
+        border: 1px solid #86efac;
+        color: #166534;
+      }
+
+      .forgot-status.error {
+        background: #fef2f2;
+        border: 1px solid #fca5a5;
+        color: #b91c1c;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
       .signin-error-banner {
         display: flex;
         align-items: flex-start;
@@ -296,6 +459,133 @@
       </div>
     </div>
 
+    <div class="popup-overlay" id="forgot-overlay" aria-hidden="true">
+      <div
+        class="forgot-popup-box"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="forgot-title"
+      >
+        <button
+          class="forgot-close"
+          type="button"
+          aria-label="Close forgot password popup"
+          onclick="closeForgotPopup()"
+        >
+          &times;
+        </button>
+        <h2 class="forgot-title" id="forgot-title">Forgot Password</h2>
+        <p class="forgot-text" id="forgot-description">
+          Enter your account email to receive a password reset code.
+        </p>
+
+        <div
+          id="forgot-status"
+          class="forgot-status"
+          role="status"
+          aria-live="polite"
+        >
+          <span>&#9888;</span>
+          <span id="forgot-status-text"></span>
+        </div>
+
+        <form class="forgot-form" id="forgot-form" onsubmit="return false;">
+          <div id="forgot-step-email">
+            <label for="forgot-email">Email Address</label>
+            <input
+              type="email"
+              id="forgot-email"
+              name="forgot_email"
+              placeholder="you@company.com"
+              autocomplete="email"
+            />
+
+            <div class="forgot-actions">
+              <button
+                type="button"
+                class="forgot-btn-secondary"
+                onclick="closeForgotPopup()"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="forgot-btn-primary"
+                id="forgot-send-otp-btn"
+              >
+                Send OTP
+              </button>
+            </div>
+          </div>
+
+          <div id="forgot-step-reset" class="hidden">
+            <label for="forgot-otp">OTP Code</label>
+            <input
+              type="text"
+              id="forgot-otp"
+              name="forgot_otp"
+              inputmode="numeric"
+              maxlength="6"
+              placeholder="Enter 6-digit OTP"
+              autocomplete="one-time-code"
+            />
+
+            <label for="forgot-new-password">New Password</label>
+            <input
+              type="password"
+              id="forgot-new-password"
+              name="forgot_new_password"
+              placeholder="Create a new password"
+              autocomplete="new-password"
+            />
+
+            <label for="forgot-confirm-password">Confirm New Password</label>
+            <input
+              type="password"
+              id="forgot-confirm-password"
+              name="forgot_confirm_password"
+              placeholder="Re-enter new password"
+              autocomplete="new-password"
+            />
+
+            <div class="forgot-actions">
+              <button
+                type="button"
+                class="forgot-btn-secondary"
+                id="forgot-back-btn"
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                class="forgot-btn-primary"
+                id="forgot-reset-btn"
+              >
+                Reset Password
+              </button>
+            </div>
+
+            <div class="forgot-resend-row">
+              <span class="forgot-resend-hint" id="forgot-resend-hint">
+                Didn't receive the OTP?
+              </span>
+              <button
+                type="button"
+                class="forgot-resend-btn"
+                id="forgot-resend-btn"
+              >
+                Resend OTP
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <p class="forgot-note" id="forgot-note">
+          OTP expires in 10 minutes. Request a new one if it expires.
+        </p>
+      </div>
+    </div>
+
     <div class="signin-container">
       <h1>Sign In</h1>
       <p class="subtitle">
@@ -337,7 +627,13 @@
             <input type="checkbox" id="remember" name="remember" />
             Remember me on this device
           </label>
-          <a class="utility-link" href="privacy-policy.html"
+          <a
+            class="utility-link"
+            href="#"
+            onclick="
+              openForgotPopup();
+              return false;
+            "
             >Forgot password?</a
           >
         </div>
@@ -383,10 +679,267 @@
       function closePopup() {
         document.getElementById("success-overlay").classList.remove("visible");
       }
+
+      function openForgotPopup() {
+        const overlay = document.getElementById("forgot-overlay");
+        overlay.classList.add("visible");
+        overlay.setAttribute("aria-hidden", "false");
+        resetForgotUi();
+      }
+
+      function closeForgotPopup() {
+        const overlay = document.getElementById("forgot-overlay");
+        overlay.classList.remove("visible");
+        overlay.setAttribute("aria-hidden", "true");
+        resetResendCooldown();
+      }
+
+      let forgotCooldownTimer = null;
+      let forgotCooldownLeft = 0;
+
+      function resetResendCooldown() {
+        if (forgotCooldownTimer) {
+          clearInterval(forgotCooldownTimer);
+          forgotCooldownTimer = null;
+        }
+        forgotCooldownLeft = 0;
+        updateResendUi();
+      }
+
+      function updateResendUi() {
+        const resendBtn = document.getElementById("forgot-resend-btn");
+        const hint = document.getElementById("forgot-resend-hint");
+
+        if (forgotCooldownLeft > 0) {
+          resendBtn.disabled = true;
+          resendBtn.textContent = `Resend in ${forgotCooldownLeft}s`;
+          hint.textContent = "You can request another OTP shortly.";
+          return;
+        }
+
+        resendBtn.disabled = false;
+        resendBtn.textContent = "Resend OTP";
+        hint.textContent = "Didn't receive the OTP?";
+      }
+
+      function startResendCooldown(seconds = 60) {
+        if (forgotCooldownTimer) {
+          clearInterval(forgotCooldownTimer);
+          forgotCooldownTimer = null;
+        }
+
+        forgotCooldownLeft = seconds;
+        updateResendUi();
+
+        forgotCooldownTimer = setInterval(() => {
+          forgotCooldownLeft -= 1;
+          if (forgotCooldownLeft <= 0) {
+            clearInterval(forgotCooldownTimer);
+            forgotCooldownTimer = null;
+            forgotCooldownLeft = 0;
+          }
+          updateResendUi();
+        }, 1000);
+      }
+
+      function setForgotStatus(type, message) {
+        const box = document.getElementById("forgot-status");
+        const text = document.getElementById("forgot-status-text");
+        box.classList.remove("success", "error", "visible");
+        if (!message) return;
+        box.classList.add(type === "success" ? "success" : "error", "visible");
+        text.textContent = message;
+      }
+
+      function setForgotStep(step) {
+        const stepEmail = document.getElementById("forgot-step-email");
+        const stepReset = document.getElementById("forgot-step-reset");
+        const desc = document.getElementById("forgot-description");
+
+        if (step === "reset") {
+          stepEmail.classList.add("hidden");
+          stepReset.classList.remove("hidden");
+          desc.textContent = "Enter your OTP and choose a new password";
+          return;
+        }
+
+        stepReset.classList.add("hidden");
+        stepEmail.classList.remove("hidden");
+        desc.textContent = "Enter your account email";
+      }
+
+      function resetForgotUi() {
+        setForgotStatus("", "");
+        setForgotStep("email");
+        updateResendUi();
+      }
+
+      async function parseApiResponse(res) {
+        const raw = await res.text();
+        try {
+          return JSON.parse(raw);
+        } catch (_) {
+          return {
+            ok: false,
+            message: "Server returned an unexpected response. Please try again",
+          };
+        }
+      }
+
+      async function requestForgotOtp(options = {}) {
+        const keepResetStep = options.keepResetStep === true;
+        const email = document.getElementById("forgot-email").value.trim();
+        const csrf = document.getElementById("csrf_token").value;
+        const btn = document.getElementById("forgot-send-otp-btn");
+        const resendBtn = document.getElementById("forgot-resend-btn");
+
+        if (!email) {
+          setForgotStatus("error", "Please enter your email address.");
+          return;
+        }
+
+        if (keepResetStep && forgotCooldownLeft > 0) {
+          return;
+        }
+
+        if (keepResetStep) {
+          resendBtn.disabled = true;
+          resendBtn.textContent = "Sending...";
+        } else {
+          btn.disabled = true;
+          btn.textContent = "Sending...";
+        }
+
+        setForgotStatus("", "");
+
+        try {
+          const formData = new FormData();
+          formData.append("action", "request_otp");
+          formData.append("email", email);
+          formData.append("csrf_token", csrf);
+
+          const res = await fetch("forgot-password.php", {
+            method: "POST",
+            credentials: "same-origin",
+            body: formData,
+          });
+
+          const data = await parseApiResponse(res);
+          if (!res.ok || !data.ok) {
+            setForgotStatus(
+              "error",
+              data.message || "Could not send OTP. Please try again.",
+            );
+            return;
+          }
+
+          setForgotStatus("success", data.message || "OTP sent successfully.");
+          setForgotStep("reset");
+          startResendCooldown(60);
+        } catch (_) {
+          setForgotStatus("error", "Network error. Please try again.");
+        } finally {
+          if (keepResetStep) {
+            updateResendUi();
+          } else {
+            btn.disabled = false;
+            btn.textContent = "Send OTP";
+          }
+        }
+      }
+
+      async function submitForgotReset() {
+        const email = document.getElementById("forgot-email").value.trim();
+        const otp = document.getElementById("forgot-otp").value.trim();
+        const newPassword = document.getElementById(
+          "forgot-new-password",
+        ).value;
+        const confirmPassword = document.getElementById(
+          "forgot-confirm-password",
+        ).value;
+        const csrf = document.getElementById("csrf_token").value;
+        const btn = document.getElementById("forgot-reset-btn");
+
+        if (!email || !otp || !newPassword || !confirmPassword) {
+          setForgotStatus("error", "Please fill all fields.");
+          return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = "Resetting...";
+        setForgotStatus("", "");
+
+        try {
+          const formData = new FormData();
+          formData.append("action", "reset_password");
+          formData.append("email", email);
+          formData.append("otp", otp);
+          formData.append("new_password", newPassword);
+          formData.append("confirm_password", confirmPassword);
+          formData.append("csrf_token", csrf);
+
+          const res = await fetch("forgot-password.php", {
+            method: "POST",
+            credentials: "same-origin",
+            body: formData,
+          });
+
+          const data = await parseApiResponse(res);
+          if (!res.ok || !data.ok) {
+            setForgotStatus("error", data.message || "Password reset failed.");
+            return;
+          }
+
+          setForgotStatus(
+            "success",
+            data.message || "Password reset successful.",
+          );
+          document.getElementById("forgot-otp").value = "";
+          document.getElementById("forgot-new-password").value = "";
+          document.getElementById("forgot-confirm-password").value = "";
+
+          setTimeout(() => {
+            closeForgotPopup();
+          }, 1200);
+        } catch (_) {
+          setForgotStatus("error", "Network error. Please try again.");
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Reset Password";
+        }
+      }
+
+      document
+        .getElementById("forgot-overlay")
+        .addEventListener("click", function (e) {
+          if (e.target.id === "forgot-overlay") {
+            closeForgotPopup();
+          }
+        });
+
+      document
+        .getElementById("forgot-send-otp-btn")
+        .addEventListener("click", requestForgotOtp);
+
+      document
+        .getElementById("forgot-reset-btn")
+        .addEventListener("click", submitForgotReset);
+
+      document
+        .getElementById("forgot-back-btn")
+        .addEventListener("click", function () {
+          setForgotStatus("", "");
+          setForgotStep("email");
+        });
+
+      document
+        .getElementById("forgot-resend-btn")
+        .addEventListener("click", function () {
+          requestForgotOtp({ keepResetStep: true });
+        });
     </script>
 
     <script>
-      // Redirect already-logged-in users to dashboard
       fetch("auth-status.php", {
         method: "GET",
         cache: "no-store",
@@ -394,8 +947,9 @@
       })
         .then((r) => (r.ok ? r.json() : null))
         .then((data) => {
-          if (data && data.loggedIn === true)
+          if (data && data.loggedIn === true) {
             window.location.replace("dashboard.php");
+          }
         })
         .catch(() => {});
 
