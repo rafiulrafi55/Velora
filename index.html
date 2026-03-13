@@ -464,6 +464,227 @@
         animation: featuresModalIn 0.28s ease-out;
       }
 
+      .donate-modal {
+        background: linear-gradient(180deg, #13263f, #0f1f33);
+        border: 1px solid #2a3a52;
+        border-radius: 18px;
+        width: min(760px, 92vw);
+        max-height: 86vh;
+        overflow: auto;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+        color: #dbe7f5;
+        animation: featuresModalIn 0.28s ease-out;
+      }
+
+      .donate-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        padding: 22px 24px 18px;
+        border-bottom: 1px solid #2a3a52;
+      }
+
+      .donate-modal-title-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .donate-modal-kicker {
+        color: #f59e0b;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .donate-modal-title {
+        color: #fff;
+        font-size: 24px;
+        line-height: 1.2;
+      }
+
+      .donate-modal-body {
+        padding: 22px 24px 26px;
+      }
+
+      .donate-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+        gap: 18px;
+      }
+
+      .donate-panel {
+        background: rgba(8, 20, 32, 0.65);
+        border: 1px solid #22354d;
+        border-radius: 14px;
+        padding: 18px;
+      }
+
+      .donate-panel h3 {
+        color: #fff;
+        font-size: 18px;
+        margin-bottom: 8px;
+      }
+
+      .donate-panel p {
+        color: #9fb2c7;
+        font-size: 14px;
+        line-height: 1.55;
+        margin-bottom: 16px;
+      }
+
+      .donate-local-box {
+        display: none;
+        border: 1px solid #36506d;
+        background: rgba(19, 38, 63, 0.9);
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 14px;
+      }
+
+      .donate-local-box.visible {
+        display: block;
+      }
+
+      .donate-local-box h4 {
+        color: #fff;
+        font-size: 15px;
+        margin-bottom: 6px;
+      }
+
+      .donate-local-box p {
+        margin-bottom: 10px;
+      }
+
+      .donate-local-steps {
+        margin: 0;
+        padding-left: 18px;
+        color: #cbd5e1;
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      .donate-local-placeholder {
+        margin-top: 12px;
+        border: 1px dashed #4b6380;
+        border-radius: 10px;
+        padding: 12px;
+        color: #fbbf24;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .donate-placeholder-field {
+        margin-top: 12px;
+      }
+
+      .donate-placeholder-input {
+        width: 100%;
+        border: 1px dashed #4b6380;
+        background: #0d1b2a;
+        color: #94a3b8;
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-size: 14px;
+      }
+
+      .donate-field-label {
+        display: block;
+        color: #cbd5e1;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .donate-status {
+        border: 1px solid #36506d;
+        background: rgba(19, 38, 63, 0.9);
+        border-radius: 12px;
+        padding: 12px 14px;
+        color: #cbd5e1;
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      .donate-side-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin: 0 0 18px;
+        padding: 0;
+      }
+
+      .donate-side-item {
+        border: 1px solid #22354d;
+        background: #0d1b2a;
+        border-radius: 12px;
+        padding: 14px;
+      }
+
+      .donate-side-item strong {
+        display: block;
+        color: #fff;
+        margin-bottom: 4px;
+        font-size: 14px;
+      }
+
+      .donate-side-item span {
+        color: #94a3b8;
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .donate-note {
+        color: #fbbf24;
+        font-size: 13px;
+        line-height: 1.55;
+        margin-bottom: 16px;
+      }
+
+      .donate-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .donate-primary-btn,
+      .donate-secondary-btn {
+        border-radius: 10px;
+        padding: 12px 18px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        transition:
+          background 0.2s ease,
+          color 0.2s ease,
+          border-color 0.2s ease;
+      }
+
+      .donate-primary-btn {
+        border: none;
+        background: #f59e0b;
+        color: #131212;
+      }
+
+      .donate-primary-btn:hover {
+        background: #d97706;
+      }
+
+      .donate-secondary-btn {
+        border: 1px solid #334b67;
+        background: transparent;
+        color: #dbe7f5;
+      }
+
+      .donate-secondary-btn:hover {
+        background: #1e3a55;
+        color: #fff;
+      }
+
       @keyframes featuresModalIn {
         from {
           opacity: 0;
@@ -885,7 +1106,17 @@
           grid-template-columns: 1fr;
         }
 
+        .donate-grid {
+          grid-template-columns: 1fr;
+        }
+
         .features-modal {
+          width: 94vw;
+          max-height: 88vh;
+          border-radius: 12px;
+        }
+
+        .donate-modal {
           width: 94vw;
           max-height: 88vh;
           border-radius: 12px;
@@ -893,6 +1124,12 @@
 
         .features-modal-header {
           padding: 14px 16px;
+        }
+
+        .donate-modal-header,
+        .donate-modal-body {
+          padding-left: 16px;
+          padding-right: 16px;
         }
 
         .features-modal-title {
@@ -911,9 +1148,18 @@
         .feature-detail {
           padding: 12px;
         }
+
+        .donate-actions {
+          flex-direction: column;
+        }
+
+        .donate-primary-btn,
+        .donate-secondary-btn {
+          width: 100%;
+          text-align: center;
+        }
       }
 
-      /* Cookie consent banner */
       .cookie-banner {
         position: fixed;
         bottom: -120px;
@@ -1182,6 +1428,131 @@
       </div>
     </div>
 
+    <div class="popup-overlay" id="donate-overlay">
+      <div
+        class="donate-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="donate-title"
+      >
+        <div class="donate-modal-header">
+          <div class="donate-modal-title-wrap">
+            <span class="donate-modal-kicker">Support Velora</span>
+            <h2 class="donate-modal-title" id="donate-title">
+              Help fund new features and maintenance
+            </h2>
+          </div>
+          <button
+            class="features-close-btn"
+            id="donate-close-btn"
+            aria-label="Close donate dialog"
+          >
+            ×
+          </button>
+        </div>
+        <div class="donate-modal-body">
+          <div class="donate-grid">
+            <div class="donate-panel">
+              <h3>Send support via bKash</h3>
+              <p>
+                Use the bKash number below to send any amount you want to
+                donate.
+              </p>
+
+              <div class="donate-local-box visible" id="donate-bkash-box">
+                <h4>bKash donation address</h4>
+                <p>
+                  Send your chosen amount directly to this bKash personal
+                  number.
+                </p>
+                <ol class="donate-local-steps">
+                  <li>Copy the bKash number below.</li>
+                  <li>Complete payment from your bKash app.</li>
+                </ol>
+                <div class="donate-local-placeholder">
+                  Checkout integration is disabled because no merchant account
+                  is connected right now.
+                </div>
+                <div class="donate-placeholder-field">
+                  <label class="donate-field-label" for="donate-bkash-number"
+                    >bKash number</label
+                  >
+                  <input
+                    class="donate-placeholder-input"
+                    id="donate-bkash-number"
+                    type="text"
+                    value="01755375747"
+                    readonly
+                  />
+                  <label class="donate-field-label" style="margin-top: 10px"
+                    >Account type: Personal</label
+                  >
+                </div>
+              </div>
+
+              <div class="donate-status" id="donate-status">
+                Send your donation to the bKash number above.
+              </div>
+            </div>
+
+            <div class="donate-panel">
+              <h3>What your support helps with</h3>
+              <ul class="donate-side-list">
+                <li class="donate-side-item">
+                  <strong>Email reliability</strong>
+                  <span
+                    >SMTP stability, OTP delivery, and notification
+                    improvements.</span
+                  >
+                </li>
+                <li class="donate-side-item">
+                  <strong>Event workflow upgrades</strong>
+                  <span
+                    >Guest management, RSVP tools, and dashboard polish.</span
+                  >
+                </li>
+                <li class="donate-side-item">
+                  <strong>Hosting and maintenance</strong>
+                  <span
+                    >Deployment, bug fixes, and ongoing project support.</span
+                  >
+                </li>
+              </ul>
+
+              <p class="donate-note">
+                Donate by sending money to the bKash number shown above. No
+                payment gateway checkout is used here.
+              </p>
+
+              <div class="donate-actions">
+                <button
+                  type="button"
+                  class="donate-primary-btn"
+                  id="copy-bkash-btn"
+                >
+                  Copy bKash Number
+                </button>
+                <button
+                  type="button"
+                  class="donate-secondary-btn"
+                  id="open-bkash-site-btn"
+                >
+                  Open bKash Website
+                </button>
+                <button
+                  type="button"
+                  class="donate-secondary-btn"
+                  id="donate-close-secondary-btn"
+                >
+                  Maybe Later
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="logout-confirm-overlay" id="logout-confirm-overlay">
       <div class="logout-confirm-box">
         <div class="logout-confirm-icon">&#128274;</div>
@@ -1348,6 +1719,7 @@
           >
             Email Us
           </button>
+          <button class="secondary-btn" id="open-donate-btn">Donate</button>
         </div>
 
         <a
@@ -1414,12 +1786,14 @@
       <a href="#" id="footer-contact">Contact</a>
     </footer>
 
+    <script src="assets/js/github-profile.js"></script>
     <script>
       (() => {
         const successOverlay = document.getElementById("success-overlay");
         const navAuthBtn = document.getElementById("nav-auth-btn");
         const heroAuthBtn = document.getElementById("hero-auth-btn");
         const featuresOverlay = document.getElementById("features-overlay");
+        const donateOverlay = document.getElementById("donate-overlay");
         const logoutConfirmOverlay = document.getElementById(
           "logout-confirm-overlay",
         );
@@ -1429,6 +1803,18 @@
           "explore-features-btn",
         );
         const featuresCloseBtn = document.getElementById("features-close-btn");
+        const openDonateBtn = document.getElementById("open-donate-btn");
+        const donateCloseBtn = document.getElementById("donate-close-btn");
+        const donateCloseSecondaryBtn = document.getElementById(
+          "donate-close-secondary-btn",
+        );
+        const copyBkashBtn = document.getElementById("copy-bkash-btn");
+        const openBkashSiteBtn = document.getElementById("open-bkash-site-btn");
+        const donateStatus = document.getElementById("donate-status");
+        const donateBkashBox = document.getElementById("donate-bkash-box");
+        const donateBkashNumber = document.getElementById(
+          "donate-bkash-number",
+        );
 
         const openLogoutConfirm = () => {
           logoutConfirmOverlay?.classList.add("visible");
@@ -1436,6 +1822,14 @@
 
         const closeLogoutConfirm = () => {
           logoutConfirmOverlay?.classList.remove("visible");
+        };
+
+        const openDonateModal = () => {
+          donateOverlay?.classList.add("visible");
+        };
+
+        const closeDonateModal = () => {
+          donateOverlay?.classList.remove("visible");
         };
 
         logoutConfirmYes?.addEventListener("click", () => {
@@ -1450,82 +1844,81 @@
           }
         });
 
-        const setAuthButtonsForLoggedIn = () => {
-          if (navAuthBtn) {
-            navAuthBtn.textContent = "Logout";
-            navAuthBtn.onclick = () => {
-              openLogoutConfirm();
-            };
-          }
+        exploreFeaturesBtn?.addEventListener("click", () => {
+          featuresOverlay?.classList.add("visible");
+        });
 
-          if (heroAuthBtn) {
-            heroAuthBtn.textContent = "Logout";
-            heroAuthBtn.onclick = () => {
-              openLogoutConfirm();
-            };
-          }
+        featuresCloseBtn?.addEventListener("click", () => {
+          featuresOverlay?.classList.remove("visible");
+        });
 
-          const navDashboardLink =
-            document.getElementById("nav-dashboard-link");
-          if (navDashboardLink) {
-            navDashboardLink.style.display = "";
-          }
-        };
-
-        fetch("auth-status.php", {
-          method: "GET",
-          cache: "no-store",
-          credentials: "same-origin",
-        })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("Failed auth status check");
-            }
-            return response.json();
-          })
-          .then((data) => {
-            if (data && data.loggedIn === true) {
-              setAuthButtonsForLoggedIn();
-            }
-          })
-          .catch(() => {
-            // Keep default sign-in/sign-up buttons if status check fails.
-          });
-
-        if (exploreFeaturesBtn && featuresOverlay) {
-          exploreFeaturesBtn.addEventListener("click", () => {
-            featuresOverlay.classList.add("visible");
-          });
-        }
-
-        if (featuresCloseBtn && featuresOverlay) {
-          featuresCloseBtn.addEventListener("click", () => {
+        featuresOverlay?.addEventListener("click", (event) => {
+          if (event.target === featuresOverlay) {
             featuresOverlay.classList.remove("visible");
-          });
-        }
+          }
+        });
 
-        if (featuresOverlay) {
-          featuresOverlay.addEventListener("click", (event) => {
-            if (event.target === featuresOverlay) {
-              featuresOverlay.classList.remove("visible");
+        successOverlay?.addEventListener("click", (event) => {
+          if (event.target === successOverlay) {
+            successOverlay.classList.remove("visible");
+          }
+        });
+
+        openDonateBtn?.addEventListener("click", openDonateModal);
+        donateCloseBtn?.addEventListener("click", closeDonateModal);
+        donateCloseSecondaryBtn?.addEventListener("click", closeDonateModal);
+
+        donateOverlay?.addEventListener("click", (event) => {
+          if (event.target === donateOverlay) {
+            closeDonateModal();
+          }
+        });
+
+        donateBkashBox?.classList.add("visible");
+
+        copyBkashBtn?.addEventListener("click", async () => {
+          const bkashNumber = donateBkashNumber?.value?.trim();
+          if (!bkashNumber) {
+            if (donateStatus) {
+              donateStatus.textContent = "bKash number unavailable right now.";
             }
-          });
-        }
-        if (successOverlay) {
-          successOverlay.addEventListener("click", (event) => {
-            if (event.target === successOverlay) {
-              successOverlay.classList.remove("visible");
+            return;
+          }
+
+          try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              await navigator.clipboard.writeText(bkashNumber);
+            } else if (donateBkashNumber) {
+              donateBkashNumber.focus();
+              donateBkashNumber.select();
+              const copied = document.execCommand("copy");
+              donateBkashNumber.setSelectionRange(0, bkashNumber.length);
+              if (!copied) {
+                throw new Error("Copy command failed");
+              }
+            } else {
+              throw new Error("No copy fallback available");
             }
-          });
-        }
 
-        const params = new URLSearchParams(window.location.search);
-        if (params.get("registered") === "1") {
-          successOverlay?.classList.add("visible");
-          history.replaceState(null, "", window.location.pathname);
-        }
+            if (donateStatus) {
+              donateStatus.textContent = `Copied ${bkashNumber}. Paste it in your bKash app to complete the donation.`;
+            }
+          } catch (_) {
+            if (donateStatus) {
+              donateStatus.textContent =
+                "Could not copy automatically. Please copy the number manually.";
+            }
+          }
+        });
 
-        const githubUser = "rafiulrafi55";
+        openBkashSiteBtn?.addEventListener("click", () => {
+          window.open(
+            "https://www.bkash.com/",
+            "_blank",
+            "noopener,noreferrer",
+          );
+        });
+
         const aboutDropdown = document.getElementById("about-dropdown");
         const aboutTrigger = document.getElementById("about-trigger");
         const aboutCard = document.getElementById("about-card");
@@ -1545,35 +1938,178 @@
         const contactLocation = document.getElementById("contact-location");
         const contactGithub = document.getElementById("contact-github");
 
-        const isMobileView = (el) =>
-          el && el.offsetParent === null
-            ? false
-            : window.matchMedia("(max-width: 768px)").matches;
+        const isMobileView = () =>
+          window.matchMedia("(max-width: 768px)").matches;
 
         const openAboutCard = () => {
           aboutCard?.classList.add("open");
-          if (isMobileView()) document.body.classList.add("popup-open");
+          if (isMobileView()) {
+            document.body.classList.add("popup-open");
+          }
         };
+
         const closeAboutCard = () => {
           aboutCard?.classList.remove("open");
-          if (!contactCard?.classList.contains("open"))
+          if (!contactCard?.classList.contains("open")) {
             document.body.classList.remove("popup-open");
+          }
         };
+
         const openContactCard = () => {
           contactCard?.classList.add("open");
-          if (isMobileView()) document.body.classList.add("popup-open");
+          if (isMobileView()) {
+            document.body.classList.add("popup-open");
+          }
         };
+
         const closeContactCard = () => {
           contactCard?.classList.remove("open");
-          if (!aboutCard?.classList.contains("open"))
+          if (!aboutCard?.classList.contains("open")) {
             document.body.classList.remove("popup-open");
+          }
         };
+
+        const githubUser = "rafiulrafi55";
+        let githubProfileLoaded = false;
+        const loadGithubProfile = () => {
+          if (githubProfileLoaded) {
+            return;
+          }
+          githubProfileLoaded = true;
+
+          const profileLoader = window.VeloraGithubProfile;
+          if (!profileLoader || typeof profileLoader.load !== "function") {
+            return;
+          }
+
+          profileLoader.load({
+            githubUser,
+            onData: (data) => {
+              if (aboutAvatar && data.avatar_url) {
+                aboutAvatar.src = data.avatar_url;
+              }
+              if (aboutName) {
+                aboutName.textContent = data.name || githubUser;
+              }
+              if (aboutHandle) {
+                aboutHandle.textContent = `@${data.login || githubUser}`;
+              }
+              if (aboutBio) {
+                aboutBio.textContent =
+                  data.bio ||
+                  "Building useful experiences with clean, modern code.";
+              }
+              if (aboutRepos) {
+                aboutRepos.textContent = String(data.public_repos ?? 0);
+              }
+              if (aboutFollowers) {
+                aboutFollowers.textContent = String(data.followers ?? 0);
+              }
+              if (aboutFollowing) {
+                aboutFollowing.textContent = String(data.following ?? 0);
+              }
+              if (aboutLocation) {
+                aboutLocation.textContent = `Location: ${data.location || "Bangladesh"}`;
+              }
+              if (contactEmail) {
+                contactEmail.textContent =
+                  data.email || "rafiulrafi55@gmail.com";
+              }
+              if (contactBlog) {
+                if (data.blog) {
+                  const blogUrl = data.blog.startsWith("http")
+                    ? data.blog
+                    : `https://${data.blog}`;
+                  contactBlog.innerHTML = `<a href="${blogUrl}" target="_blank" rel="noopener noreferrer">${data.blog}</a>`;
+                } else {
+                  contactBlog.textContent = "Website not provided";
+                }
+              }
+              if (contactLocation) {
+                contactLocation.textContent =
+                  data.location || "Location not public";
+              }
+              if (contactGithub) {
+                contactGithub.href =
+                  data.html_url || `https://github.com/${githubUser}`;
+              }
+            },
+            onFallback: () => {
+              if (aboutName) {
+                aboutName.textContent = "Rafiul";
+              }
+              if (aboutHandle) {
+                aboutHandle.textContent = "@rafiulrafi55";
+              }
+              if (aboutBio) {
+                aboutBio.textContent =
+                  "Lead Developer focused on reliable and user-friendly systems.";
+              }
+              if (aboutRepos) {
+                aboutRepos.textContent = "--";
+              }
+              if (aboutFollowers) {
+                aboutFollowers.textContent = "--";
+              }
+              if (aboutFollowing) {
+                aboutFollowing.textContent = "--";
+              }
+              if (aboutLocation) {
+                aboutLocation.textContent = "Location: Bangladesh";
+              }
+              if (contactEmail) {
+                contactEmail.textContent = "rafiulrafi55@gmail.com";
+              }
+              if (contactBlog) {
+                contactBlog.textContent = "Website not available";
+              }
+              if (contactLocation) {
+                contactLocation.textContent = "Bangladesh";
+              }
+            },
+          });
+        };
+
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("registered") === "1") {
+          successOverlay?.classList.add("visible");
+          history.replaceState(null, "", window.location.pathname);
+        }
+
+        fetch("auth-status.php", {
+          method: "GET",
+          cache: "no-store",
+          credentials: "same-origin",
+        })
+          .then((response) => (response.ok ? response.json() : null))
+          .then((data) => {
+            if (data && data.loggedIn === true) {
+              if (navAuthBtn) {
+                navAuthBtn.textContent = "Logout";
+                navAuthBtn.removeAttribute("onclick");
+                navAuthBtn.onclick = (event) => {
+                  event.preventDefault();
+                  openLogoutConfirm();
+                };
+              }
+
+              if (heroAuthBtn) {
+                heroAuthBtn.textContent = "Go to Dashboard";
+                heroAuthBtn.removeAttribute("onclick");
+                heroAuthBtn.onclick = () => {
+                  window.location.href = "dashboard.php";
+                };
+              }
+            }
+          })
+          .catch(() => {});
 
         if (aboutTrigger && aboutDropdown) {
           const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
           if (isMobile) {
             aboutTrigger.addEventListener("click", (event) => {
+              loadGithubProfile();
               event.stopPropagation();
               if (aboutCard?.classList.contains("open")) {
                 closeAboutCard();
@@ -1585,6 +2121,7 @@
 
             if (contactTrigger && contactDropdown) {
               contactTrigger.addEventListener("click", (event) => {
+                loadGithubProfile();
                 event.stopPropagation();
                 if (contactCard?.classList.contains("open")) {
                   closeContactCard();
@@ -1605,6 +2142,7 @@
             });
           } else {
             aboutDropdown.addEventListener("mouseenter", () => {
+              loadGithubProfile();
               openAboutCard();
               closeContactCard();
             });
@@ -1615,11 +2153,10 @@
 
             if (contactTrigger && contactDropdown) {
               contactDropdown.addEventListener("mouseenter", () => {
+                loadGithubProfile();
                 openContactCard();
                 closeAboutCard();
               });
-
-              contactDropdown.addEventListener("mouseleave", () => {});
 
               contactCard?.addEventListener("mouseenter", () => {
                 openContactCard();
@@ -1636,6 +2173,7 @@
               closeAboutCard();
               closeContactCard();
               featuresOverlay?.classList.remove("visible");
+              closeDonateModal();
               closeLogoutConfirm();
             }
           });
@@ -1645,6 +2183,7 @@
 
           if (footerAboutBtn) {
             footerAboutBtn.addEventListener("click", (event) => {
+              loadGithubProfile();
               event.preventDefault();
               openAboutCard();
               closeContactCard();
@@ -1654,6 +2193,7 @@
 
           if (footerContactBtn) {
             footerContactBtn.addEventListener("click", (event) => {
+              loadGithubProfile();
               event.preventDefault();
               openContactCard();
               closeAboutCard();
@@ -1662,95 +2202,7 @@
           }
         }
 
-        fetch(`https://api.github.com/users/${githubUser}`)
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("Failed to fetch profile");
-            }
-            return response.json();
-          })
-          .then((data) => {
-            if (aboutAvatar && data.avatar_url) {
-              aboutAvatar.src = data.avatar_url;
-            }
-            if (aboutName) {
-              aboutName.textContent = data.name || githubUser;
-            }
-            if (aboutHandle) {
-              aboutHandle.textContent = `@${data.login || githubUser}`;
-            }
-            if (aboutBio) {
-              aboutBio.textContent =
-                data.bio ||
-                "Building useful experiences with clean, modern code.";
-            }
-            if (aboutRepos) {
-              aboutRepos.textContent = String(data.public_repos ?? 0);
-            }
-            if (aboutFollowers) {
-              aboutFollowers.textContent = String(data.followers ?? 0);
-            }
-            if (aboutFollowing) {
-              aboutFollowing.textContent = String(data.following ?? 0);
-            }
-            if (aboutLocation) {
-              aboutLocation.textContent = `Location: ${data.location || "Bangladesh"}`;
-            }
-            if (contactEmail) {
-              contactEmail.textContent = data.email || "rafiulrafi55@gmail.com";
-            }
-            if (contactBlog) {
-              if (data.blog) {
-                const blogUrl = data.blog.startsWith("http")
-                  ? data.blog
-                  : `https://${data.blog}`;
-                contactBlog.innerHTML = `<a href="${blogUrl}" target="_blank" rel="noopener noreferrer">${data.blog}</a>`;
-              } else {
-                contactBlog.textContent = "Website not provided";
-              }
-            }
-            if (contactLocation) {
-              contactLocation.textContent =
-                data.location || "Location not public";
-            }
-            if (contactGithub) {
-              contactGithub.href =
-                data.html_url || `https://github.com/${githubUser}`;
-            }
-          })
-          .catch(() => {
-            if (aboutName) {
-              aboutName.textContent = "Rafiul";
-            }
-            if (aboutHandle) {
-              aboutHandle.textContent = "@rafiulrafi55";
-            }
-            if (aboutBio) {
-              aboutBio.textContent =
-                "Lead Developer focused on reliable and user-friendly systems.";
-            }
-            if (aboutRepos) {
-              aboutRepos.textContent = "--";
-            }
-            if (aboutFollowers) {
-              aboutFollowers.textContent = "--";
-            }
-            if (aboutFollowing) {
-              aboutFollowing.textContent = "--";
-            }
-            if (aboutLocation) {
-              aboutLocation.textContent = "Location: Bangladesh";
-            }
-            if (contactEmail) {
-              contactEmail.textContent = "rafiulrafi55@gmail.com";
-            }
-            if (contactBlog) {
-              contactBlog.textContent = "Website not available";
-            }
-            if (contactLocation) {
-              contactLocation.textContent = "Bangladesh";
-            }
-          });
+        setTimeout(loadGithubProfile, 1200);
 
         const mobileQuery = window.matchMedia("(max-width: 768px)");
         const animatedElements = document.querySelectorAll(
@@ -1815,7 +2267,6 @@
       })();
     </script>
 
-    <!-- Cookie consent banner -->
     <div
       class="cookie-banner"
       id="cookie-banner"
@@ -1840,7 +2291,6 @@
         const banner = document.getElementById("cookie-banner");
 
         if (!localStorage.getItem(STORAGE_KEY)) {
-          // Slight delay so the slide-in animation is visible
           setTimeout(() => banner.classList.add("visible"), 600);
         }
 

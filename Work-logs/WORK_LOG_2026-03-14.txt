@@ -1,0 +1,77 @@
+WGMS Work Log - 2026-03-14
+
+Project root: C:\CSIT\Projects\WGMS
+
+1) Frontend optimization and asset sharing
+- Added shared GitHub profile loader: assets/js/github-profile.js.
+- Added shared profile card stylesheet: assets/css/profile-cards.css.
+- Refactored dashboard.html to use shared JS/CSS and lazy-load profile data.
+- Refactored index.html to use lazy GitHub loading and fixed broken script structure after merge issues.
+- Restored missing modal/event wiring on index (features modal, donate modal, bKash interactions, overlay handlers).
+
+2) Data and encoding consistency
+- Set MySQL connection charset to utf8mb4 in config.php.
+
+3) Email verification onboarding flow
+- Changed registration flow so account is NOT created immediately after sign-up.
+- Added pending registration storage with token + expiration:
+  - pending_registrations table is created on demand by backend code.
+- Verification email now includes a secure tokenized link.
+- Added verify-email.php endpoint:
+  - Validates token and expiry.
+  - Creates final user record in registration only after successful link visit.
+  - Removes consumed pending record.
+  - Redirects to signin with registered=1 on success.
+
+4) SMTP integration for verification email
+- Replaced PHP mail() usage in signup verification flow with existing SMTP utility.
+- Reused existing project SMTP stack:
+  - mailer.php (sendSmtpEmail)
+  - smtp-config.php (existing SMTP settings)
+
+5) Legacy MySQL compatibility fix
+- Resolved MySQL/InnoDB key length error (max key length 767 bytes) for utf8mb4 indexes.
+- Updated pending_registrations indexed fields to 191-length where required:
+  - email VARCHAR(191)
+  - adminKey VARCHAR(191)
+
+6) Donation and feature-modal UX work
+- Added and/or restored index donation modal flow and controls:
+  - Open/close behavior, overlay close, and keyboard close integration.
+  - bKash quick actions (copy number + open bKash site button).
+  - Donation status feedback messages for copy success/failure states.
+- Restored/maintained features modal interactions from the hero section.
+
+7) Forgot password backend flow (OTP)
+- Implemented/updated forgot-password API flow in forgot-password.php:
+  - OTP request action and OTP reset action handling.
+  - On-demand table creation for password_reset_otps.
+  - OTP hashing, expiry handling, attempt counting, and OTP consumption.
+  - Rate limiting by email and request IP.
+  - Password reset write-back and post-reset confirmation email.
+- Forgot-password flow reuses SMTP delivery via sendSmtpEmail.
+
+8) Forgot password frontend integration (signin)
+- Added integrated "Forgot Password" popup flow in signin.html.
+- Added step-based UI (request OTP -> reset password) with client-side state handling.
+- Added resend cooldown UX and status messaging for success/error feedback.
+- Wired popup actions to backend endpoints and handled responses in-page.
+
+9) Validation completed
+- No syntax/editor errors after final changes in:
+  - login-validation.php
+  - verify-email.php
+  - signup.html
+  - dashboard.html
+  - index.html
+  - assets/js/github-profile.js
+  - assets/css/profile-cards.css
+- PHP lint checks passed for updated backend files.
+
+Final state summary (2026-03-14)
+- Signup now requires email verification before account creation.
+- Verification email delivery uses existing SMTP configuration.
+- Index and dashboard profile loading are optimized via shared assets and deferred fetch behavior.
+- Pending registration schema is compatible with older MySQL key limits.
+- Donation modal interactions and bKash helper actions are in place on index.
+- Forgot-password OTP reset flow is available from signin with SMTP-backed emails.
