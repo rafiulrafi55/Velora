@@ -1580,12 +1580,14 @@
     </div>
 
     <nav>
-      <div class="logo" onclick="window.location.href = 'home.php'">Velora</div>
+      <div class="logo" onclick="window.location.href = 'index.html'">
+        Velora
+      </div>
 
       <ul>
         <li
           id="nav-dashboard-link"
-          onclick="window.location.href = 'dashboard.php'"
+          onclick="window.location.href = 'dashboard.html'"
           style="display: none"
         >
           Dashboard
@@ -1787,6 +1789,8 @@
     </footer>
 
     <script src="assets/js/github-profile.js"></script>
+    <!-- Firebase App (modular) -->
+    <script type="module" src="assets/js/firebase-app.js"></script>
     <script>
       (() => {
         const successOverlay = document.getElementById("success-overlay");
@@ -1832,8 +1836,10 @@
           donateOverlay?.classList.remove("visible");
         };
 
+        // Remove PHP logout, use Firebase signOut (to be implemented in next step)
         logoutConfirmYes?.addEventListener("click", () => {
-          window.location.href = "logout.php?redirect=index.html";
+          // signOut logic will be added after Firebase integration
+          window.location.href = "index.html";
         });
 
         logoutConfirmNo?.addEventListener("click", closeLogoutConfirm);
@@ -2076,33 +2082,8 @@
           history.replaceState(null, "", window.location.pathname);
         }
 
-        fetch("auth-status.php", {
-          method: "GET",
-          cache: "no-store",
-          credentials: "same-origin",
-        })
-          .then((response) => (response.ok ? response.json() : null))
-          .then((data) => {
-            if (data && data.loggedIn === true) {
-              if (navAuthBtn) {
-                navAuthBtn.textContent = "Logout";
-                navAuthBtn.removeAttribute("onclick");
-                navAuthBtn.onclick = (event) => {
-                  event.preventDefault();
-                  openLogoutConfirm();
-                };
-              }
-
-              if (heroAuthBtn) {
-                heroAuthBtn.textContent = "Go to Dashboard";
-                heroAuthBtn.removeAttribute("onclick");
-                heroAuthBtn.onclick = () => {
-                  window.location.href = "dashboard.php";
-                };
-              }
-            }
-          })
-          .catch(() => {});
+        // TODO: Replace PHP auth-status with Firebase Auth state check
+        // Firebase Auth integration will update navAuthBtn and heroAuthBtn based on user state
 
         if (aboutTrigger && aboutDropdown) {
           const isMobile = window.matchMedia("(max-width: 768px)").matches;

@@ -188,7 +188,9 @@
     </div>
 
     <nav>
-      <div class="logo" onclick="window.location.href = 'home.php'">Velora</div>
+      <div class="logo" onclick="window.location.href = 'index.html'">
+        Velora
+      </div>
 
       <ul>
         <li onclick="window.location.href = 'index.html'">Home</li>
@@ -295,11 +297,13 @@
         document.getElementById("logout-btn").addEventListener("click", () => {
           logoutOverlay.classList.add("visible");
         });
-        document
-          .getElementById("logout-confirm")
-          .addEventListener("click", () => {
-            window.location.href = "logout.php?redirect=index.html";
-          });
+          import { auth } from "./assets/js/firebase-app.js";
+          import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+          document.getElementById("logout-confirm").addEventListener("click", () => {
+              signOut(auth).then(() => {
+                window.location.href = "index.html";
+              });
+            });
         document
           .getElementById("logout-cancel")
           .addEventListener("click", () => {
@@ -313,11 +317,7 @@
           if (e.key === "Escape") logoutOverlay.classList.remove("visible");
         });
 
-        fetch("auth-status.php", {
-          method: "GET",
-          cache: "no-store",
-          credentials: "same-origin",
-        })
+        // TODO: Use Firebase Auth for login state
           .then((response) => {
             if (!response.ok) throw new Error("Auth check failed");
             return response.json();
@@ -331,6 +331,14 @@
           })
           .catch(() => {
             window.location.replace("index.html");
+          });
+          // Firebase Auth session check
+          onAuthStateChanged(auth, (user) => {
+            if (!user) {
+              window.location.replace("index.html");
+            } else {
+              document.body.classList.remove("auth-pending");
+            }
           });
 
         const aboutDropdown = document.getElementById("about-dropdown");

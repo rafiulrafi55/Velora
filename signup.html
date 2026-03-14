@@ -385,11 +385,7 @@
         <span class="banner-icon">&#9888;</span>
         <span id="server-error-msg"></span>
       </div>
-      <form
-        action="login-validation.php"
-        method="post"
-        onsubmit="return handleSubmit(event);"
-      >
+      <form id="signup-form" action="#" method="post" autocomplete="off">
         <input type="hidden" name="auth_action" value="register" />
         <input type="hidden" id="csrf_token" name="csrf_token" value="" />
         <div class="section-title full-row">Profile</div>
@@ -727,82 +723,77 @@
         );
       }
 
-      function handleSubmit(e) {
-        const checks = [
-          {
-            id: "name",
-            isEmpty: () => document.getElementById("name").value.trim() === "",
-          },
-          {
-            id: "email",
-            isEmpty: () =>
-              !document.getElementById("email").checkValidity() ||
-              document.getElementById("email").value.trim() === "",
-          },
-          {
-            id: "country_code",
-            isEmpty: () => document.getElementById("country_code").value === "",
-          },
-          {
-            id: "custom_code",
-            isEmpty: () =>
-              document.getElementById("country_code").value === "custom" &&
-              document.getElementById("custom_code").value.trim() === "",
-          },
-          {
-            id: "phone",
-            isEmpty: () =>
-              !/^\d{10}$/.test(document.getElementById("phone").value.trim()),
-          },
-          {
-            id: "role",
-            isEmpty: () => document.getElementById("role").value === "",
-          },
-          {
-            id: "admin_key",
-            isEmpty: () =>
-              document.getElementById("role").value === "admin" &&
-              document.getElementById("admin_key").value.trim() === "",
-          },
-          {
-            id: "password",
-            isEmpty: () => document.getElementById("password").value === "",
-          },
-          {
-            id: "confirm",
-            isEmpty: () =>
-              document.getElementById("confirm").value === "" ||
-              document.getElementById("password").value !==
-                document.getElementById("confirm").value,
-          },
-          {
-            id: "terms",
-            isEmpty: () => !document.getElementById("terms").checked,
-          },
-          {
-            id: "captcha_answer",
-            isEmpty: () =>
-              document.getElementById("captcha_answer").value.trim() === "" ||
-              parseInt(document.getElementById("captcha_answer").value) !==
-                parseInt(document.getElementById("captcha_expected").value),
-          },
-        ];
+      // Firebase signup logic
+      import { auth, db } from "./assets/js/firebase-app.js";
+      import {
+        createUserWithEmailAndPassword,
+        updateProfile,
+        sendEmailVerification,
+      } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+      import {
+        ref,
+        set,
+      } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-        document
-          .querySelectorAll(".field-error")
-          .forEach((el) => el.classList.remove("field-error"));
-
-        const firstInvalid = checks.find((c) => c.isEmpty());
-        if (firstInvalid) {
+      document
+        .getElementById("signup-form")
+        .addEventListener("submit", async function (e) {
           e.preventDefault();
-          const el = document.getElementById(firstInvalid.id);
-          el.closest(".form-group, .check-row").classList.add("field-error");
-          el.scrollIntoView({ behavior: "smooth", block: "center" });
-          el.focus();
-          return false;
-        }
-        return true;
-      }
+          // Validate form using existing validateForm()
+          if (!validateForm()) return;
+
+          const name = document.getElementById("name").value.trim();
+          const email = document.getElementById("email").value.trim();
+          const countryCode = document.getElementById("country_code").value;
+          const customCode = document
+            .getElementById("custom_code")
+            .value.trim();
+          const phone = document.getElementById("phone").value.trim();
+          const role = document.getElementById("role").value;
+          const adminKey = document.getElementById("admin_key").value.trim();
+          const password = document.getElementById("password").value;
+
+          const serverBanner = document.getElementById("server-error-banner");
+          const serverMsg = document.getElementById("server-error-msg");
+          serverBanner.classList.add("hidden");
+          serverBanner.classList.remove("success");
+          serverMsg.textContent = "";
+
+          try {
+            // Create user in Firebase Auth
+            const userCredential = await createUserWithEmailAndPassword(
+              auth,
+              email,
+              password,
+            );
+            await updateProfile(userCredential.user, { displayName: name });
+            await sendEmailVerification(userCredential.user);
+
+            // Save extra user info in Realtime Database
+            await set(ref(db, "users/" + userCredential.user.uid), {
+              name,
+              email,
+              countryCode: countryCode === "custom" ? customCode : countryCode,
+              phone,
+              role,
+              adminKey: role === "admin" ? adminKey : null,
+              createdAt: new Date().toISOString(),
+            });
+
+            document.getElementById("success-overlay").classList.add("visible");
+          } catch (error) {
+            let msg = "Registration failed. Please try again.";
+            if (error.code === "auth/email-already-in-use") {
+              msg = "This email is already registered.";
+            } else if (error.code === "auth/invalid-email") {
+              msg = "Invalid email address.";
+            } else if (error.code === "auth/weak-password") {
+              msg = "Password is too weak.";
+            }
+            serverBanner.classList.remove("hidden");
+            serverMsg.textContent = msg;
+          }
+        });
 
       generateCaptcha();
 
@@ -868,6 +859,8 @@
     </script>
 
     <script>
+      // TODO: Use Firebase Auth for login state and CSRF is not needed for Firebase
+      // Redirect to dashboard.html if already logged in (to be implemented)
       fetch("auth-status.php", {
         method: "GET",
         cache: "no-store",
@@ -876,23 +869,12 @@
         .then((r) => (r.ok ? r.json() : null))
         .then((data) => {
           if (data && data.loggedIn === true) {
-            window.location.replace("dashboard.php");
-          }
-        })
-        .catch(() => {});
-
-      fetch("csrf-token.php", {
-        method: "GET",
-        cache: "no-store",
-        credentials: "same-origin",
-      })
-        .then((r) => (r.ok ? r.json() : null))
-        .then((data) => {
-          if (data && data.csrfToken) {
-            document.getElementById("csrf_token").value = data.csrfToken;
+            window.location.replace("dashboard.html");
           }
         })
         .catch(() => {});
     </script>
   </body>
+  <!-- Firebase App (modular) -->
+  <script type="module" src="assets/js/firebase-app.js"></script>
 </html>
