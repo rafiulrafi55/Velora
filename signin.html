@@ -103,6 +103,69 @@
         box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
       }
 
+      .password-input-wrapper {
+        position: relative;
+      }
+
+
+      .password-input-wrapper input {
+        padding-right: 40px;
+      }
+
+      .toggle-password {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-60%);
+        background: transparent;
+        border: none;
+        padding: 0;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #6b7280;
+        z-index: 2;
+        pointer-events: auto;
+      }
+
+      .toggle-password:focus,
+      .toggle-password:focus-visible {
+        outline: none;
+        box-shadow: none;
+        background: transparent;
+      }
+
+      /* remove mobile blue highlight on tap */
+      .toggle-password {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      /* Keep the icon appearance consistent on hover/active */
+      .toggle-password:hover {
+        background: transparent;
+        color: #6b7280;
+      }
+
+      .toggle-password:active {
+        background: transparent;
+      }
+
+      .toggle-password:hover .icon,
+      .toggle-password:active .icon {
+        fill: #6b7280;
+        opacity: 1;
+      }
+
+      .toggle-password .icon {
+        width: 20px;
+        height: 20px;
+        fill: currentColor;
+        display: block;
+      }
+
       .hint {
         color: #6b7280;
         font-size: 12px;
@@ -525,14 +588,31 @@
           >
         </div>
         <div class="form-group">
-          <label for="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Enter your password"
-            required
-          />
+            <label for="password">Password</label>
+            <div class="password-input-wrapper">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter your password"
+                required
+              />
+              <button
+                type="button"
+                id="toggle-password"
+                class="toggle-password"
+                aria-label="Show password"
+                aria-pressed="false"
+              >
+                <svg class="icon icon-show" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                  <path d="M12 5c-7 0-11 6-11 7s4 7 11 7 11-6 11-7-4-7-11-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/>
+                  <circle cx="12" cy="12" r="2.5"/>
+                </svg>
+                <svg class="icon icon-hide hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                  <path d="M2 2l20 20-1.4 1.4L17.4 19C15.6 19.8 13.9 20 12 20c-7 0-11-6-11-7 0-.8.4-1.9 1-3l-1-1L2 2zM7.8 9.2C8.4 8.6 9.1 8 10 7.6L8.6 6.2C7.4 6.8 6.4 7.8 5.6 9.1c1-1 2.4-1.5 3.2-1.9zM12 8a4 4 0 0 1 4 4c0 .6-.1 1.1-.3 1.6l-1.5-1.5A2 2 0 0 0 12 10a2 2 0 0 0-1.7.9L8.8 9.4C9.7 8.6 10.8 8 12 8z"/>
+                </svg>
+              </button>
+            </div>
         </div>
 
 
@@ -577,16 +657,27 @@
           // Optionally check for email verification: if (!userCredential.user.emailVerified) { ... }
           window.location.replace("dashboard.html");
         } catch (error) {
-          let msg = "Login failed. Please try again.";
-          if (error.code === "auth/user-not-found" || error.code === "auth/wrong-password") {
-            msg = "Invalid email or password.";
-          } else if (error.code === "auth/invalid-email") {
-            msg = "Invalid email address.";
-          } else if (error.code === "auth/too-many-requests") {
-            msg = "Too many failed attempts. Please try again later.";
-          }
-          errorBanner.classList.remove("hidden");
-          errorMsg.textContent = msg;
+            console.error("Sign-in error:", error);
+            let msg = "Login failed. Please try again.";
+            // Try to determine a normalized code from FirebaseError or error.message text
+            let code = (error && error.code) || '';
+            if (!code && error && error.message) {
+              const m = String(error.message).toLowerCase();
+              if (m.includes('invalid_password') || m.includes('invalid password') || m.includes('wrong-password') || m.includes('wrong password') || m.includes('invalid credential') || m.includes('invalid-credential')) code = 'auth/wrong-password';
+              else if (m.includes('email_not_found') || m.includes('email not found') || m.includes('user-not-found') || m.includes('no user record')) code = 'auth/user-not-found';
+              else if (m.includes('invalid_email') || m.includes('invalid email') || m.includes('invalid-email')) code = 'auth/invalid-email';
+              else if (m.includes('too many requests') || m.includes('too_many_attempts') || m.includes('too many attempts')) code = 'auth/too-many-requests';
+            }
+            if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') msg = 'Wrong password or email';
+            else if (code === 'auth/user-not-found') msg = 'No account found with that email.';
+            else if (code === 'auth/invalid-email') msg = 'Invalid email address.';
+            else if (code === 'auth/too-many-requests') msg = 'Too many failed attempts. Please try again later.';
+            else if (error && error.message) {
+              // Fallback: show the server message without Firebase prefix and auth code suffix
+              msg = String(error.message).replace(/^Firebase:\s*/i, '').replace(/\s*\(auth\/.*\)$/, '').trim();
+            }
+            errorBanner.classList.remove('hidden');
+            errorMsg.textContent = msg;
         }
       });
 
@@ -596,6 +687,23 @@
       const forgotStatus = document.getElementById("forgot-status");
       const forgotStatusText = document.getElementById("forgot-status-text");
       const forgotSendBtn = document.getElementById("forgot-send-btn");
+
+      // Password visibility toggle
+      const togglePasswordBtn = document.getElementById('toggle-password');
+      if (togglePasswordBtn) {
+        togglePasswordBtn.addEventListener('click', function () {
+          const pw = document.getElementById('password');
+          if (!pw) return;
+          pw.type = pw.type === 'password' ? 'text' : 'password';
+          const isNowVisible = pw.type === 'text';
+          togglePasswordBtn.setAttribute('aria-pressed', String(isNowVisible));
+          togglePasswordBtn.setAttribute('aria-label', isNowVisible ? 'Hide password' : 'Show password');
+          const showIcon = togglePasswordBtn.querySelector('.icon-show');
+          const hideIcon = togglePasswordBtn.querySelector('.icon-hide');
+          if (showIcon) showIcon.classList.toggle('hidden', isNowVisible);
+          if (hideIcon) hideIcon.classList.toggle('hidden', !isNowVisible);
+        });
+      }
 
       window.openForgotPopup = function openForgotPopup() {
         forgotOverlay.classList.add("visible");
