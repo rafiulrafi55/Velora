@@ -1500,10 +1500,7 @@
               <ul class="donate-side-list">
                 <li class="donate-side-item">
                   <strong>Email reliability</strong>
-                  <span
-                    >SMTP stability, OTP delivery, and notification
-                    improvements.</span
-                  >
+                  <span>SMTP stability, notification improvements.</span>
                 </li>
                 <li class="donate-side-item">
                   <strong>Event workflow upgrades</strong>
@@ -1588,7 +1585,7 @@
         <li
           id="nav-dashboard-link"
           onclick="window.location.href = 'dashboard.html'"
-          style="display: none"
+          style="display: none; visibility: hidden;"
         >
           Dashboard
         </li>
@@ -1688,6 +1685,7 @@
       <button
         id="nav-auth-btn"
         class="login-btn"
+        style="visibility: hidden;"
         onclick="window.location.href = 'signin.html'"
       >
         Login
@@ -1711,6 +1709,7 @@
           <button
             id="hero-auth-btn"
             class="signup-btn"
+            style="visibility: hidden;"
             onclick="window.location.href = 'signup.html'"
           >
             Make an Account
@@ -1791,49 +1790,112 @@
     <script src="assets/js/github-profile.js"></script>
     <!-- Firebase App (modular) -->
     <script type="module" src="assets/js/firebase-app.js"></script>
-    <script>
-      (() => {
-        const successOverlay = document.getElementById("success-overlay");
-        const navAuthBtn = document.getElementById("nav-auth-btn");
-        const heroAuthBtn = document.getElementById("hero-auth-btn");
-        const featuresOverlay = document.getElementById("features-overlay");
-        const donateOverlay = document.getElementById("donate-overlay");
-        const logoutConfirmOverlay = document.getElementById(
-          "logout-confirm-overlay",
-        );
-        const logoutConfirmYes = document.getElementById("logout-confirm-yes");
-        const logoutConfirmNo = document.getElementById("logout-confirm-no");
-        const exploreFeaturesBtn = document.getElementById(
-          "explore-features-btn",
-        );
-        const featuresCloseBtn = document.getElementById("features-close-btn");
-        const openDonateBtn = document.getElementById("open-donate-btn");
-        const donateCloseBtn = document.getElementById("donate-close-btn");
-        const donateCloseSecondaryBtn = document.getElementById(
-          "donate-close-secondary-btn",
-        );
-        const copyBkashBtn = document.getElementById("copy-bkash-btn");
-        const openBkashSiteBtn = document.getElementById("open-bkash-site-btn");
-        const donateStatus = document.getElementById("donate-status");
-        const donateBkashBox = document.getElementById("donate-bkash-box");
-        const donateBkashNumber = document.getElementById(
-          "donate-bkash-number",
-        );
+    <script type="module">
+      import { auth } from "./assets/js/firebase-app.js";
+      import {
+        onAuthStateChanged,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 
-        const openLogoutConfirm = () => {
-          logoutConfirmOverlay?.classList.add("visible");
-        };
+      const navDashboardLink = document.getElementById("nav-dashboard-link");
+      const navAuthBtn = document.getElementById("nav-auth-btn");
+      const heroAuthBtn = document.getElementById("hero-auth-btn");
 
-        const closeLogoutConfirm = () => {
-          logoutConfirmOverlay?.classList.remove("visible");
-        };
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          // Show dashboard link, hide login button
+          if (navDashboardLink) navDashboardLink.style.display = "inline-block";
+          if (navAuthBtn) {
+            navAuthBtn.textContent = "Logout";
+            navAuthBtn.onclick = async () => {
+              await signOut(auth);
+              window.location.reload();
+            };
+          }
+          if (heroAuthBtn) {
+            heroAuthBtn.textContent = "Go to Dashboard";
+            heroAuthBtn.onclick = () => {
+              window.location.href = "dashboard.html";
+            };
+          }
+        } else {
+          // Hide dashboard link, show login button
+          if (navDashboardLink) navDashboardLink.style.display = "none";
+          if (navAuthBtn) {
+            navAuthBtn.textContent = "Login";
+            navAuthBtn.onclick = () => {
+              window.location.href = "signin.html";
+            };
+          }
+          if (heroAuthBtn) {
+            heroAuthBtn.textContent = "Make an Account";
+            heroAuthBtn.onclick = () => {
+              window.location.href = "signup.html";
+            };
+          }
+        }
+      });
+    </script>
+    <script type="module">
+      import { auth } from "./assets/js/firebase-app.js";
+      import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 
-        const openDonateModal = () => {
-          donateOverlay?.classList.add("visible");
-        };
+      const navDashboardLink = document.getElementById("nav-dashboard-link");
+      const navAuthBtn = document.getElementById("nav-auth-btn");
+      const heroAuthBtn = document.getElementById("hero-auth-btn");
 
-        const closeDonateModal = () => {
-          donateOverlay?.classList.remove("visible");
+      // Hide both immediately to prevent flicker
+      if (navDashboardLink) {
+        navDashboardLink.style.display = "none";
+        navDashboardLink.style.visibility = "hidden";
+      }
+      if (navAuthBtn) {
+        navAuthBtn.style.visibility = "hidden";
+      }
+
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          if (navDashboardLink) {
+            navDashboardLink.style.display = "inline-block";
+            navDashboardLink.style.visibility = "visible";
+          }
+          if (navAuthBtn) {
+            navAuthBtn.textContent = "Logout";
+            navAuthBtn.onclick = async () => {
+              await signOut(auth);
+              window.location.reload();
+            };
+            navAuthBtn.style.visibility = "visible";
+          }
+          if (heroAuthBtn) {
+            heroAuthBtn.textContent = "Go to Dashboard";
+            heroAuthBtn.onclick = () => {
+              window.location.href = "dashboard.html";
+            };
+            heroAuthBtn.style.visibility = "visible";
+          }
+        } else {
+          if (navDashboardLink) {
+            navDashboardLink.style.display = "none";
+            navDashboardLink.style.visibility = "hidden";
+          }
+          if (navAuthBtn) {
+            navAuthBtn.textContent = "Login";
+            navAuthBtn.onclick = () => {
+              window.location.href = "signin.html";
+            };
+            navAuthBtn.style.visibility = "visible";
+          }
+          if (heroAuthBtn) {
+            heroAuthBtn.textContent = "Make an Account";
+            heroAuthBtn.onclick = () => {
+              window.location.href = "signup.html";
+            };
+            heroAuthBtn.style.visibility = "visible";
+          }
+        }
+      });
+    </script>
         };
 
         // Remove PHP logout, use Firebase signOut (to be implemented in next step)

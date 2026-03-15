@@ -1,0 +1,639 @@
+<div id="guest-modal-overlay" class="modal-overlay">
+  <div class="modal-box">
+    <h2>Add Guest</h2>
+    <form id="guest-form" autocomplete="off">
+      <div style="display: flex; justify-content: flex-end; margin-bottom: 8px">
+        <label
+          for="import-contacts"
+          style="color: #f59e0b; font-size: 13px; cursor: pointer"
+        >
+          <span style="text-decoration: underline"
+            >Import from Contacts Backup</span
+          >
+          <input
+            type="file"
+            id="import-contacts"
+            accept=".csv,.json"
+            style="display: none"
+          />
+        </label>
+      </div>
+      <!-- Batch Import Modal -->
+      <div id="batch-import-modal" class="modal-overlay">
+        <div class="modal-box" style="max-width: 500px; text-align: center">
+          <h2>Batch Import Preview</h2>
+          <div style="margin-bottom: 12px">
+            Set a role for all imported guests:
+          </div>
+          <select
+            id="batch-import-role"
+            style="
+              width: 100%;
+              padding: 10px 8px;
+              border-radius: 8px;
+              background: #1e293b;
+              color: #fff;
+              border: 1px solid #2a3a52;
+              font-size: 15px;
+              margin-bottom: 16px;
+            "
+          >
+            <option value="Chief guest">Chief guest</option>
+            <option value="Friend">Friend</option>
+            <option value="Family">Family</option>
+            <option value="Other">Other</option>
+          </select>
+          <div
+            id="batch-import-preview"
+            style="max-height: 220px; overflow-y: auto; margin-bottom: 12px"
+          ></div>
+          <div
+            style="
+              display: flex;
+              gap: 10px;
+              justify-content: center;
+              margin-top: 10px;
+            "
+          >
+            <button
+              id="batch-import-confirm"
+              class="add-btn"
+              style="width: 48%"
+            >
+              Confirm Import
+            </button>
+            <button
+              id="batch-import-cancel"
+              class="cancel-btn"
+              style="width: 48%"
+            >
+              Cancel
+            </button>
+          </div>
+          <div id="batch-import-status" class="modal-status"></div>
+        </div>
+      </div>
+      <label for="guest-name">Name</label>
+      <input
+        type="text"
+        id="guest-name"
+        name="guest_name"
+        required
+        maxlength="60"
+        placeholder="Full Name"
+      />
+      <label for="guest-email">Email</label>
+      <input
+        type="email"
+        id="guest-email"
+        name="guest_email"
+        required
+        maxlength="80"
+        placeholder="Email Address"
+      />
+      <label for="guest-phone">Phone</label>
+      <input
+        type="tel"
+        id="guest-phone"
+        name="guest_phone"
+        maxlength="20"
+        placeholder="Phone Number"
+      />
+      <label for="guest-role">Role</label>
+      <select id="guest-role" name="guest_role" required>
+        <option value="Chief guest">Chief guest</option>
+        <option value="Friend">Friend</option>
+        <option value="Family">Family</option>
+        <option value="Other">Other</option>
+      </select>
+      <div class="modal-actions">
+        <button type="submit" class="add-btn" style="width: 48%">Add</button>
+        <button
+          type="button"
+          class="cancel-btn"
+          id="cancel-modal-btn"
+          style="width: 48%"
+        >
+          Cancel
+        </button>
+      </div>
+      <div id="modal-status" class="modal-status"></div>
+    </form>
+  </div>
+</div>
+<style>
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+  }
+  .modal-overlay.visible {
+    display: flex;
+  }
+  .modal-box {
+    background: #13263f;
+    border-radius: 14px;
+    padding: 32px 28px 22px 28px;
+    max-width: 370px;
+    width: 95%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    text-align: left;
+  }
+  .modal-box h2 {
+    color: #ffffff;
+    font-size: 22px;
+    margin-bottom: 18px;
+    text-align: center;
+  }
+  .modal-box label {
+    color: #fff;
+    font-size: 14px;
+    margin-bottom: 4px;
+    display: block;
+    margin-top: 10px;
+  }
+  .modal-box input,
+  .modal-box select {
+    width: 100%;
+    padding: 11px;
+    border-radius: 8px;
+    border: 1px solid #2a3a52;
+    font-size: 15px;
+    background: #1e293b;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+  .modal-box input:focus,
+  .modal-box select:focus {
+    outline: none;
+    border-color: #f59e0b;
+  }
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+  }
+  .cancel-btn {
+    background: #374151;
+    color: #fff;
+    border: 1px solid #2a3a52;
+    border-radius: 8px;
+    padding: 8px 0;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition:
+      background 0.2s,
+      color 0.2s;
+  }
+  .cancel-btn:hover {
+    background: #f59e0b;
+    color: #131212;
+  }
+  .modal-status {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #f59e0b;
+    text-align: center;
+    min-height: 18px;
+  }
+</style>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Guest List | Velora</title>
+    <link rel="stylesheet" href="assets/css/profile-cards.css" />
+    <style>
+      body {
+        background: #0d1b2a;
+        color: #fff;
+        font-family: Arial, Helvetica, sans-serif;
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 40px 0;
+      }
+      .container {
+        background: #13263f;
+        border: 1px solid #2a3a52;
+        border-radius: 14px;
+        padding: 36px 32px;
+        max-width: 700px;
+        width: 98%;
+        margin-top: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 18px;
+        color: #ffffff;
+      }
+      .actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+      }
+      .add-btn {
+        background: #f59e0b;
+        color: #131212;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 22px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          color 0.2s;
+        height: 40px;
+        line-height: 1.2;
+      }
+      .add-btn:hover {
+        background: #d97706;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #1e293b;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      th,
+      td {
+        padding: 13px 10px;
+        text-align: left;
+      }
+      th {
+        background: #22324b;
+        color: #f59e0b;
+        font-size: 15px;
+      }
+      th.name-label,
+      th.phone-label {
+        color: #fff;
+      }
+      tr:nth-child(even) {
+        background: #192133;
+      }
+      tr:nth-child(odd) {
+        background: #1e293b;
+      }
+      td {
+        color: #fff;
+        font-size: 15px;
+      }
+      #guest-table-body tr {
+        cursor: pointer;
+      }
+      #guest-table-body tr .delete-guest-btn {
+        cursor: pointer;
+      }
+      .empty-row td {
+        text-align: center;
+        color: #94a3b8;
+        font-style: italic;
+      }
+      .back-btn {
+        display: inline-block;
+        background: #374151;
+        color: #fff;
+        border: 1px solid #2a3a52;
+        border-radius: 8px;
+        padding: 8px 22px;
+        font-size: 15px;
+        font-weight: bold;
+        text-decoration: none;
+        margin-bottom: 0;
+        margin-right: 0;
+        height: 40px;
+        line-height: 1.2;
+        transition:
+          background 0.2s,
+          color 0.2s;
+        cursor: pointer;
+        box-sizing: border-box;
+      }
+      .back-btn:hover {
+        background: #f59e0b;
+        color: #131212;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Guest List</h1>
+      <div class="actions">
+        <a href="dashboard.html" class="back-btn">Dashboard</a>
+        <button class="add-btn" id="add-guest-btn">Add Guest</button>
+        <button
+          class="cancel-btn"
+          id="delete-all-guests-btn"
+          style="
+            margin-left: 10px;
+            background: #e11d48;
+            padding: 10px 32px;
+            min-width: 110px;
+            font-size: 16px;
+            letter-spacing: 0.5px;
+          "
+        >
+          Delete All
+        </button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th class="name-label">Name</th>
+            <th>Email</th>
+            <th class="phone-label">Phone</th>
+            <th>Role</th>
+          </tr>
+        </thead>
+        <tbody id="guest-table-body">
+          <tr class="empty-row">
+            <td colspan="4">Loading guests...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <script type="module">
+      import { db } from "./assets/js/firebase-app.js";
+      import {
+        ref,
+        onValue,
+        push,
+        remove,
+      } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+      import { set } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+
+      // --- Batch Import with Preview and Role Selection ---
+      const importInput = document.getElementById("import-contacts");
+      const batchImportModal = document.getElementById("batch-import-modal");
+      const batchImportRole = document.getElementById("batch-import-role");
+      const batchImportPreview = document.getElementById(
+        "batch-import-preview",
+      );
+      const batchImportConfirm = document.getElementById(
+        "batch-import-confirm",
+      );
+      const batchImportCancel = document.getElementById("batch-import-cancel");
+      const batchImportStatus = document.getElementById("batch-import-status");
+      let batchContacts = [];
+
+      importInput.addEventListener("change", async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        batchImportStatus.textContent = "";
+        batchContacts = [];
+        try {
+          const text = await file.text();
+          if (file.name.endsWith(".json")) {
+            const data = JSON.parse(text);
+            if (Array.isArray(data.contacts)) {
+              batchContacts = data.contacts.map((c) => ({
+                name: c.name || "",
+                email: c.email || "",
+                phone: c.phone || "",
+                role: c.role || "Other",
+              }));
+            } else if (Array.isArray(data)) {
+              batchContacts = data.map((c) => ({
+                name: c.name || "",
+                email: c.email || "",
+                phone: c.phone || "",
+                role: c.role || "Other",
+              }));
+            }
+          } else if (file.name.endsWith(".csv")) {
+            const lines = text.split(/\r?\n/).filter(Boolean);
+            const header = lines[0].split(",");
+            const getCol = (colName) =>
+              header.findIndex(
+                (h) => h.trim().toLowerCase() === colName.toLowerCase(),
+              );
+            const firstNameIdx = getCol("First Name");
+            const lastNameIdx = getCol("Last Name");
+            const emailIdx = getCol("E-mail 1 - Value");
+            const phoneIdx = getCol("Phone 1 - Value");
+            for (let i = 1; i < lines.length; i++) {
+              const cols = lines[i].split(",");
+              const name = [cols[firstNameIdx], cols[lastNameIdx]]
+                .filter(Boolean)
+                .join(" ")
+                .trim();
+              const email =
+                emailIdx !== -1 ? (cols[emailIdx] || "").trim() : "";
+              const phone =
+                phoneIdx !== -1 ? (cols[phoneIdx] || "").trim() : "";
+              if (name) {
+                batchContacts.push({
+                  name,
+                  email,
+                  phone,
+                  role: batchImportRole.value || "Other",
+                });
+              }
+            }
+          }
+          if (!batchContacts.length) {
+            batchImportStatus.textContent = "No valid contacts found.";
+            return;
+          }
+          renderBatchPreview();
+          batchImportModal.classList.add("visible");
+          // Render batch preview with remove buttons
+          function renderBatchPreview() {
+            batchImportPreview.innerHTML = `<table style='width:100%;border-collapse:collapse;font-size:14px;'>
+                <thead><tr><th></th><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
+                <tbody>
+                  ${batchContacts.map((c, i) => `<tr><td><button class='remove-batch-contact' data-idx='${i}' title='Remove' style='color:#fff;background:none;border:none;font-size:18px;line-height:1;padding:0 8px;cursor:pointer;'><span style='color:#e11d48;font-weight:bold;'>&#10006;</span></button></td><td>${c.name}</td><td>${c.email}</td><td>${c.phone}</td></tr>`).join("")}
+                </tbody>
+              </table>`;
+            // Add event listeners for remove buttons
+            batchImportPreview
+              .querySelectorAll(".remove-batch-contact")
+              .forEach((btn) => {
+                btn.addEventListener("click", (e) => {
+                  const idx = parseInt(btn.getAttribute("data-idx"));
+                  batchContacts.splice(idx, 1);
+                  renderBatchPreview();
+                });
+              });
+          }
+        } catch (err) {
+          batchImportStatus.textContent = "Failed to parse file.";
+        }
+        importInput.value = "";
+      });
+
+      batchImportRole.addEventListener("change", () => {
+        // Update role for all contacts in preview
+        batchContacts = batchContacts.map((c) => ({
+          ...c,
+          role: batchImportRole.value,
+        }));
+        renderBatchPreview();
+      });
+
+      batchImportConfirm.addEventListener("click", async () => {
+        if (!batchContacts.length) return;
+        batchImportConfirm.disabled = true;
+        let imported = 0,
+          failed = 0;
+        for (const contact of batchContacts) {
+          try {
+            await push(ref(db, "guests"), contact);
+            imported++;
+          } catch {
+            failed++;
+          }
+        }
+        batchImportStatus.textContent = `Imported ${imported} guest(s).${failed ? " Failed: " + failed : ""}`;
+        setTimeout(() => {
+          batchImportModal.classList.remove("visible");
+          batchImportConfirm.disabled = false;
+        }, 1200);
+      });
+
+      batchImportCancel.addEventListener("click", () => {
+        batchImportModal.classList.remove("visible");
+        batchContacts = [];
+        batchImportStatus.textContent = "";
+      });
+
+      const guestTableBody = document.getElementById("guest-table-body");
+      const addGuestBtn = document.getElementById("add-guest-btn");
+      const guestModal = document.getElementById("guest-modal-overlay");
+      const guestForm = document.getElementById("guest-form");
+      const cancelModalBtn = document.getElementById("cancel-modal-btn");
+      const modalStatus = document.getElementById("modal-status");
+
+      function renderGuests(guests) {
+        guestTableBody.innerHTML = "";
+        if (!guests || Object.keys(guests).length === 0) {
+          guestTableBody.innerHTML =
+            '<tr class="empty-row"><td colspan="5">No guests found.</td></tr>';
+          return;
+        }
+        Object.entries(guests).forEach(([id, guest]) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td><button class="delete-guest-btn" data-id="${id}" title="Delete" style="color:#fff;background:none;border:none;font-size:18px;line-height:1;padding:0 8px;cursor:pointer;"><span style="color:#e11d48;font-weight:bold;">&#10006;</span></button></td>
+            <td>${guest.name || ""}</td>
+            <td>${guest.email || ""}</td>
+            <td>${guest.phone || ""}</td>
+            <td>${guest.role || ""}</td>
+          `;
+          // Add click event for editing (ignore delete button)
+          tr.addEventListener("click", (e) => {
+            if (e.target.closest(".delete-guest-btn")) return;
+            guestForm.reset();
+            modalStatus.textContent = "";
+            guestModal.classList.add("visible");
+            document.getElementById("guest-name").value = guest.name || "";
+            document.getElementById("guest-email").value = guest.email || "";
+            document.getElementById("guest-phone").value = guest.phone || "";
+            document.getElementById("guest-role").value = guest.role || "Other";
+            guestModal.setAttribute("data-edit-id", id);
+          });
+          guestTableBody.appendChild(tr);
+        });
+        // Add delete event listeners
+        guestTableBody.querySelectorAll(".delete-guest-btn").forEach((btn) => {
+          btn.addEventListener("click", async (e) => {
+            const id = btn.getAttribute("data-id");
+            if (confirm("Are you sure you want to delete this guest?")) {
+              await remove(ref(db, `guests/${id}`));
+            }
+            e.stopPropagation();
+          });
+        });
+      }
+
+      // Listen for guest changes
+      onValue(ref(db, "guests"), (snapshot) => {
+        renderGuests(snapshot.val());
+      });
+
+      // Show modal
+      addGuestBtn.addEventListener("click", () => {
+        guestForm.reset();
+        modalStatus.textContent = "";
+        guestModal.classList.add("visible");
+        document.getElementById("guest-name").focus();
+      });
+
+      // Hide modal
+      cancelModalBtn.addEventListener("click", () => {
+        guestModal.classList.remove("visible");
+      });
+      guestModal.addEventListener(
+        "click",
+        (e) => {
+          // Only close if click is directly on the overlay, not on modal content or dropdown
+          if (e.target === guestModal) {
+            guestModal.classList.remove("visible");
+          }
+        },
+        true,
+      );
+
+      // Add guest submit
+      guestForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        modalStatus.textContent = "";
+        const name = document.getElementById("guest-name").value.trim();
+        const email = document.getElementById("guest-email").value.trim();
+        const phone = document.getElementById("guest-phone").value.trim();
+        const role = document.getElementById("guest-role").value;
+        if (!name) {
+          modalStatus.textContent = "Name is required.";
+          return;
+        }
+        const editId = guestModal.getAttribute("data-edit-id");
+        try {
+          if (editId) {
+            // Update existing guest
+            await import("https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js").then(
+              ({ ref, update }) =>
+                update(ref(db, `guests/${editId}`), {
+                  name,
+                  email,
+                  phone,
+                  role,
+                }),
+            );
+            guestModal.removeAttribute("data-edit-id");
+          } else {
+            // Add new guest
+            await push(ref(db, "guests"), {
+              name,
+              email,
+              phone,
+              role,
+            });
+          }
+          guestModal.classList.remove("visible");
+        } catch (err) {
+          modalStatus.textContent =
+            "Failed to save guest. Please check your internet connection or Firebase rules.";
+        }
+      });
+      // Clear edit mode on modal close
+      cancelModalBtn.addEventListener("click", () => {
+        guestModal.removeAttribute("data-edit-id");
+      });
+    </script>
+  </body>
+</html>

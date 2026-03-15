@@ -386,8 +386,7 @@
         <span id="server-error-msg"></span>
       </div>
       <form id="signup-form" action="#" method="post" autocomplete="off">
-        <input type="hidden" name="auth_action" value="register" />
-        <input type="hidden" id="csrf_token" name="csrf_token" value="" />
+        <!-- <input type="hidden" name="auth_action" value="register" /> -->
         <div class="section-title full-row">Profile</div>
         <div class="form-group">
           <label for="name">Full Name</label>
@@ -617,12 +616,12 @@
       <p>Already have an account? <a href="signin.html">Log in</a></p>
     </div>
 
-    <script>
-      function toggleCustomCode() {
+    <script type="module">
+      // Expose functions globally for inline event handlers
+      window.toggleCustomCode = function toggleCustomCode() {
         const countryCode = document.getElementById("country_code");
         const customCodeGroup = document.getElementById("custom_code_group");
         const customCodeInput = document.getElementById("custom_code");
-
         if (countryCode.value === "custom") {
           customCodeGroup.classList.remove("hidden");
           customCodeInput.required = true;
@@ -631,17 +630,16 @@
           customCodeInput.required = false;
           customCodeInput.value = "";
         }
-      }
+      };
 
-      function clearError(el) {
+      window.clearError = function clearError(el) {
         el.closest(".form-group, .check-row").classList.remove("field-error");
-      }
+      };
 
-      function toggleAdminKey() {
+      window.toggleAdminKey = function toggleAdminKey() {
         const role = document.getElementById("role").value;
         const adminKeyGroup = document.getElementById("admin_key_group");
         const adminKeyInput = document.getElementById("admin_key");
-
         if (role === "admin") {
           adminKeyGroup.classList.remove("hidden");
           adminKeyInput.required = true;
@@ -650,39 +648,41 @@
           adminKeyInput.required = false;
           adminKeyInput.value = "";
         }
-      }
+      };
 
-      function checkPasswordMatch() {
+      window.checkPasswordMatch = function checkPasswordMatch() {
         const password = document.getElementById("password").value;
         const confirm = document.getElementById("confirm").value;
         const feedback = document.getElementById("password-feedback");
-
+        const submitBtn = document.getElementById("submit-btn");
         if (confirm === "") {
           feedback.classList.add("hidden");
+          submitBtn.disabled = false;
           return;
         }
-
         if (password === confirm) {
           feedback.textContent = "✓ Passwords match";
           feedback.classList.remove("hidden", "error");
           feedback.classList.add("success");
+          submitBtn.disabled = false;
         } else {
           feedback.textContent = "✗ Passwords do not match";
           feedback.classList.remove("hidden", "success");
           feedback.classList.add("error");
+          submitBtn.disabled = true;
         }
-      }
+      };
 
-      function generateCaptcha() {
+      window.generateCaptcha = function generateCaptcha() {
         const a = Math.floor(Math.random() * 10) + 1;
         const b = Math.floor(Math.random() * 10) + 1;
         document.getElementById("captcha-question").textContent =
           a + " + " + b + " = ?";
         document.getElementById("captcha_expected").value = a + b;
         document.getElementById("captcha_answer").value = "";
-      }
+      };
 
-      function validateForm() {
+      window.validateForm = function validateForm(showCaptchaError = false) {
         const name = document.getElementById("name").value.trim();
         const emailInput = document.getElementById("email");
         const emailValid =
@@ -701,6 +701,7 @@
           .value.trim();
         const captchaExpected =
           document.getElementById("captcha_expected").value;
+        const captchaGroup = document.getElementById("captcha_group");
 
         const passwordsMatch = password !== "" && password === confirm;
         const adminKeyOk = role !== "admin" || adminKey !== "";
@@ -708,6 +709,15 @@
           captchaAnswer !== "" &&
           parseInt(captchaAnswer) === parseInt(captchaExpected);
         const customCodeOk = countryCode !== "custom" || customCode !== "";
+
+        // Show/hide captcha error
+        if (showCaptchaError) {
+          if (!captchaOk) {
+            captchaGroup.classList.add("field-error");
+          } else {
+            captchaGroup.classList.remove("field-error");
+          }
+        }
 
         return (
           name &&
@@ -721,7 +731,11 @@
           terms &&
           captchaOk
         );
-      }
+      };
+
+      window.closePopup = function closePopup() {
+        window.location.href = "index.html";
+      };
 
       // Firebase signup logic
       import { auth, db } from "./assets/js/firebase-app.js";
@@ -739,8 +753,23 @@
         .getElementById("signup-form")
         .addEventListener("submit", async function (e) {
           e.preventDefault();
-          // Validate form using existing validateForm()
-          if (!validateForm()) return;
+          // Validate form using existing validateForm(), show captcha error if wrong
+          if (!validateForm(true)) {
+            // If captcha is wrong, regenerate it for security
+            const captchaAnswer = document
+              .getElementById("captcha_answer")
+              .value.trim();
+            const captchaExpected =
+              document.getElementById("captcha_expected").value;
+            if (
+              captchaAnswer === "" ||
+              parseInt(captchaAnswer) !== parseInt(captchaExpected)
+            ) {
+              generateCaptcha();
+              document.getElementById("captcha_answer").focus();
+            }
+            return;
+          }
 
           const name = document.getElementById("name").value.trim();
           const email = document.getElementById("email").value.trim();
@@ -795,7 +824,7 @@
           }
         });
 
-      generateCaptcha();
+      window.addEventListener("DOMContentLoaded", generateCaptcha);
 
       (function () {
         const params = new URLSearchParams(window.location.search);
@@ -858,22 +887,7 @@
       }
     </script>
 
-    <script>
-      // TODO: Use Firebase Auth for login state and CSRF is not needed for Firebase
-      // Redirect to dashboard.html if already logged in (to be implemented)
-      fetch("auth-status.php", {
-        method: "GET",
-        cache: "no-store",
-        credentials: "same-origin",
-      })
-        .then((r) => (r.ok ? r.json() : null))
-        .then((data) => {
-          if (data && data.loggedIn === true) {
-            window.location.replace("dashboard.html");
-          }
-        })
-        .catch(() => {});
-    </script>
+    <!-- No CSRF or PHP auth-status needed for Firebase static app -->
   </body>
   <!-- Firebase App (modular) -->
   <script type="module" src="assets/js/firebase-app.js"></script>

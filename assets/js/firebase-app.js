@@ -1,7 +1,7 @@
 // Firebase App and Auth logic for GitHub Pages static deployment
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-import { getDatabase } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+import { getDatabase } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCqIbdZ1u8VilV9XIBLnayEVCcZeFaG5bM",
@@ -11,7 +11,7 @@ const firebaseConfig = {
   projectId: "velora-ff18b",
   storageBucket: "velora-ff18b.firebasestorage.app",
   messagingSenderId: "265381777586",
-  appId: "1:265381777586:web:a5fd4428ba77da3822b9ab",
+  appId: "1:265381777586:web:b09bbcd7d225bf0f22b9ab",
 };
 
 // Initialize Firebase

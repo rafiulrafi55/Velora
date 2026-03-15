@@ -367,22 +367,7 @@
         font-size: 12px;
       }
 
-      .forgot-resend-btn {
-        border: none;
-        background: transparent;
-        color: #667eea;
-        cursor: pointer;
-        font-size: 12px;
-        font-weight: bold;
-        padding: 0;
-        margin: 0;
-        width: auto;
-      }
 
-      .forgot-resend-btn:disabled {
-        color: #9ca3af;
-        cursor: not-allowed;
-      }
 
       .forgot-status {
         display: none;
@@ -479,7 +464,6 @@
             role="status"
             aria-live="polite"
           >
-            <span>&#9888;</span>
             <span id="forgot-status-text"></span>
           </div>
           <form class="forgot-form" id="forgot-form" onsubmit="return false;">
@@ -526,7 +510,7 @@
       </div>
       <form id="signin-form" action="#" method="POST" autocomplete="off">
         <input type="hidden" name="auth_action" value="login" />
-        <input type="hidden" id="csrf_token" name="csrf_token" value="" />
+
         <div class="form-group">
           <label for="email">Email</label>
           <input
@@ -551,6 +535,7 @@
           />
         </div>
 
+
         <div class="utility-row">
           <label class="remember-me" for="remember">
             <input type="checkbox" id="remember" name="remember" />
@@ -559,327 +544,26 @@
           <a
             class="utility-link"
             href="#"
-            onclick="
-              <script>
-                (function () {
-                  const params = new URLSearchParams(window.location.search);
-                  if (params.get("registered") === "1") {
-                    document.getElementById("success-overlay").classList.add("visible");
-                    history.replaceState(null, "", window.location.pathname);
-                  }
+            onclick="openForgotPopup(); return false;"
+          >Forgot password?</a>
+        </div>
 
-                  const error = params.get("error");
-                  if (error) {
-                    const banner = document.getElementById("signin-error-banner");
-                    const msg = document.getElementById("signin-error-msg");
-                    if (error === "invalid") {
-                      msg.textContent = "Invalid email or password. Please try again.";
-                    } else if (error === "security") {
-                      msg.textContent =
-                        "Security validation failed. Please refresh and try again.";
-                    } else if (error === "server") {
-                      msg.textContent =
-                        "A server error occurred. Please try again later.";
-                    } else {
-                      msg.textContent = "An unexpected error occurred. Please try again.";
-                    }
-                    banner.classList.remove("hidden");
-                    history.replaceState(null, "", window.location.pathname);
-                  }
-                })();
+        <button type="submit">Sign In</button>
+      </form>
+      <div class="footer">
+        Don't have an account? <a href="signup.html">Sign Up</a>
+      </div>
+      <div class="footer-links">
+        <a href="privacy-policy.html">Privacy Policy</a> |
+        <a href="privacy-policy.html">Terms of Service</a>
+      </div>
 
-                function closePopup() {
-                  document.getElementById("success-overlay").classList.remove("visible");
-                }
-
-                function openForgotPopup() {
-                  const overlay = document.getElementById("forgot-overlay");
-                  overlay.classList.add("visible");
-                  overlay.setAttribute("aria-hidden", "false");
-                  resetForgotUi();
-                }
-
-                function closeForgotPopup() {
-                  const overlay = document.getElementById("forgot-overlay");
-                  overlay.classList.remove("visible");
-                  overlay.setAttribute("aria-hidden", "true");
-                }
-
-                function setForgotStatus(type, message) {
-                  const box = document.getElementById("forgot-status");
-                  const text = document.getElementById("forgot-status-text");
-                  box.classList.remove("success", "error", "visible");
-                  if (!message) return;
-                  box.classList.add(type === "success" ? "success" : "error", "visible");
-                  text.textContent = message;
-                }
-
-                function resetForgotUi() {
-                  setForgotStatus("", "");
-                  document.getElementById("forgot-email").value = "";
-                }
-
-                document.getElementById("forgot-overlay").addEventListener("click", function (e) {
-                  if (e.target.id === "forgot-overlay") {
-                    closeForgotPopup();
-                  }
-                });
-
-                document.getElementById("forgot-form").addEventListener("submit", async function (e) {
-                  e.preventDefault();
-                  const email = document.getElementById("forgot-email").value.trim();
-                  if (!email) {
-                    setForgotStatus("error", "Please enter your email address.");
-                    return;
-                  }
-                  setForgotStatus("", "");
-                  document.getElementById("forgot-send-btn").disabled = true;
-                  document.getElementById("forgot-send-btn").textContent = "Sending...";
-                  try {
-                    // Firebase password reset
-                    const { auth } = await import("./assets/js/firebase-app.js");
-                    const { sendPasswordResetEmail } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js");
-                    await sendPasswordResetEmail(auth, email);
-                    setForgotStatus("success", "Password reset email sent! Check your inbox.");
-                  } catch (error) {
-                    let msg = "Failed to send reset email. Please try again.";
-                    if (error.code === "auth/user-not-found") {
-                      msg = "No account found with that email.";
-                    } else if (error.code === "auth/invalid-email") {
-                      msg = "Invalid email address.";
-                    }
-                    setForgotStatus("error", msg);
-                  } finally {
-                    document.getElementById("forgot-send-btn").disabled = false;
-                    document.getElementById("forgot-send-btn").textContent = "Send Reset Link";
-                  }
-                });
-              </script>
-        hint.textContent = "Didn't receive the OTP?";
-      }
-
-      function startResendCooldown(seconds = 60) {
-        if (forgotCooldownTimer) {
-          clearInterval(forgotCooldownTimer);
-          forgotCooldownTimer = null;
-        }
-
-        forgotCooldownLeft = seconds;
-        updateResendUi();
-
-        forgotCooldownTimer = setInterval(() => {
-          forgotCooldownLeft -= 1;
-          if (forgotCooldownLeft <= 0) {
-            clearInterval(forgotCooldownTimer);
-            forgotCooldownTimer = null;
-            forgotCooldownLeft = 0;
-          }
-          updateResendUi();
-        }, 1000);
-      }
-
-      function setForgotStatus(type, message) {
-        const box = document.getElementById("forgot-status");
-        const text = document.getElementById("forgot-status-text");
-        box.classList.remove("success", "error", "visible");
-        if (!message) return;
-        box.classList.add(type === "success" ? "success" : "error", "visible");
-        text.textContent = message;
-      }
-
-      function setForgotStep(step) {
-        const stepEmail = document.getElementById("forgot-step-email");
-        const stepReset = document.getElementById("forgot-step-reset");
-        const desc = document.getElementById("forgot-description");
-
-        if (step === "reset") {
-          stepEmail.classList.add("hidden");
-          stepReset.classList.remove("hidden");
-          desc.textContent = "Enter your OTP and choose a new password";
-          return;
-        }
-
-        stepReset.classList.add("hidden");
-        stepEmail.classList.remove("hidden");
-        desc.textContent = "Enter your account email";
-      }
-
-      function resetForgotUi() {
-        setForgotStatus("", "");
-        setForgotStep("email");
-        updateResendUi();
-      }
-
-      async function parseApiResponse(res) {
-        const raw = await res.text();
-        try {
-          return JSON.parse(raw);
-        } catch (_) {
-          return {
-            ok: false,
-            message: "Server returned an unexpected response. Please try again",
-          };
-        }
-      }
-
-      async function requestForgotOtp(options = {}) {
-        const keepResetStep = options.keepResetStep === true;
-        const email = document.getElementById("forgot-email").value.trim();
-        const csrf = document.getElementById("csrf_token").value;
-        const btn = document.getElementById("forgot-send-otp-btn");
-        const resendBtn = document.getElementById("forgot-resend-btn");
-
-        if (!email) {
-          setForgotStatus("error", "Please enter your email address.");
-          return;
-        }
-
-        if (keepResetStep && forgotCooldownLeft > 0) {
-          return;
-        }
-
-        if (keepResetStep) {
-          resendBtn.disabled = true;
-          resendBtn.textContent = "Sending...";
-        } else {
-          btn.disabled = true;
-          btn.textContent = "Sending...";
-        }
-
-        setForgotStatus("", "");
-
-        try {
-          const formData = new FormData();
-          formData.append("action", "request_otp");
-          formData.append("email", email);
-          formData.append("csrf_token", csrf);
-
-          const res = await fetch("forgot-password.php", {
-            method: "POST",
-            credentials: "same-origin",
-            body: formData,
-          });
-
-          const data = await parseApiResponse(res);
-          if (!res.ok || !data.ok) {
-            setForgotStatus(
-              "error",
-              data.message || "Could not send OTP. Please try again.",
-            );
-            return;
-          }
-
-          setForgotStatus("success", data.message || "OTP sent successfully.");
-          setForgotStep("reset");
-          startResendCooldown(60);
-        } catch (_) {
-          setForgotStatus("error", "Network error. Please try again.");
-        } finally {
-          if (keepResetStep) {
-            updateResendUi();
-          } else {
-            btn.disabled = false;
-            btn.textContent = "Send OTP";
-          }
-        }
-      }
-
-      async function submitForgotReset() {
-        const email = document.getElementById("forgot-email").value.trim();
-        const otp = document.getElementById("forgot-otp").value.trim();
-        const newPassword = document.getElementById(
-          "forgot-new-password",
-        ).value;
-        const confirmPassword = document.getElementById(
-          "forgot-confirm-password",
-        ).value;
-        const csrf = document.getElementById("csrf_token").value;
-        const btn = document.getElementById("forgot-reset-btn");
-
-        if (!email || !otp || !newPassword || !confirmPassword) {
-          setForgotStatus("error", "Please fill all fields.");
-          return;
-        }
-
-        btn.disabled = true;
-        btn.textContent = "Resetting...";
-        setForgotStatus("", "");
-
-        try {
-          const formData = new FormData();
-          formData.append("action", "reset_password");
-          formData.append("email", email);
-          formData.append("otp", otp);
-          formData.append("new_password", newPassword);
-          formData.append("confirm_password", confirmPassword);
-          formData.append("csrf_token", csrf);
-
-          const res = await fetch("forgot-password.php", {
-            method: "POST",
-            credentials: "same-origin",
-            body: formData,
-          });
-
-          const data = await parseApiResponse(res);
-          if (!res.ok || !data.ok) {
-            setForgotStatus("error", data.message || "Password reset failed.");
-            return;
-          }
-
-          setForgotStatus(
-            "success",
-            data.message || "Password reset successful.",
-          );
-          document.getElementById("forgot-otp").value = "";
-          document.getElementById("forgot-new-password").value = "";
-          document.getElementById("forgot-confirm-password").value = "";
-
-          setTimeout(() => {
-            closeForgotPopup();
-          }, 1200);
-        } catch (_) {
-          setForgotStatus("error", "Network error. Please try again.");
-        } finally {
-          btn.disabled = false;
-          btn.textContent = "Reset Password";
-        }
-      }
-
-      document
-        .getElementById("forgot-overlay")
-        .addEventListener("click", function (e) {
-          if (e.target.id === "forgot-overlay") {
-            closeForgotPopup();
-          }
-        });
-
-      document
-        .getElementById("forgot-send-otp-btn")
-        .addEventListener("click", requestForgotOtp);
-
-      document
-        .getElementById("forgot-reset-btn")
-        .addEventListener("click", submitForgotReset);
-
-      document
-        .getElementById("forgot-back-btn")
-        .addEventListener("click", function () {
-          setForgotStatus("", "");
-          setForgotStep("email");
-        });
-
-      document
-        .getElementById("forgot-resend-btn")
-        .addEventListener("click", function () {
-          requestForgotOtp({ keepResetStep: true });
-        });
-    </script>
-
-    <script>
-      // Firebase Auth login
+    <script type="module">
+      // Firebase Auth login and password reset
       import { auth } from "./assets/js/firebase-app.js";
-      import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+      import { signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 
+      // Login logic
       document.getElementById("signin-form").addEventListener("submit", async function (e) {
         e.preventDefault();
         const email = document.getElementById("email").value.trim();
@@ -905,8 +589,47 @@
           errorMsg.textContent = msg;
         }
       });
-    <!-- Firebase App (modular) -->
-    <script type="module" src="assets/js/firebase-app.js"></script>
+
+      // Forgot password logic
+      const forgotForm = document.getElementById("forgot-form");
+      const forgotOverlay = document.getElementById("forgot-overlay");
+      const forgotStatus = document.getElementById("forgot-status");
+      const forgotStatusText = document.getElementById("forgot-status-text");
+      const forgotSendBtn = document.getElementById("forgot-send-btn");
+
+      window.openForgotPopup = function openForgotPopup() {
+        forgotOverlay.classList.add("visible");
+        forgotStatus.classList.remove("visible", "success", "error");
+        forgotStatusText.textContent = "";
+        forgotForm.reset();
+      };
+
+      window.closeForgotPopup = function closeForgotPopup() {
+        forgotOverlay.classList.remove("visible");
+      };
+
+      forgotForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const email = document.getElementById("forgot-email").value.trim();
+        forgotStatus.classList.remove("success", "error");
+        forgotStatus.classList.add("visible");
+        forgotStatusText.textContent = "";
+        try {
+          await sendPasswordResetEmail(auth, email);
+          forgotStatus.classList.add("success");
+          // Add a tick icon before the message
+          forgotStatusText.innerHTML = '<span style="font-size:18px;color:#16a34a;vertical-align:middle;">&#10003;</span> Password reset email sent! Check your inbox or spam folder';
+        } catch (error) {
+          forgotStatus.classList.add("error");
+          if (error.code === "auth/user-not-found") {
+            forgotStatusText.textContent = "No account found with that email.";
+          } else if (error.code === "auth/invalid-email") {
+            forgotStatusText.textContent = "Invalid email address.";
+          } else {
+            forgotStatusText.textContent = "Failed to send reset email. Please try again.";
+          }
+        }
+      });
     </script>
   </body>
 </html>
