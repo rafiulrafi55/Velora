@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Contact — Velora (Mobile)</title>
+    <link rel="stylesheet" href="assets/css/profile-cards.css" />
+    <style>
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          Arial;
+        background: #071224;
+        color: #cbd5e1;
+        padding: 18px;
+      }
+      .page-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .back {
+        color: #93c5fd;
+        text-decoration: none;
+        font-weight: 600;
+      }
+      main {
+        max-width: 640px;
+        margin: 0 auto;
+      }
+      .contact-card {
+        position: static;
+        display: block;
+        width: 100%;
+        max-width: 480px;
+        box-sizing: border-box;
+        margin: 0 auto;
+        padding: 12px;
+      }
+      .contact-item a {
+        color: #93c5fd;
+      }
+      @media (max-width: 420px) {
+        body {
+          padding: 12px;
+        }
+        .contact-card {
+          padding: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="page-header">
+      <a class="back" href="dashboard.html">Back</a>
+    </header>
+
+    <main>
+      <div
+        class="contact-card"
+        id="contact-card"
+        aria-label="GitHub contact details"
+      >
+        <p class="contact-title">Contact Details</p>
+        <ul class="contact-list">
+          <li class="contact-item">
+            <span class="contact-icon">✉</span
+            ><span id="contact-email">Loading...</span>
+          </li>
+          <li class="contact-item">
+            <span class="contact-icon facebook-icon">f</span
+            ><a
+              href="https://www.facebook.com/ar.vi.1291"
+              target="_blank"
+              rel="noopener noreferrer"
+              >ar.vi.1291</a
+            >
+          </li>
+          <li class="contact-item">
+            <span class="contact-icon">🌐</span
+            ><span id="contact-blog">Loading...</span>
+          </li>
+          <li class="contact-item">
+            <span class="contact-icon">📍</span
+            ><span id="contact-location">Loading...</span>
+          </li>
+          <li class="contact-item">
+            <span class="contact-icon">🔗</span
+            ><a
+              id="contact-github"
+              href="https://github.com/rafiulrafi55"
+              target="_blank"
+              rel="noopener noreferrer"
+              >GitHub Profile</a
+            >
+          </li>
+        </ul>
+      </div>
+    </main>
+
+    <script src="assets/js/github-profile.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const githubUser = "rafiulrafi55";
+        window.VeloraGithubProfile?.load({
+          githubUser,
+          onData: function (data) {
+            document.getElementById("contact-email").textContent =
+              data.email || "rafiulrafi55@gmail.com";
+            if (data.blog) {
+              var blogUrl = data.blog.startsWith("http")
+                ? data.blog
+                : "https://" + data.blog;
+              document.getElementById("contact-blog").innerHTML =
+                '<a href="' +
+                blogUrl +
+                '" target="_blank" rel="noopener noreferrer">' +
+                data.blog +
+                "</a>";
+            } else {
+              document.getElementById("contact-blog").textContent =
+                "Website not provided";
+            }
+            document.getElementById("contact-location").textContent =
+              data.location || "Location not public";
+            document.getElementById("contact-github").href =
+              data.html_url || "https://github.com/rafiulrafi55";
+          },
+          onFallback: function () {
+            document.getElementById("contact-email").textContent =
+              "rafiulrafi55@gmail.com";
+            document.getElementById("contact-blog").textContent =
+              "Website not available";
+            document.getElementById("contact-location").textContent =
+              "Bangladesh";
+          },
+        });
+      });
+    </script>
+  </body>
+</html>
