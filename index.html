@@ -972,6 +972,16 @@
           display: flex;
           justify-content: flex-start;
           padding: 16px;
+          /* make footer fixed to bottom on mobile */
+          position: fixed;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          z-index: 600;
+        }
+        /* add bottom padding so page content isn't covered by fixed footer */
+        body {
+          padding-bottom: 72px;
         }
 
         .hero-text {

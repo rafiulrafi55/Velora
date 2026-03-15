@@ -311,21 +311,9 @@
           order: 1;
         }
 
-        /* Move primary nav links to a fixed bottom bar on mobile */
+        /* On mobile, hide top nav links and show them in a mobile footer instead */
         nav ul {
-          position: fixed;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          display: flex;
-          justify-content: space-around;
-          gap: 0;
-          background: #111;
-          padding: 10px 6px;
-          margin: 0;
-          list-style: none;
-          border-top: 1px solid #22354d;
-          z-index: 500;
+          display: none;
         }
 
         nav ul li {
@@ -337,6 +325,30 @@
 
         .dashboard {
           padding-bottom: 84px;
+        }
+        /* Mobile footer for nav links placed at end of page */
+        .mobile-nav-footer {
+          display: none;
+        }
+        @media (max-width: 768px) {
+          .mobile-nav-footer {
+            display: flex;
+            justify-content: center;
+            padding: 12px 8px;
+            gap: 12px;
+            margin-top: 18px;
+          }
+          .mobile-nav-footer ul {
+            list-style: none;
+            display: flex;
+            gap: 12px;
+            padding: 0;
+            margin: 0;
+          }
+          .mobile-nav-footer a {
+            color: #ccc;
+            text-decoration: none;
+          }
         }
       }
     </style>
@@ -854,6 +866,66 @@
       }
 
       setTimeout(loadGithubProfile, 1200);
+
+      // Create mobile footer and clone nav links into it on small screens
+      (function createMobileNavFooter() {
+        try {
+          const mq = window.matchMedia("(max-width: 768px)");
+          const nav = document.querySelector("nav");
+          if (!nav) return;
+          const navUl = nav.querySelector("ul");
+          if (!navUl) return;
+
+          let footer = document.getElementById("mobile-nav-footer");
+          if (!footer) {
+            footer = document.createElement("footer");
+            footer.id = "mobile-nav-footer";
+            footer.className = "mobile-nav-footer";
+            document.body.appendChild(footer);
+          }
+
+          function updateFooter(e) {
+            if (e.matches) {
+              if (!footer.querySelector("ul")) {
+                const clone = navUl.cloneNode(true);
+                // Transform About/Contact dropdowns into plain links for mobile
+                try {
+                  const aboutLi = clone.querySelector(".about-dropdown");
+                  if (aboutLi) {
+                    const a = document.createElement("a");
+                    a.id = "footer-about-us";
+                    a.href = "about-mobile.html";
+                    a.textContent = "About Us";
+                    aboutLi.parentElement.replaceChild(a, aboutLi);
+                  }
+                  const contactLi = clone.querySelector(".contact-dropdown");
+                  if (contactLi) {
+                    const a2 = document.createElement("a");
+                    a2.id = "footer-contact";
+                    a2.href = "contact-mobile.html";
+                    a2.textContent = "Contact";
+                    contactLi.parentElement.replaceChild(a2, contactLi);
+                  }
+                } catch (e) {
+                  // ignore transformation errors
+                }
+                footer.innerHTML = "";
+                footer.appendChild(clone);
+              }
+              footer.style.display = "flex";
+            } else {
+              footer.style.display = "none";
+              footer.innerHTML = "";
+            }
+          }
+
+          updateFooter(mq);
+          if (mq.addEventListener) mq.addEventListener("change", updateFooter);
+          else if (mq.addListener) mq.addListener(updateFooter);
+        } catch (err) {
+          console.warn("createMobileNavFooter failed", err);
+        }
+      })();
     </script>
   </body>
 </html>
