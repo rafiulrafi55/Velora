@@ -460,6 +460,91 @@
           background: #f59e0b;
           color: #131212;
         }
+        /* Responsive adjustments for mobile */
+        @media (max-width: 720px) {
+          .container {
+            padding: 20px 16px;
+            max-width: 100%;
+            width: 100%;
+            margin-top: 18px;
+            border-radius: 10px;
+          }
+          .actions {
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+          }
+          #guest-search {
+            min-width: 0 !important;
+            width: 100% !important;
+            margin: 0 !important;
+          }
+          /* Stretch the add (+) button to full width on mobile */
+          #add-guest-btn {
+            margin-right: 0 !important;
+            margin-left: 0 !important;
+            width: 100% !important;
+            height: 46px !important;
+            align-self: center !important;
+            margin: 0 !important;
+            display: block !important;
+            border-radius: 10px !important;
+            padding: 8px 12px !important;
+            box-sizing: border-box !important;
+          }
+          /* Make the circular styling adapt to full-width */
+          #add-guest-btn.new-add-btn {
+            background: linear-gradient(180deg, #ffb86b 0%, #ff8a00 100%) !important;
+            box-shadow: 0 6px 20px rgba(255,138,0,0.18) !important;
+            border: 1px solid rgba(255,255,255,0.06) !important;
+          }
+          /* ensure delete button doesn't push layout unexpectedly */
+          .danger-btn { width: 100% !important; }
+          /* Stretch the dashboard/back button to full width on mobile */
+          .back-btn { display: block !important; width: 100% !important; text-align: center !important; box-sizing: border-box !important; }
+          .danger-btn {
+            width: 100%;
+            justify-content: center;
+            margin-left: 0;
+          }
+          /* Make the table readable on small screens: hide headers and show rows as blocks */
+          table {
+            border-radius: 8px;
+            overflow: hidden;
+          }
+          thead {
+            display: none;
+          }
+          tbody tr {
+            display: block;
+            padding: 12px 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+          }
+          tbody tr td {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            align-items: center;
+          }
+          tbody tr td:nth-child(1) {
+            padding-bottom: 8px;
+          }
+          tbody tr td:nth-child(2) {
+            font-weight: 700;
+            color: #fff;
+            flex: 1 1 auto;
+            margin-right: 8px;
+          }
+          tbody tr td:nth-child(3),
+          tbody tr td:nth-child(5) {
+            display: none; /* hide email and role on small screens */
+          }
+          tbody tr td:nth-child(4) {
+            color: #94a3b8;
+            white-space: nowrap;
+            margin-left: 8px;
+          }
+        }
     </style>
   </head>
   <body>
