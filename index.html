@@ -1791,137 +1791,148 @@
     <!-- Firebase App (modular) -->
     <script type="module" src="assets/js/firebase-app.js"></script>
     <script type="module">
-      document.addEventListener("DOMContentLoaded", () => {
-        import("./assets/js/firebase-app.js").then(({ auth }) => {
-          import("https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js").then(
-            ({ onAuthStateChanged, signOut }) => {
-              const navDashboardLink =
-                document.getElementById("nav-dashboard-link");
-              const navAuthBtn = document.getElementById("nav-auth-btn");
-              const heroAuthBtn = document.getElementById("hero-auth-btn");
+      document.addEventListener("DOMContentLoaded", async () => {
+        try {
+          const { auth } = await import("./assets/js/firebase-app.js");
+          const { onAuthStateChanged, signOut } =
+            await import("https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js");
 
-              // Hide both immediately to prevent flicker
-              if (navDashboardLink) {
-                navDashboardLink.style.display = "none";
-                navDashboardLink.style.visibility = "hidden";
-              }
-              if (navAuthBtn) {
-                navAuthBtn.style.visibility = "hidden";
-              }
+          const navDashboardLink =
+            document.getElementById("nav-dashboard-link");
+          const navAuthBtn = document.getElementById("nav-auth-btn");
+          const heroAuthBtn = document.getElementById("hero-auth-btn");
 
-              onAuthStateChanged(auth, (user) => {
-                if (user) {
-                  if (navDashboardLink) {
-                    navDashboardLink.style.display = "inline-block";
-                    navDashboardLink.style.visibility = "visible";
-                  }
-                  if (navAuthBtn) {
-                    navAuthBtn.textContent = "Logout";
-                    navAuthBtn.onclick = async () => {
-                      await signOut(auth);
-                      window.location.reload();
-                    };
-                    navAuthBtn.style.visibility = "visible";
-                  }
-                  if (heroAuthBtn) {
-                    heroAuthBtn.textContent = "Go to Dashboard";
-                    heroAuthBtn.onclick = () => {
-                      window.location.href = "dashboard.html";
-                    };
-                    heroAuthBtn.style.visibility = "visible";
-                  }
-                } else {
-                  if (navDashboardLink) {
-                    navDashboardLink.style.display = "none";
-                    navDashboardLink.style.visibility = "hidden";
-                  }
-                  if (navAuthBtn) {
-                    navAuthBtn.textContent = "Login";
-                    navAuthBtn.onclick = () => {
-                      window.location.href = "signin.html";
-                    };
-                    navAuthBtn.style.visibility = "visible";
-                  }
-                  if (heroAuthBtn) {
-                    heroAuthBtn.textContent = "Make an Account";
-                    heroAuthBtn.onclick = () => {
-                      window.location.href = "signup.html";
-                    };
-                    heroAuthBtn.style.visibility = "visible";
-                  }
-                }
-              });
-            },
-          );
-        });
-      });
-    </script>
-    <script type="module">
-      import { auth } from "./assets/js/firebase-app.js";
-      import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
-
-      const navDashboardLink = document.getElementById("nav-dashboard-link");
-      const navAuthBtn = document.getElementById("nav-auth-btn");
-      const heroAuthBtn = document.getElementById("hero-auth-btn");
-
-      // Hide both immediately to prevent flicker
-      if (navDashboardLink) {
-        navDashboardLink.style.display = "none";
-        navDashboardLink.style.visibility = "hidden";
-      }
-      if (navAuthBtn) {
-        navAuthBtn.style.visibility = "hidden";
-      }
-
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          if (navDashboardLink) {
-            navDashboardLink.style.display = "inline-block";
-            navDashboardLink.style.visibility = "visible";
-          }
-          if (navAuthBtn) {
-            navAuthBtn.textContent = "Logout";
-            navAuthBtn.onclick = async () => {
-              await signOut(auth);
-              window.location.reload();
-            };
-            navAuthBtn.style.visibility = "visible";
-          }
-          if (heroAuthBtn) {
-            heroAuthBtn.textContent = "Go to Dashboard";
-            heroAuthBtn.onclick = () => {
-              window.location.href = "dashboard.html";
-            };
-            heroAuthBtn.style.visibility = "visible";
-          }
-        } else {
+          // Hide both immediately to prevent flicker
           if (navDashboardLink) {
             navDashboardLink.style.display = "none";
             navDashboardLink.style.visibility = "hidden";
           }
           if (navAuthBtn) {
-            navAuthBtn.textContent = "Login";
-            navAuthBtn.onclick = () => {
-              window.location.href = "signin.html";
-            };
-            navAuthBtn.style.visibility = "visible";
+            navAuthBtn.style.visibility = "hidden";
           }
-          if (heroAuthBtn) {
-            heroAuthBtn.textContent = "Make an Account";
-            heroAuthBtn.onclick = () => {
-              window.location.href = "signup.html";
-            };
-            heroAuthBtn.style.visibility = "visible";
-          }
+
+          onAuthStateChanged(auth, (user) => {
+            if (user) {
+              if (navDashboardLink) {
+                navDashboardLink.style.display = "inline-block";
+                navDashboardLink.style.visibility = "visible";
+              }
+              if (navAuthBtn) {
+                navAuthBtn.textContent = "Logout";
+                // open confirmation overlay instead of immediate sign-out
+                navAuthBtn.onclick = () => {
+                  try {
+                    window.openLogoutConfirm?.();
+                  } catch (e) {
+                    // fallback: perform sign-out directly
+                    signOut(auth).then(() => window.location.reload());
+                  }
+                };
+                // export a global sign-out helper for the UI to call
+                try {
+                  window._velora_signOut = async () => {
+                    await signOut(auth);
+                    window.location.reload();
+                  };
+                } catch (e) {
+                  console.error("Could not expose signOut on window:", e);
+                }
+                navAuthBtn.style.visibility = "visible";
+              }
+              if (heroAuthBtn) {
+                heroAuthBtn.textContent = "Go to Dashboard";
+                heroAuthBtn.onclick = () => {
+                  window.location.href = "dashboard.html";
+                };
+                heroAuthBtn.style.visibility = "visible";
+              }
+            } else {
+              if (navDashboardLink) {
+                navDashboardLink.style.display = "none";
+                navDashboardLink.style.visibility = "hidden";
+              }
+              if (navAuthBtn) {
+                navAuthBtn.textContent = "Login";
+                navAuthBtn.onclick = () => {
+                  window.location.href = "signin.html";
+                };
+                navAuthBtn.style.visibility = "visible";
+              }
+              if (heroAuthBtn) {
+                heroAuthBtn.textContent = "Make an Account";
+                heroAuthBtn.onclick = () => {
+                  window.location.href = "signup.html";
+                };
+                heroAuthBtn.style.visibility = "visible";
+              }
+            }
+          });
+        } catch (err) {
+          // swallow import errors; auth is optional for dropdowns
+          console.error("Auth init failed:", err);
         }
       });
+    </script>
+    <script>
+      (function () {
+        // UI script (wrapped in IIFE); auth module handled separately
+        const navDashboardLink = document.getElementById("nav-dashboard-link");
+        const navAuthBtn = document.getElementById("nav-auth-btn");
+        const heroAuthBtn = document.getElementById("hero-auth-btn");
 
-        };
+        const logoutConfirmYes = document.getElementById("logout-confirm-yes");
+        const logoutConfirmNo = document.getElementById("logout-confirm-no");
+        const logoutConfirmOverlay = document.getElementById(
+          "logout-confirm-overlay",
+        );
+
+        const exploreFeaturesBtn = document.getElementById(
+          "explore-features-btn",
+        );
+        const featuresOverlay = document.getElementById("features-overlay");
+        const featuresCloseBtn = document.getElementById("features-close-btn");
+        const successOverlay = document.getElementById("success-overlay");
+
+        const openDonateBtn = document.getElementById("open-donate-btn");
+        const donateCloseBtn = document.getElementById("donate-close-btn");
+        const donateCloseSecondaryBtn = document.getElementById(
+          "donate-close-secondary-btn",
+        );
+        const donateOverlay = document.getElementById("donate-overlay");
+        const donateBkashBox = document.getElementById("donate-bkash-box");
+        const donateBkashNumber = document.getElementById(
+          "donate-bkash-number",
+        );
+        const donateStatus = document.getElementById("donate-status");
+        const copyBkashBtn = document.getElementById("copy-bkash-btn");
+        const openBkashSiteBtn = document.getElementById("open-bkash-site-btn");
+
+        // Hide both immediately to prevent flicker
+        if (navDashboardLink) {
+          navDashboardLink.style.display = "none";
+          navDashboardLink.style.visibility = "hidden";
+        }
+        if (navAuthBtn) {
+          navAuthBtn.style.visibility = "hidden";
+        }
+
+        // Auth state is handled in the module script above; no-op here
 
         // Remove PHP logout, use Firebase signOut (to be implemented in next step)
-        logoutConfirmYes?.addEventListener("click", () => {
-          // signOut logic will be added after Firebase integration
-          window.location.href = "index.html";
+        logoutConfirmYes?.addEventListener("click", async () => {
+          if (
+            window._velora_signOut &&
+            typeof window._velora_signOut === "function"
+          ) {
+            try {
+              await window._velora_signOut();
+            } catch (e) {
+              console.error("Sign-out failed:", e);
+              window.location.href = "index.html";
+            }
+          } else {
+            window.location.href = "index.html";
+          }
         });
 
         logoutConfirmNo?.addEventListener("click", closeLogoutConfirm);
@@ -2056,6 +2067,38 @@
             document.body.classList.remove("popup-open");
           }
         };
+
+        function openLogoutConfirm() {
+          logoutConfirmOverlay?.classList.add("visible");
+          document.body.classList.add("popup-open");
+        }
+
+        function closeLogoutConfirm() {
+          logoutConfirmOverlay?.classList.remove("visible");
+          document.body.classList.remove("popup-open");
+        }
+
+        function openDonateModal() {
+          donateOverlay?.classList.add("visible");
+          document.body.classList.add("popup-open");
+          donateBkashBox?.classList.add("visible");
+          if (donateStatus) donateStatus.textContent = "";
+        }
+
+        function closeDonateModal() {
+          donateOverlay?.classList.remove("visible");
+          document.body.classList.remove("popup-open");
+        }
+
+        // Expose modal helpers so module auth code can open/close them
+        try {
+          window.openLogoutConfirm = openLogoutConfirm;
+          window.closeLogoutConfirm = closeLogoutConfirm;
+          window.openDonateModal = openDonateModal;
+          window.closeDonateModal = closeDonateModal;
+        } catch (e) {
+          // noop if window isn't writable in some contexts
+        }
 
         const githubUser = "rafiulrafi55";
         let githubProfileLoaded = false;
