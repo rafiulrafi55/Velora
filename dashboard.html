@@ -172,6 +172,131 @@
         background: #22324b;
         color: #fff;
       }
+      .dashboard {
+        padding: 40px 60px;
+      }
+
+      .dashboard-header h1 {
+        font-size: 30px;
+        margin-bottom: 8px;
+      }
+
+      .dashboard-header p {
+        color: #94a3b8;
+        margin-bottom: 30px;
+      }
+
+      /* stats */
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 35px;
+      }
+
+      .stat-card {
+        background: #13263f;
+        border: 1px solid #2a3a52;
+        border-radius: 10px;
+        padding: 24px;
+        text-align: center;
+      }
+
+      .stat-card h3 {
+        font-size: 14px;
+        color: #94a3b8;
+      }
+
+      .stat-card p {
+        font-size: 30px;
+        font-weight: bold;
+        margin-top: 10px;
+        color: #f59e0b;
+      }
+
+      /* panels */
+
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+        margin-bottom: 25px;
+      }
+
+      .panel {
+        background: #13263f;
+        border: 1px solid #2a3a52;
+        border-radius: 10px;
+        padding: 25px;
+      }
+
+      .panel h2 {
+        margin-bottom: 18px;
+      }
+
+      /* actions */
+
+      .actions {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .actions button {
+        background: #1e3a55;
+        border: 1px solid #2a3a52;
+        padding: 12px;
+        border-radius: 6px;
+        color: white;
+        cursor: pointer;
+      }
+
+      .actions button:hover {
+        background: #f59e0b;
+        color: #111;
+      }
+
+      /* event list */
+
+      .event-list {
+        list-style: none;
+      }
+
+      .event-list li {
+        padding: 12px 0;
+        border-bottom: 1px solid #2a3a52;
+      }
+
+      .event-list span {
+        display: block;
+        color: #94a3b8;
+        font-size: 13px;
+      }
+
+      /* activity */
+
+      .activity-list {
+        list-style: none;
+      }
+
+      .activity-list li {
+        padding: 10px 0;
+        border-bottom: 1px solid #2a3a52;
+        color: #cbd5e1;
+      }
+
+      /* responsive */
+
+      @media (max-width: 900px) {
+        .dashboard {
+          padding: 25px;
+        }
+
+        .dashboard-grid {
+          grid-template-columns: 1fr;
+        }
+      }
     </style>
   </head>
   <body class="auth-pending">
@@ -188,7 +313,9 @@
     </div>
 
     <nav>
-      <div class="logo" onclick="window.location.href = 'home.php'">Velora</div>
+      <div class="logo" onclick="window.location.href = 'index.html'">
+        Velora
+      </div>
 
       <ul>
         <li onclick="window.location.href = 'index.html'">Home</li>
@@ -287,224 +414,375 @@
 
       <button class="logout-btn" id="logout-btn">Logout</button>
     </nav>
+    <main class="dashboard">
+      <section class="dashboard-header">
+        <h1>Dashboard</h1>
+        <p>Manage your events, guests and registrations from Velora.</p>
+      </section>
+
+      <section class="stats-grid">
+        <div class="stat-card">
+          <h3>Total Events</h3>
+          <p id="stat-events">...</p>
+        </div>
+
+        <div class="stat-card">
+          <h3>Upcoming Events</h3>
+          <p id="stat-upcoming">...</p>
+        </div>
+
+        <div class="stat-card">
+          <h3>Total Guests</h3>
+          <p id="stat-guests">...</p>
+        </div>
+
+        <div class="stat-card">
+          <h3>Checked-In</h3>
+          <p id="stat-checkins">...</p>
+        </div>
+      </section>
+
+      <section class="dashboard-grid">
+        <div class="panel quick-actions">
+          <h2>Quick Actions</h2>
+
+          <div class="actions">
+            <button onclick="location.href = 'create-event.html'">
+              Create Event
+            </button>
+
+            <button onclick="location.href = 'events.html'">
+              Manage Events
+            </button>
+
+            <button onclick="location.href = 'guests.html'">Guest List</button>
+
+            <button onclick="location.href = 'checkin.html'">
+              Guest Check-in
+            </button>
+          </div>
+        </div>
+
+        <div class="panel upcoming-events">
+          <h2>Upcoming Events</h2>
+          <ul class="event-list">
+            <li id="event-loading">Loading...</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="panel activity-panel">
+        <h2>Recent Activity</h2>
+        <ul class="activity-list">
+          <li id="activity-loading">Loading...</li>
+        </ul>
+      </section>
+    </main>
 
     <script src="assets/js/github-profile.js"></script>
-    <script>
-      (() => {
-        const logoutOverlay = document.getElementById("logout-overlay");
-        document.getElementById("logout-btn").addEventListener("click", () => {
-          logoutOverlay.classList.add("visible");
-        });
-        document
-          .getElementById("logout-confirm")
-          .addEventListener("click", () => {
-            window.location.href = "logout.php?redirect=index.html";
+    <script type="module">
+      // Firebase Auth, Database, and logout logic
+      import { auth, db } from "./assets/js/firebase-app.js";
+      import {
+        signOut,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+      import {
+        ref,
+        get,
+        child,
+      } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+
+      const logoutOverlay = document.getElementById("logout-overlay");
+      document.getElementById("logout-btn").addEventListener("click", () => {
+        logoutOverlay.classList.add("visible");
+      });
+      document
+        .getElementById("logout-confirm")
+        .addEventListener("click", () => {
+          signOut(auth).then(() => {
+            window.location.href = "index.html";
           });
-        document
-          .getElementById("logout-cancel")
-          .addEventListener("click", () => {
-            logoutOverlay.classList.remove("visible");
-          });
-        logoutOverlay.addEventListener("click", (e) => {
-          if (e.target === logoutOverlay)
-            logoutOverlay.classList.remove("visible");
         });
-        document.addEventListener("keydown", (e) => {
-          if (e.key === "Escape") logoutOverlay.classList.remove("visible");
-        });
+      document.getElementById("logout-cancel").addEventListener("click", () => {
+        logoutOverlay.classList.remove("visible");
+      });
+      logoutOverlay.addEventListener("click", (e) => {
+        if (e.target === logoutOverlay)
+          logoutOverlay.classList.remove("visible");
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") logoutOverlay.classList.remove("visible");
+      });
 
-        fetch("auth-status.php", {
-          method: "GET",
-          cache: "no-store",
-          credentials: "same-origin",
-        })
-          .then((response) => {
-            if (!response.ok) throw new Error("Auth check failed");
-            return response.json();
-          })
-          .then((data) => {
-            if (!data || data.loggedIn !== true) {
-              window.location.replace("index.html");
-              return;
-            }
-            document.body.classList.remove("auth-pending");
-          })
-          .catch(() => {
-            window.location.replace("index.html");
-          });
+      // Firebase Auth session check
+      onAuthStateChanged(auth, (user) => {
+        if (!user) {
+          window.location.replace("index.html");
+        } else {
+          document.body.classList.remove("auth-pending");
+          loadDashboardData(user.uid);
+        }
+      });
 
-        const aboutDropdown = document.getElementById("about-dropdown");
-        const aboutTrigger = document.getElementById("about-trigger");
-        const aboutCard = document.getElementById("about-card");
-        const aboutAvatar = document.getElementById("about-avatar");
-        const aboutName = document.getElementById("about-name");
-        const aboutHandle = document.getElementById("about-handle");
-        const aboutBio = document.getElementById("about-bio");
-        const aboutRepos = document.getElementById("about-repos");
-        const aboutFollowers = document.getElementById("about-followers");
-        const aboutFollowing = document.getElementById("about-following");
-        const aboutLocation = document.getElementById("about-location");
-        const contactDropdown = document.getElementById("contact-dropdown");
-        const contactTrigger = document.getElementById("contact-trigger");
-        const contactCard = document.getElementById("contact-card");
-        const contactEmail = document.getElementById("contact-email");
-        const contactBlog = document.getElementById("contact-blog");
-        const contactLocation = document.getElementById("contact-location");
-        const contactGithub = document.getElementById("contact-github");
+      // Load dashboard data from Firebase
+      async function loadDashboardData(uid) {
+        // Reference to root
+        const dbRef = ref(db);
+        try {
+          // Fetch all dashboard data in parallel
+          const [eventsSnap, guestsSnap, checkinsSnap, activitySnap] =
+            await Promise.all([
+              get(child(dbRef, `events`)),
+              get(child(dbRef, `guests`)),
+              get(child(dbRef, `checkins`)),
+              get(child(dbRef, `activity`)),
+            ]);
 
-        const openAboutCard = () => aboutCard?.classList.add("open");
-        const closeAboutCard = () => aboutCard?.classList.remove("open");
-        const openContactCard = () => contactCard?.classList.add("open");
-        const closeContactCard = () => contactCard?.classList.remove("open");
-
-        const githubUser = "rafiulrafi55";
-        let githubProfileLoaded = false;
-        const loadGithubProfile = () => {
-          if (githubProfileLoaded) {
-            return;
+          // Events
+          let events = [];
+          if (eventsSnap.exists()) {
+            events = Object.values(eventsSnap.val());
           }
-          githubProfileLoaded = true;
+          document.getElementById("stat-events").textContent = events.length;
 
-          window.VeloraGithubProfile?.load({
-            githubUser,
-            onData: (data) => {
-              if (aboutAvatar && data.avatar_url) {
-                aboutAvatar.src = data.avatar_url;
-              }
-              if (aboutName) {
-                aboutName.textContent = data.name || githubUser;
-              }
-              if (aboutHandle) {
-                aboutHandle.textContent = `@${data.login || githubUser}`;
-              }
-              if (aboutBio) {
-                aboutBio.textContent =
-                  data.bio ||
-                  "Building useful experiences with clean, modern code.";
-              }
-              if (aboutRepos) {
-                aboutRepos.textContent = String(data.public_repos ?? 0);
-              }
-              if (aboutFollowers) {
-                aboutFollowers.textContent = String(data.followers ?? 0);
-              }
-              if (aboutFollowing) {
-                aboutFollowing.textContent = String(data.following ?? 0);
-              }
-              if (aboutLocation) {
-                aboutLocation.textContent = `Location: ${data.location || "Bangladesh"}`;
-              }
-              if (contactEmail) {
-                contactEmail.textContent =
-                  data.email || "rafiulrafi55@gmail.com";
-              }
-              if (contactBlog) {
-                if (data.blog) {
-                  const url = data.blog.startsWith("http")
-                    ? data.blog
-                    : `https://${data.blog}`;
-                  contactBlog.innerHTML = `<a href="${url}" target="_blank" rel="noopener noreferrer">${data.blog}</a>`;
-                } else {
-                  contactBlog.textContent = "Website not provided";
-                }
-              }
-              if (contactLocation) {
-                contactLocation.textContent =
-                  data.location || "Location not public";
-              }
-              if (contactGithub) {
-                contactGithub.href =
-                  data.html_url || `https://github.com/${githubUser}`;
-              }
-            },
-            onFallback: () => {
-              if (aboutName) {
-                aboutName.textContent = "Rafiul";
-              }
-              if (aboutHandle) {
-                aboutHandle.textContent = "@rafiulrafi55";
-              }
-              if (aboutBio) {
-                aboutBio.textContent =
-                  "Lead Developer focused on reliable and user-friendly systems.";
-              }
-              if (aboutRepos) {
-                aboutRepos.textContent = "--";
-              }
-              if (aboutFollowers) {
-                aboutFollowers.textContent = "--";
-              }
-              if (aboutFollowing) {
-                aboutFollowing.textContent = "--";
-              }
-              if (aboutLocation) {
-                aboutLocation.textContent = "Location: Bangladesh";
-              }
-              if (contactEmail) {
-                contactEmail.textContent = "rafiulrafi55@gmail.com";
-              }
-              if (contactBlog) {
-                contactBlog.textContent = "Website not available";
-              }
-              if (contactLocation) {
-                contactLocation.textContent = "Bangladesh";
-              }
-            },
+          // Upcoming Events (filter by date in future, fallback: show all if no date)
+          const now = new Date();
+          let upcoming = events.filter((ev) => {
+            if (!ev.date) return false;
+            return new Date(ev.date) > now;
           });
-        };
+          document.getElementById("stat-upcoming").textContent =
+            upcoming.length;
 
-        if (aboutTrigger && aboutDropdown) {
-          const isMobile = window.matchMedia("(max-width: 768px)").matches;
+          // Guests
+          let guests = [];
+          if (guestsSnap.exists()) {
+            guests = Object.values(guestsSnap.val());
+          }
+          document.getElementById("stat-guests").textContent = guests.length;
 
-          if (isMobile) {
-            aboutTrigger.addEventListener("click", (e) => {
-              loadGithubProfile();
-              e.stopPropagation();
-              aboutCard?.classList.contains("open")
-                ? closeAboutCard()
-                : (openAboutCard(), closeContactCard());
-            });
-            contactTrigger?.addEventListener("click", (e) => {
-              loadGithubProfile();
-              e.stopPropagation();
-              contactCard?.classList.contains("open")
-                ? closeContactCard()
-                : (openContactCard(), closeAboutCard());
-            });
-            document.addEventListener("click", (e) => {
-              if (!aboutDropdown.contains(e.target)) closeAboutCard();
-              if (contactDropdown && !contactDropdown.contains(e.target))
-                closeContactCard();
+          // Check-ins
+          let checkins = [];
+          if (checkinsSnap.exists()) {
+            checkins = Object.values(checkinsSnap.val());
+          }
+          document.getElementById("stat-checkins").textContent =
+            checkins.length;
+
+          // Upcoming Events List
+          const eventList = document.querySelector(
+            ".upcoming-events .event-list",
+          );
+          eventList.innerHTML = "";
+          if (upcoming.length > 0) {
+            upcoming.slice(0, 5).forEach((ev) => {
+              const li = document.createElement("li");
+              li.innerHTML = `<strong>${ev.name || "Event"}</strong><span>${ev.date ? new Date(ev.date).toLocaleDateString() : "No date"} • ${ev.guestCount || 0} Guests</span>`;
+              eventList.appendChild(li);
             });
           } else {
-            aboutDropdown.addEventListener("mouseenter", () => {
-              loadGithubProfile();
-              openAboutCard();
-              closeContactCard();
-            });
-            aboutDropdown.addEventListener("mouseleave", closeAboutCard);
-
-            if (contactDropdown) {
-              contactDropdown.addEventListener("mouseenter", () => {
-                loadGithubProfile();
-                openContactCard();
-                closeAboutCard();
-              });
-              contactCard?.addEventListener("mouseenter", openContactCard);
-              contactCard?.addEventListener("mouseleave", closeContactCard);
-            }
+            eventList.innerHTML = "<li>No upcoming events</li>";
           }
 
-          document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape") {
-              closeAboutCard();
-              closeContactCard();
+          // Activity List
+          const activityList = document.querySelector(".activity-list");
+          activityList.innerHTML = "";
+          if (activitySnap.exists()) {
+            const activityArr = Object.values(activitySnap.val());
+            activityArr
+              .slice(-5)
+              .reverse()
+              .forEach((act) => {
+                const li = document.createElement("li");
+                li.textContent = act.text || "Activity";
+                activityList.appendChild(li);
+              });
+          } else {
+            activityList.innerHTML = "<li>No recent activity</li>";
+          }
+        } catch (err) {
+          // Fallback: show error state if error
+          document.getElementById("stat-events").textContent = "-";
+          document.getElementById("stat-upcoming").textContent = "-";
+          document.getElementById("stat-guests").textContent = "-";
+          document.getElementById("stat-checkins").textContent = "-";
+          document.querySelector(".upcoming-events .event-list").innerHTML =
+            "<li>Unable to load events</li>";
+          document.querySelector(".activity-list").innerHTML =
+            "<li>Unable to load activity</li>";
+        }
+      }
+      const aboutDropdown = document.getElementById("about-dropdown");
+      const aboutTrigger = document.getElementById("about-trigger");
+      const aboutCard = document.getElementById("about-card");
+      const aboutAvatar = document.getElementById("about-avatar");
+      const aboutName = document.getElementById("about-name");
+      const aboutHandle = document.getElementById("about-handle");
+      const aboutBio = document.getElementById("about-bio");
+      const aboutRepos = document.getElementById("about-repos");
+      const aboutFollowers = document.getElementById("about-followers");
+      const aboutFollowing = document.getElementById("about-following");
+      const aboutLocation = document.getElementById("about-location");
+      const contactDropdown = document.getElementById("contact-dropdown");
+      const contactTrigger = document.getElementById("contact-trigger");
+      const contactCard = document.getElementById("contact-card");
+      const contactEmail = document.getElementById("contact-email");
+      const contactBlog = document.getElementById("contact-blog");
+      const contactLocation = document.getElementById("contact-location");
+      const contactGithub = document.getElementById("contact-github");
+
+      const openAboutCard = () => aboutCard?.classList.add("open");
+      const closeAboutCard = () => aboutCard?.classList.remove("open");
+      const openContactCard = () => contactCard?.classList.add("open");
+      const closeContactCard = () => contactCard?.classList.remove("open");
+
+      const githubUser = "rafiulrafi55";
+      let githubProfileLoaded = false;
+      const loadGithubProfile = () => {
+        if (githubProfileLoaded) {
+          return;
+        }
+        githubProfileLoaded = true;
+
+        window.VeloraGithubProfile?.load({
+          githubUser,
+          onData: (data) => {
+            if (aboutAvatar && data.avatar_url) {
+              aboutAvatar.src = data.avatar_url;
             }
+            if (aboutName) {
+              aboutName.textContent = data.name || githubUser;
+            }
+            if (aboutHandle) {
+              aboutHandle.textContent = `@${data.login || githubUser}`;
+            }
+            if (aboutBio) {
+              aboutBio.textContent =
+                data.bio ||
+                "Building useful experiences with clean, modern code.";
+            }
+            if (aboutRepos) {
+              aboutRepos.textContent = String(data.public_repos ?? 0);
+            }
+            if (aboutFollowers) {
+              aboutFollowers.textContent = String(data.followers ?? 0);
+            }
+            if (aboutFollowing) {
+              aboutFollowing.textContent = String(data.following ?? 0);
+            }
+            if (aboutLocation) {
+              aboutLocation.textContent = `Location: ${data.location || "Bangladesh"}`;
+            }
+            if (contactEmail) {
+              contactEmail.textContent = data.email || "rafiulrafi55@gmail.com";
+            }
+            if (contactBlog) {
+              if (data.blog) {
+                const url = data.blog.startsWith("http")
+                  ? data.blog
+                  : `https://${data.blog}`;
+                contactBlog.innerHTML = `<a href="${url}" target="_blank" rel="noopener noreferrer">${data.blog}</a>`;
+              } else {
+                contactBlog.textContent = "Website not provided";
+              }
+            }
+            if (contactLocation) {
+              contactLocation.textContent =
+                data.location || "Location not public";
+            }
+            if (contactGithub) {
+              contactGithub.href =
+                data.html_url || `https://github.com/${githubUser}`;
+            }
+          },
+          onFallback: () => {
+            if (aboutName) {
+              aboutName.textContent = "Rafiul";
+            }
+            if (aboutHandle) {
+              aboutHandle.textContent = "@rafiulrafi55";
+            }
+            if (aboutBio) {
+              aboutBio.textContent =
+                "Lead Developer focused on reliable and user-friendly systems.";
+            }
+            if (aboutRepos) {
+              aboutRepos.textContent = "--";
+            }
+            if (aboutFollowers) {
+              aboutFollowers.textContent = "--";
+            }
+            if (aboutFollowing) {
+              aboutFollowing.textContent = "--";
+            }
+            if (aboutLocation) {
+              aboutLocation.textContent = "Location: Bangladesh";
+            }
+            if (contactEmail) {
+              contactEmail.textContent = "rafiulrafi55@gmail.com";
+            }
+            if (contactBlog) {
+              contactBlog.textContent = "Website not available";
+            }
+            if (contactLocation) {
+              contactLocation.textContent = "Bangladesh";
+            }
+          },
+        });
+      };
+
+      if (aboutTrigger && aboutDropdown) {
+        const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+        if (isMobile) {
+          aboutTrigger.addEventListener("click", (e) => {
+            loadGithubProfile();
+            e.stopPropagation();
+            aboutCard?.classList.contains("open")
+              ? closeAboutCard()
+              : (openAboutCard(), closeContactCard());
           });
+          contactTrigger?.addEventListener("click", (e) => {
+            loadGithubProfile();
+            e.stopPropagation();
+            contactCard?.classList.contains("open")
+              ? closeContactCard()
+              : (openContactCard(), closeAboutCard());
+          });
+          document.addEventListener("click", (e) => {
+            if (!aboutDropdown.contains(e.target)) closeAboutCard();
+            if (contactDropdown && !contactDropdown.contains(e.target))
+              closeContactCard();
+          });
+        } else {
+          aboutDropdown.addEventListener("mouseenter", () => {
+            loadGithubProfile();
+            openAboutCard();
+            closeContactCard();
+          });
+          aboutDropdown.addEventListener("mouseleave", closeAboutCard);
+
+          if (contactDropdown) {
+            contactDropdown.addEventListener("mouseenter", () => {
+              loadGithubProfile();
+              openContactCard();
+              closeAboutCard();
+            });
+            contactCard?.addEventListener("mouseenter", openContactCard);
+            contactCard?.addEventListener("mouseleave", closeContactCard);
+          }
         }
 
-        setTimeout(loadGithubProfile, 1200);
-      })();
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            closeAboutCard();
+            closeContactCard();
+          }
+        });
+      }
+
+      setTimeout(loadGithubProfile, 1200);
     </script>
   </body>
 </html>

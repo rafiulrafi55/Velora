@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Event | Velora</title>
+    <link rel="stylesheet" href="assets/css/profile-cards.css" />
+    <style>
+      body {
+        background: #0d1b2a;
+        color: #fff;
+        font-family: Arial, Helvetica, sans-serif;
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 40px 0;
+      }
+      .container {
+        background: #13263f;
+        border: 1px solid #2a3a52;
+        border-radius: 14px;
+        padding: 36px 32px;
+        max-width: 420px;
+        width: 95%;
+        margin-top: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 18px;
+        color: #f59e0b;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+      label {
+        font-size: 14px;
+      }
+
+      .cancel-btn {
+        background: #374151;
+        color: #fff;
+        border: 1px solid #2a3a52;
+        border-radius: 8px;
+        padding: 13px;
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 8px;
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+      .cancel-btn:hover {
+        background: #475569;
+        color: #f59e0b;
+        color: #cbd5e1;
+        margin-bottom: 4px;
+      }
+      input,
+      select {
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #2a3a52;
+        font-size: 15px;
+        background: #1e293b;
+        color: #fff;
+      }
+      input:focus {
+        outline: none;
+        border-color: #f59e0b;
+      }
+      button {
+        background: #f59e0b;
+        color: #131212;
+        border: none;
+        border-radius: 8px;
+        padding: 13px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+      button:hover {
+        background: #d97706;
+      }
+      .status {
+        margin-top: 12px;
+        font-size: 14px;
+        text-align: center;
+        border-radius: 8px;
+        padding: 10px 0;
+        display: none;
+      }
+      .status.success {
+        background: #ecfdf3;
+        color: #166534;
+        display: block;
+      }
+      .status.error {
+        background: #fef2f2;
+        color: #b91c1c;
+        display: block;
+      }
+      .back-btn {
+        display: inline-block;
+        background: #f59e0b;
+        color: #131212;
+        border: none;
+        border-radius: 8px;
+        padding: 13px 24px;
+        font-size: 16px;
+        font-weight: bold;
+        text-decoration: none;
+        margin-bottom: 18px;
+        margin-left: 0;
+        margin-right: auto;
+        transition:
+          background 0.2s,
+          color 0.2s;
+        cursor: pointer;
+      }
+      .back-btn:hover {
+        background: #d97706;
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Dashboard button removed -->
+    <div class="container">
+      <h1>Create Event</h1>
+      <form id="create-event-form" autocomplete="off">
+        <div>
+          <label for="event-name">Event Name</label>
+          <input
+            type="text"
+            id="event-name"
+            name="event_name"
+            required
+            maxlength="60"
+            placeholder="e.g. Wedding Ceremony"
+          />
+        </div>
+        <div>
+          <label for="event-date">Event Date</label>
+          <input type="date" id="event-date" name="event_date" required />
+        </div>
+        <div>
+          <label for="guest-count">Expected Guest Count</label>
+          <input
+            type="number"
+            id="guest-count"
+            name="guest_count"
+            min="1"
+            max="10000"
+            required
+            placeholder="e.g. 250"
+          />
+        </div>
+        <button type="submit">Create Event</button>
+        <button
+          type="button"
+          class="cancel-btn"
+          onclick="window.location.href = 'dashboard.html'"
+        >
+          Cancel
+        </button>
+        <div id="status" class="status"></div>
+      </form>
+    </div>
+    <script type="module">
+      import { db } from "./assets/js/firebase-app.js";
+      import {
+        ref,
+        push,
+        serverTimestamp,
+      } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+
+      const form = document.getElementById("create-event-form");
+      const statusDiv = document.getElementById("status");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        statusDiv.className = "status";
+        statusDiv.textContent = "";
+        const name = document.getElementById("event-name").value.trim();
+        const date = document.getElementById("event-date").value;
+        const guestCount = parseInt(
+          document.getElementById("guest-count").value,
+          10,
+        );
+        if (!name || !date || !guestCount) {
+          statusDiv.className = "status error";
+          statusDiv.textContent = "Please fill in all fields.";
+          return;
+        }
+        try {
+          await push(ref(db, "events"), {
+            name,
+            date,
+            guestCount,
+            createdAt: serverTimestamp(),
+          });
+          statusDiv.className = "status success";
+          statusDiv.textContent = "Event created successfully! Redirecting...";
+          setTimeout(() => {
+            window.location.href = "dashboard.html";
+          }, 1200);
+        } catch (err) {
+          statusDiv.className = "status error";
+          statusDiv.textContent = "Failed to create event. Please try again.";
+        }
+      });
+    </script>
+  </body>
+</html>
