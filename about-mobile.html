@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>About — Velora (Mobile)</title>
+    <link rel="stylesheet" href="assets/css/profile-cards.css" />
+    <style>
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          Arial;
+        background: #071224;
+        color: #cbd5e1;
+        padding: 18px;
+      }
+      .page-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .back {
+        color: #93c5fd;
+        text-decoration: none;
+        font-weight: 600;
+      }
+      main {
+        max-width: 640px;
+        margin: 0 auto;
+      }
+      .about-card {
+        position: static;
+        display: block;
+        width: 100%;
+        max-width: 480px;
+        box-sizing: border-box;
+        margin: 0 auto;
+        padding: 12px;
+      }
+      .about-avatar {
+        width: 64px;
+        height: 64px;
+      }
+      @media (max-width: 420px) {
+        body {
+          padding: 12px;
+        }
+        .about-card {
+          padding: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="page-header">
+      <a class="back" href="dashboard.html">Back</a>
+    </header>
+
+    <main>
+      <div
+        class="about-card"
+        id="about-card"
+        aria-label="GitHub profile preview"
+      >
+        <div class="about-top">
+          <img
+            class="about-avatar"
+            id="about-avatar"
+            src="https://github.com/identicons/rafiulrafi55.png"
+            alt="Profile picture"
+          />
+          <div class="about-meta">
+            <span class="about-name" id="about-name">Loading...</span>
+            <span class="about-handle" id="about-handle">@rafiulrafi55</span>
+            <span class="about-role">Lead Developer</span>
+          </div>
+        </div>
+
+        <p class="about-bio" id="about-bio">Loading profile details...</p>
+
+        <div class="about-stats">
+          <div class="about-stat">
+            <span class="value" id="about-repos">0</span
+            ><span class="label">Repos</span>
+          </div>
+          <div class="about-stat">
+            <span class="value" id="about-followers">0</span
+            ><span class="label">Followers</span>
+          </div>
+          <div class="about-stat">
+            <span class="value" id="about-following">0</span
+            ><span class="label">Following</span>
+          </div>
+        </div>
+
+        <p class="about-location" id="about-location">Location: Updating...</p>
+      </div>
+    </main>
+
+    <script src="assets/js/github-profile.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const githubUser = "rafiulrafi55";
+        window.VeloraGithubProfile?.load({
+          githubUser,
+          onData: function (data) {
+            document.getElementById("about-avatar").src = data.avatar_url || "";
+            document.getElementById("about-name").textContent =
+              data.name || githubUser;
+            document.getElementById("about-handle").textContent =
+              "@" + (data.login || githubUser);
+            document.getElementById("about-bio").textContent =
+              data.bio ||
+              "Building useful experiences with clean, modern code.";
+            document.getElementById("about-repos").textContent = String(
+              data.public_repos ?? 0,
+            );
+            document.getElementById("about-followers").textContent = String(
+              data.followers ?? 0,
+            );
+            document.getElementById("about-following").textContent = String(
+              data.following ?? 0,
+            );
+            document.getElementById("about-location").textContent =
+              "Location: " + (data.location || "Bangladesh");
+          },
+          onFallback: function () {
+            document.getElementById("about-name").textContent = "Rafiul";
+            document.getElementById("about-handle").textContent =
+              "@rafiulrafi55";
+            document.getElementById("about-bio").textContent =
+              "Lead Developer focused on reliable and user-friendly systems.";
+          },
+        });
+      });
+    </script>
+  </body>
+</html>

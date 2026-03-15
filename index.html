@@ -2214,38 +2214,19 @@
           const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
           if (isMobile) {
-            aboutTrigger.addEventListener("click", (event) => {
-              loadGithubProfile();
-              event.stopPropagation();
-              if (aboutCard?.classList.contains("open")) {
-                closeAboutCard();
-              } else {
-                openAboutCard();
-                closeContactCard();
-              }
-            });
-
-            if (contactTrigger && contactDropdown) {
-              contactTrigger.addEventListener("click", (event) => {
-                loadGithubProfile();
-                event.stopPropagation();
-                if (contactCard?.classList.contains("open")) {
-                  closeContactCard();
-                } else {
-                  openContactCard();
-                  closeAboutCard();
-                }
+            // On mobile, navigate to dedicated mobile pages instead of opening dropdowns
+            try {
+              aboutTrigger?.addEventListener("click", (e) => {
+                e.preventDefault();
+                window.location.href = "about-mobile.html";
               });
+              contactTrigger?.addEventListener("click", (e) => {
+                e.preventDefault();
+                window.location.href = "contact-mobile.html";
+              });
+            } catch (e) {
+              // ignore if attach fails
             }
-
-            document.addEventListener("click", (event) => {
-              if (!aboutDropdown.contains(event.target)) {
-                closeAboutCard();
-              }
-              if (contactDropdown && !contactDropdown.contains(event.target)) {
-                closeContactCard();
-              }
-            });
           } else {
             aboutDropdown.addEventListener("mouseenter", () => {
               loadGithubProfile();
@@ -2287,24 +2268,34 @@
           const footerAboutBtn = document.getElementById("footer-about-us");
           const footerContactBtn = document.getElementById("footer-contact");
 
-          if (footerAboutBtn) {
-            footerAboutBtn.addEventListener("click", (event) => {
-              loadGithubProfile();
-              event.preventDefault();
-              openAboutCard();
-              closeContactCard();
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            });
-          }
+          if (!isMobile) {
+            if (footerAboutBtn) {
+              footerAboutBtn.addEventListener("click", (event) => {
+                loadGithubProfile();
+                event.preventDefault();
+                openAboutCard();
+                closeContactCard();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              });
+            }
 
-          if (footerContactBtn) {
-            footerContactBtn.addEventListener("click", (event) => {
-              loadGithubProfile();
-              event.preventDefault();
-              openContactCard();
-              closeAboutCard();
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            });
+            if (footerContactBtn) {
+              footerContactBtn.addEventListener("click", (event) => {
+                loadGithubProfile();
+                event.preventDefault();
+                openContactCard();
+                closeAboutCard();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              });
+            }
+          } else {
+            // Mobile: footer links go to dedicated mobile pages
+            try {
+              if (footerAboutBtn)
+                footerAboutBtn.setAttribute("href", "about-mobile.html");
+              if (footerContactBtn)
+                footerContactBtn.setAttribute("href", "contact-mobile.html");
+            } catch (e) {}
           }
         }
 
