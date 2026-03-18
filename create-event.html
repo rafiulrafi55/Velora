@@ -183,15 +183,27 @@
       </form>
     </div>
     <script type="module">
-      import { db } from "./assets/js/firebase-app.js";
+      import { auth, db } from "./assets/js/firebase-app.js";
       import {
         ref,
         push,
         serverTimestamp,
       } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+      import {
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 
       const form = document.getElementById("create-event-form");
       const statusDiv = document.getElementById("status");
+
+      let currentUid = null;
+      onAuthStateChanged(auth, (user) => {
+        if (!user) {
+          window.location.replace("index.html");
+          return;
+        }
+        currentUid = user.uid;
+      });
 
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -208,12 +220,18 @@
           statusDiv.textContent = "Please fill in all fields.";
           return;
         }
+        if (!currentUid) {
+          statusDiv.className = "status error";
+          statusDiv.textContent = "Authentication required. Please sign in.";
+          return;
+        }
         try {
           await push(ref(db, "events"), {
             name,
             date,
             guestCount,
             createdAt: serverTimestamp(),
+            createdBy: currentUid,
           });
           statusDiv.className = "status success";
           statusDiv.textContent = "Event created successfully! Redirecting...";
