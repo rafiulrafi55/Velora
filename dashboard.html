@@ -216,6 +216,20 @@
         color: #f59e0b;
       }
 
+      .stat-card.clickable {
+        cursor: pointer;
+        box-shadow: 0 0 0 2px #f59e0b33;
+        transition:
+          box-shadow 0.18s,
+          background 0.18s;
+      }
+      .stat-card.clickable:hover,
+      .stat-card.clickable:focus {
+        background: #22324b;
+        box-shadow: 0 0 0 3px #f59e0b;
+        outline: none;
+      }
+
       /* panels */
 
       .dashboard-grid {
@@ -476,7 +490,12 @@
       </section>
 
       <section class="stats-grid">
-        <div class="stat-card">
+        <div
+          class="stat-card clickable"
+          id="stat-events-card"
+          tabindex="0"
+          title="View all events"
+        >
           <h3>Total Events</h3>
           <p id="stat-events">...</p>
         </div>
@@ -964,6 +983,17 @@
           console.warn("createMobileNavFooter failed", err);
         }
       })();
+      const statEventsCard = document.getElementById("stat-events-card");
+      if (statEventsCard) {
+        statEventsCard.addEventListener("click", () => {
+          window.location.href = "manage-events.html";
+        });
+        statEventsCard.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            window.location.href = "manage-events.html";
+          }
+        });
+      }
     </script>
   </body>
 </html>
