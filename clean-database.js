@@ -5,16 +5,16 @@
 import { db } from "./assets/js/firebase-app.js";
 import {
   ref,
-  set,
+  remove,
 } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
 
 export async function cleanDatabase() {
   try {
     await Promise.all([
-      set(ref(db, "events"), {}),
-      set(ref(db, "guests"), {}),
-      set(ref(db, "checkins"), {}),
-      set(ref(db, "activity"), {}),
+      remove(ref(db, "events")),
+      remove(ref(db, "guests")),
+      remove(ref(db, "checkins")),
+      remove(ref(db, "activity")),
       // Add more collections if needed
     ]);
     alert("All user data has been deleted, but structure is preserved.");

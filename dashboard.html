@@ -615,48 +615,25 @@
       });
 
       // Reset button logic
+      import { cleanDatabase } from "./clean-database.js";
       document.addEventListener("DOMContentLoaded", () => {
         const resetBtn = document.getElementById("reset-btn");
         if (resetBtn) {
           resetBtn.addEventListener("click", async () => {
-            if (!currentUserUid) {
-              alert("User not authenticated.");
-              return;
-            }
             if (
               !confirm(
-                "Are you sure you want to delete ALL your events and guests? This cannot be undone.",
+                "Are you sure you want to delete ALL user data? This cannot be undone.",
               )
             )
               return;
             resetBtn.disabled = true;
             resetBtn.textContent = "Resetting...";
             try {
-              // Remove all events created by this user
-              const dbRef = ref(db);
-              const eventsSnap = await get(child(dbRef, "events"));
-              if (eventsSnap.exists()) {
-                const all = eventsSnap.val();
-                const toDelete = Object.entries(all).filter(
-                  ([k, v]) => v && v.createdBy === currentUserUid,
-                );
-                await Promise.all(
-                  toDelete.map(([k]) => remove(child(dbRef, `events/${k}`))),
-                );
+              await cleanDatabase();
+              // Optionally reload dashboard data after cleaning
+              if (typeof loadDashboardData === "function" && currentUserUid) {
+                loadDashboardData(currentUserUid);
               }
-              // Remove all guests created by this user
-              const guestsSnap = await get(child(dbRef, "guests"));
-              if (guestsSnap.exists()) {
-                const allG = guestsSnap.val();
-                const toDeleteG = Object.entries(allG).filter(
-                  ([k, v]) => v && v.createdBy === currentUserUid,
-                );
-                await Promise.all(
-                  toDeleteG.map(([k]) => remove(child(dbRef, `guests/${k}`))),
-                );
-              }
-              alert("All your events and guests have been deleted.");
-              loadDashboardData(currentUserUid);
             } catch (err) {
               alert("Failed to reset data. See console for details.");
               console.error(err);
