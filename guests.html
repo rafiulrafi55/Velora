@@ -1216,6 +1216,12 @@
         const events = snap.val() || {};
         eventsCache = events;
         renderEvents(events);
+        // If there are no events, show a message and stop loading guests
+        if (Object.keys(events).length === 0) {
+          guestTableBody.innerHTML = `<tr class="empty-row"><td colspan="5">No events found. Please create an event first.</td></tr>`;
+          updateEventStats();
+          return;
+        }
         // After events are initialized, render guests (if any cached)
         if (eventsInitialized) {
           renderGuests(guestsCache);
