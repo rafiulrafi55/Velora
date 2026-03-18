@@ -826,19 +826,33 @@
           document.getElementById("stat-checkins").textContent =
             checkins.length;
 
-          // Upcoming Events List
+          // Upcoming Events List (max 3 on desktop, max 5 on mobile)
           const eventList = document.querySelector(
             ".upcoming-events .event-list",
           );
           eventList.innerHTML = "";
+          // Use matchMedia to check if mobile (<=768px)
+          const isMobile = window.matchMedia("(max-width: 768px)").matches;
           if (upcoming.length > 0) {
-            upcoming.slice(0, 5).forEach((ev) => {
+            const eventsToShow = isMobile ? upcoming : upcoming.slice(0, 3);
+            eventsToShow.forEach((ev) => {
               const li = document.createElement("li");
               li.innerHTML = `<strong>${ev.name || "Event"}</strong><span>${ev.date ? new Date(ev.date).toLocaleDateString() : "No date"} • ${ev.guestCount || 0} Guests</span>`;
               eventList.appendChild(li);
             });
           } else {
             eventList.innerHTML = "<li>No upcoming events</li>";
+          }
+
+          // Listen for screen resize to update event list dynamically
+          if (!window._upcomingEventsResizeListenerAdded) {
+            window._upcomingEventsResizeListenerAdded = true;
+            window.addEventListener("resize", () => {
+              // Only update if dashboard is visible
+              if (document.querySelector(".upcoming-events .event-list")) {
+                loadDashboardData(currentUserUid);
+              }
+            });
           }
 
           // Activity List
