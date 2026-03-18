@@ -1,0 +1,21 @@
+WGMS Work Log - 2026-03-15 to 2026-03-19
+
+Project root: C:\CSIT\Projects\WGMS
+
+Summary of work completed over the last 3 days:
+
+1) Comment and file cleanup
+- Searched for and identified unnecessary files and folders (e.g., tools/).
+- Prepared to remove tools/ directory and its scripts for project cleanup.
+- Evaluated backup, vendor, and work log folders for necessity.
+
+2) Project maintenance and organization
+- Reviewed and listed available VS Code extensions for comment removal across HTML, JS, and other code files.
+- Provided guidance on using extensions to remove comments efficiently.
+- Assisted in planning and executing safe deletion/migration of utility scripts.
+
+3) Ongoing support and workflow improvements
+- Answered questions about project structure and file/folder necessity.
+- Provided recommendations for safe file removal and project hygiene.
+- Maintained and updated work logs for project transparency.
+
