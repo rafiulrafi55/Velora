@@ -505,7 +505,12 @@
           <p id="stat-upcoming">...</p>
         </div>
 
-        <div class="stat-card">
+        <div
+          class="stat-card clickable"
+          id="stat-guests-card"
+          tabindex="0"
+          title="View all guests"
+        >
           <h3>Total Guests</h3>
           <p id="stat-guests">...</p>
         </div>
@@ -991,6 +996,17 @@
         statEventsCard.addEventListener("keydown", (e) => {
           if (e.key === "Enter" || e.key === " ") {
             window.location.href = "manage-events.html";
+          }
+        });
+      }
+      const statGuestsCard = document.getElementById("stat-guests-card");
+      if (statGuestsCard) {
+        statGuestsCard.addEventListener("click", () => {
+          window.location.href = "guests.html";
+        });
+        statGuestsCard.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            window.location.href = "guests.html";
           }
         });
       }
