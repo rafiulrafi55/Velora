@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Manage Events | Velora</title>
     <link rel="stylesheet" href="assets/css/profile-cards.css" />
+    <link rel="stylesheet" href="assets/css/confirm-modal.css" />
     <style>
       body {
         background: #0d1b2a;
@@ -145,6 +146,7 @@
         update,
         remove,
       } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+      import { showConfirmModal } from "./assets/js/confirm-modal.js";
 
       const root = document.getElementById("events-root");
       const editModal = document.getElementById("edit-modal");
@@ -261,7 +263,11 @@
       });
 
       async function confirmDelete(key) {
-        if (!confirm("Delete this event? This cannot be undone.")) return;
+        const confirmed = await showConfirmModal(
+          "Delete this event? This cannot be undone.",
+          { okText: "Delete", cancelText: "Cancel" },
+        );
+        if (!confirmed) return;
         try {
           await remove(ref(db, "events/" + key));
           delete eventsMap[key];

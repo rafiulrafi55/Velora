@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard | Velora</title>
     <link rel="stylesheet" href="assets/css/profile-cards.css" />
+    <link rel="stylesheet" href="assets/css/confirm-modal.css" />
     <style>
       * {
         margin: 0;
@@ -616,16 +617,16 @@
 
       // Reset button logic
       import { cleanDatabase } from "./clean-database.js";
+      import { showConfirmModal } from "./assets/js/confirm-modal.js";
       document.addEventListener("DOMContentLoaded", () => {
         const resetBtn = document.getElementById("reset-btn");
         if (resetBtn) {
           resetBtn.addEventListener("click", async () => {
-            if (
-              !confirm(
-                "Are you sure you want to delete ALL user data? This cannot be undone.",
-              )
-            )
-              return;
+            const confirmed = await showConfirmModal(
+              "Are you sure you want to delete ALL user data? This cannot be undone.",
+              { okText: "Delete All", cancelText: "Cancel" },
+            );
+            if (!confirmed) return;
             resetBtn.disabled = true;
             resetBtn.textContent = "Resetting...";
             try {

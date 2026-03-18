@@ -1,0 +1,56 @@
+/* Custom confirmation modal styles */
+.confirm-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.confirm-modal {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+  padding: 32px 28px 24px 28px;
+  max-width: 350px;
+  width: 90%;
+  text-align: center;
+  font-family: inherit;
+}
+.confirm-modal h3 {
+  margin: 0 0 16px 0;
+  font-size: 1.15rem;
+  color: #222;
+}
+.confirm-modal .confirm-modal-btns {
+  margin-top: 24px;
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+.confirm-modal button {
+  min-width: 80px;
+  padding: 8px 0;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  background: #f0f0f0;
+  color: #222;
+  transition: background 0.2s;
+}
+.confirm-modal button.confirm {
+  background: #e53935;
+  color: #fff;
+}
+.confirm-modal button.cancel {
+  background: #e0e0e0;
+  color: #444;
+}
+.confirm-modal button:active {
+  opacity: 0.85;
+}
