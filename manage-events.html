@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Manage Events | Velora</title>
+    <link rel="stylesheet" href="assets/css/profile-cards.css" />
+    <link rel="stylesheet" href="assets/css/confirm-modal.css" />
+    <style>
+      body {
+        background: #0d1b2a;
+        color: #fff;
+        font-family: Arial, Helvetica, sans-serif;
+        padding: 28px;
+      }
+      .container {
+        max-width: 900px;
+        margin: 20px auto;
+        background: #13263f;
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid #2a3a52;
+      }
+      h1 {
+        color: #f59e0b;
+      }
+      .events-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 12px;
+      }
+      .events-table th,
+      .events-table td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      .actions button {
+        margin-right: 8px;
+      }
+      .btn {
+        background: #f59e0b;
+        color: #111;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 10px;
+        cursor: pointer;
+      }
+      .btn.danger {
+        background: #ef4444;
+        color: #fff;
+      }
+      .empty {
+        padding: 18px;
+        color: #cbd5e1;
+      }
+      .modal {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.6);
+      }
+      .modal.open {
+        display: flex;
+      }
+      .modal-card {
+        background: #0b1220;
+        padding: 18px;
+        border-radius: 8px;
+        width: 420px;
+        border: 1px solid #233244;
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 8px;
+        border-radius: 6px;
+        border: 1px solid #243241;
+        background: #07101a;
+        color: #fff;
+      }
+      .row {
+        display: flex;
+        gap: 8px;
+      }
+      .row > * {
+        flex: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Manage Your Events</h1>
+      <p>Here are events you created. Edit or delete as needed.</p>
+      <div id="events-root">
+        <div class="empty">Loading...</div>
+      </div>
+      <a
+        class="btn"
+        href="dashboard.html"
+        style="margin-top: 14px; display: inline-block; text-decoration: none"
+        >Dashboard</a
+      >
+    </div>
+
+    <div id="edit-modal" class="modal">
+      <div class="modal-card">
+        <h3>Edit Event</h3>
+        <form id="edit-form">
+          <div style="margin-bottom: 8px">
+            <label>Event name</label>
+            <input id="edit-name" required maxlength="60" />
+          </div>
+          <div style="margin-bottom: 8px">
+            <label>Date</label>
+            <input id="edit-date" type="date" required />
+          </div>
+          <div style="margin-bottom: 8px">
+            <label>Guest count</label>
+            <input id="edit-guest" type="number" min="1" required />
+          </div>
+          <div
+            style="
+              display: flex;
+              gap: 8px;
+              justify-content: flex-end;
+              margin-top: 8px;
+            "
+          >
+            <button type="button" id="edit-cancel" class="btn">Cancel</button>
+            <button type="submit" class="btn">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script type="module">
+      import { auth, db } from "./assets/js/firebase-app.js";
+      import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+      import {
+        ref,
+        get,
+        child,
+        update,
+        remove,
+      } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+      import { showConfirmModal } from "./assets/js/confirm-modal.js";
+
+      const root = document.getElementById("events-root");
+      const editModal = document.getElementById("edit-modal");
+      const editForm = document.getElementById("edit-form");
+      const editName = document.getElementById("edit-name");
+      const editDate = document.getElementById("edit-date");
+      const editGuest = document.getElementById("edit-guest");
+      const editCancel = document.getElementById("edit-cancel");
+
+      let uid = null;
+      let eventsMap = {}; // key -> data
+      let editingKey = null;
+
+      onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+          window.location.replace("index.html");
+          return;
+        }
+        uid = user.uid;
+        await loadEvents();
+      });
+
+      async function loadEvents() {
+        root.innerHTML = '<div class="empty">Loading...</div>';
+        try {
+          const dbRef = ref(db);
+          const snap = await get(child(dbRef, "events"));
+          if (!snap.exists()) {
+            root.innerHTML = '<div class="empty">No events found.</div>';
+            return;
+          }
+          const all = snap.val();
+          const rows = [];
+          eventsMap = {};
+          Object.entries(all).forEach(([k, v]) => {
+            // only events created by this user (createdBy field expected)
+            if (v && v.createdBy && v.createdBy === uid) {
+              eventsMap[k] = v;
+              rows.push({ key: k, data: v });
+            }
+          });
+          if (rows.length === 0) {
+            root.innerHTML =
+              '<div class="empty">You have not created any events yet.</div>';
+            return;
+          }
+          const table = document.createElement("table");
+          table.className = "events-table";
+          table.innerHTML =
+            "<thead><tr><th>Name</th><th>Date</th><th>Guests</th><th>Actions</th></tr></thead>";
+          const tbody = document.createElement("tbody");
+          rows.sort((a, b) =>
+            (a.data.date || "").localeCompare(b.data.date || ""),
+          );
+          rows.forEach((r) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td>${escapeHtml(r.data.name || "")}</td><td>${r.data.date ? new Date(r.data.date).toLocaleDateString() : "—"}</td><td>${r.data.guestCount || 0}</td>`;
+            const actionTd = document.createElement("td");
+            actionTd.className = "actions";
+            const editBtn = document.createElement("button");
+            editBtn.className = "btn";
+            editBtn.textContent = "Edit";
+            editBtn.addEventListener("click", () => openEdit(r.key));
+            const delBtn = document.createElement("button");
+            delBtn.className = "btn danger";
+            delBtn.textContent = "Delete";
+            delBtn.addEventListener("click", () => confirmDelete(r.key));
+            actionTd.appendChild(editBtn);
+            actionTd.appendChild(delBtn);
+            tr.appendChild(actionTd);
+            tbody.appendChild(tr);
+          });
+          table.appendChild(tbody);
+          root.innerHTML = "";
+          root.appendChild(table);
+        } catch (err) {
+          root.innerHTML = '<div class="empty">Unable to load events.</div>';
+          console.error(err);
+        }
+      }
+
+      function openEdit(key) {
+        const data = eventsMap[key];
+        if (!data) return;
+        editingKey = key;
+        editName.value = data.name || "";
+        editDate.value = data.date || "";
+        editGuest.value = data.guestCount || "";
+        editModal.classList.add("open");
+      }
+
+      editCancel.addEventListener("click", () => {
+        editingKey = null;
+        editModal.classList.remove("open");
+      });
+
+      editForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!editingKey) return;
+        const upd = {
+          name: editName.value.trim(),
+          date: editDate.value,
+          guestCount: Number(editGuest.value) || 0,
+        };
+        try {
+          await update(ref(db, "events/" + editingKey), upd);
+          editModal.classList.remove("open");
+          editingKey = null;
+          await loadEvents();
+        } catch (err) {
+          alert("Unable to save changes");
+          console.error(err);
+        }
+      });
+
+      async function confirmDelete(key) {
+        const confirmed = await showConfirmModal(
+          "Delete this event? This cannot be undone.",
+          { okText: "Delete", cancelText: "Cancel" },
+        );
+        if (!confirmed) return;
+        try {
+          await remove(ref(db, "events/" + key));
+          delete eventsMap[key];
+          await loadEvents();
+        } catch (err) {
+          alert("Unable to delete event");
+          console.error(err);
+        }
+      }
+
+      // small helper
+      function escapeHtml(s) {
+        return String(s).replace(/[&<>\"']/g, function (c) {
+          return {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;",
+          }[c];
+        });
+      }
+    </script>
+  </body>
+</html>

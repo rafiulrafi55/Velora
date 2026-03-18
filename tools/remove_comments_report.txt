@@ -1,0 +1,14 @@
+Backup dir: C:\CSIT\Projects\WGMS\backup_comments_20260318_164904
+Modified files: 10
+Total comment blocks removed (approx): 24
+
+create-event.html — removed: 1
+guests.html — removed: 3
+index.html — removed: 1
+signup.html — removed: 3
+assets\css\profile-cards.css — removed: 0
+assets\js\firebase-app.js — removed: 0
+tools\check_guests_syntax.py — removed: 0
+tools\find_brace_balance.py — removed: 3
+tools\find_unmatched.py — removed: 1
+tools\remove_comments.py — removed: 12

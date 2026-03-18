@@ -14,8 +14,8 @@
   top: calc(100% + 10px);
   left: 0;
   width: 290px;
-  background: #13263f;
-  border: 1px solid #2a3a52;
+  background: 
+  border: 1px solid 
   border-radius: 12px;
   padding: 14px;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
@@ -37,9 +37,9 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  border: 2px solid #f59e0b;
+  border: 2px solid 
   object-fit: cover;
-  background: #0d1b2a;
+  background: 
 }
 
 .about-meta {
@@ -49,18 +49,18 @@
 }
 
 .about-name {
-  color: #fff;
+  color: 
   font-size: 14px;
   font-weight: 700;
 }
 
 .about-handle {
-  color: #9ca3af;
+  color: 
   font-size: 12px;
 }
 
 .about-role {
-  color: #f59e0b;
+  color: 
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -68,7 +68,7 @@
 }
 
 .about-bio {
-  color: #cbd5e1;
+  color: 
   font-size: 12px;
   line-height: 1.45;
   margin-bottom: 10px;
@@ -82,29 +82,29 @@
 }
 
 .about-stat {
-  background: #0f1f33;
-  border: 1px solid #22354d;
+  background: 
+  border: 1px solid 
   border-radius: 8px;
   padding: 6px;
   text-align: center;
 }
 
 .about-stat .value {
-  color: #fff;
+  color: 
   font-size: 13px;
   font-weight: 700;
   display: block;
 }
 
 .about-stat .label {
-  color: #94a3b8;
+  color: 
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 .about-location {
-  color: #94a3b8;
+  color: 
   font-size: 12px;
 }
 
@@ -114,8 +114,8 @@
   top: calc(100% + 10px);
   left: 0;
   width: 290px;
-  background: #13263f;
-  border: 1px solid #2a3a52;
+  background: 
+  border: 1px solid 
   border-radius: 12px;
   padding: 14px;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
@@ -127,7 +127,7 @@
 }
 
 .contact-title {
-  color: #fff;
+  color: 
   font-size: 14px;
   font-weight: 700;
   margin-bottom: 10px;
@@ -144,7 +144,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #cbd5e1;
+  color: 
   font-size: 12px;
   line-height: 1.4;
 }
@@ -161,15 +161,15 @@
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #1877f2;
-  color: #fff;
+  background: 
+  color: 
   font-weight: 700;
   font-size: 12px;
   line-height: 1;
 }
 
 .contact-item a {
-  color: #93c5fd;
+  color: 
   text-decoration: none;
 }
 

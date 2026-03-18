@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard | Velora</title>
     <link rel="stylesheet" href="assets/css/profile-cards.css" />
+    <link rel="stylesheet" href="assets/css/confirm-modal.css" />
     <style>
       * {
         margin: 0;
@@ -213,6 +214,20 @@
         font-weight: bold;
         margin-top: 10px;
         color: #f59e0b;
+      }
+
+      .stat-card.clickable {
+        cursor: pointer;
+        box-shadow: 0 0 0 2px #f59e0b33;
+        transition:
+          box-shadow 0.18s,
+          background 0.18s;
+      }
+      .stat-card.clickable:hover,
+      .stat-card.clickable:focus {
+        background: #22324b;
+        box-shadow: 0 0 0 3px #f59e0b;
+        outline: none;
       }
 
       /* panels */
@@ -475,7 +490,12 @@
       </section>
 
       <section class="stats-grid">
-        <div class="stat-card">
+        <div
+          class="stat-card clickable"
+          id="stat-events-card"
+          tabindex="0"
+          title="View all events"
+        >
           <h3>Total Events</h3>
           <p id="stat-events">...</p>
         </div>
@@ -485,7 +505,12 @@
           <p id="stat-upcoming">...</p>
         </div>
 
-        <div class="stat-card">
+        <div
+          class="stat-card clickable"
+          id="stat-guests-card"
+          tabindex="0"
+          title="View all guests"
+        >
           <h3>Total Guests</h3>
           <p id="stat-guests">...</p>
         </div>
@@ -505,7 +530,7 @@
               Create Event
             </button>
 
-            <button onclick="location.href = 'events.html'">
+            <button onclick="location.href = 'manage-events.html'">
               Manage Events
             </button>
 
@@ -513,6 +538,9 @@
 
             <button onclick="location.href = 'checkin.html'">
               Guest Check-in
+            </button>
+            <button id="reset-btn" style="background: #ef4444; color: #fff">
+              Reset (Delete All)
             </button>
           </div>
         </div>
@@ -574,6 +602,7 @@
         ref,
         get,
         child,
+        remove,
       } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
 
       const logoutOverlay = document.getElementById("logout-overlay");
@@ -599,12 +628,45 @@
       });
 
       // Firebase Auth session check
+      let currentUserUid = null;
       onAuthStateChanged(auth, (user) => {
         if (!user) {
           window.location.replace("index.html");
         } else {
           document.body.classList.remove("auth-pending");
+          currentUserUid = user.uid;
           loadDashboardData(user.uid);
+        }
+      });
+
+      // Reset button logic
+      import { cleanDatabase } from "./clean-database.js";
+      import { showConfirmModal } from "./assets/js/confirm-modal.js";
+      document.addEventListener("DOMContentLoaded", () => {
+        const resetBtn = document.getElementById("reset-btn");
+        if (resetBtn) {
+          resetBtn.addEventListener("click", async () => {
+            const confirmed = await showConfirmModal(
+              "Are you sure you want to delete ALL user data? This cannot be undone.",
+              { okText: "Delete All", cancelText: "Cancel" },
+            );
+            if (!confirmed) return;
+            resetBtn.disabled = true;
+            resetBtn.textContent = "Resetting...";
+            try {
+              await cleanDatabase();
+              // Optionally reload dashboard data after cleaning
+              if (typeof loadDashboardData === "function" && currentUserUid) {
+                loadDashboardData(currentUserUid);
+              }
+            } catch (err) {
+              alert("Failed to reset data. See console for details.");
+              console.error(err);
+            } finally {
+              resetBtn.disabled = false;
+              resetBtn.textContent = "Reset (Delete All)";
+            }
+          });
         }
       });
 
@@ -926,6 +988,28 @@
           console.warn("createMobileNavFooter failed", err);
         }
       })();
+      const statEventsCard = document.getElementById("stat-events-card");
+      if (statEventsCard) {
+        statEventsCard.addEventListener("click", () => {
+          window.location.href = "manage-events.html";
+        });
+        statEventsCard.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            window.location.href = "manage-events.html";
+          }
+        });
+      }
+      const statGuestsCard = document.getElementById("stat-guests-card");
+      if (statGuestsCard) {
+        statGuestsCard.addEventListener("click", () => {
+          window.location.href = "guests.html";
+        });
+        statGuestsCard.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            window.location.href = "guests.html";
+          }
+        });
+      }
     </script>
   </body>
 </html>
