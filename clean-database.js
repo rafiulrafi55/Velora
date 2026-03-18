@@ -17,7 +17,7 @@ export async function cleanDatabase() {
       remove(ref(db, "activity")),
       // Add more collections if needed
     ]);
-    alert("All user data has been deleted, but structure is preserved.");
+    // Removed alert here to avoid double popup
   } catch (err) {
     alert("Failed to clean database. See console for details.");
     console.error(err);
