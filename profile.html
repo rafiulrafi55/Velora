@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Profile — Velora</title>
+    <link rel="stylesheet" href="assets/css/profile-cards.css" />
+    <link rel="stylesheet" href="assets/css/confirm-modal.css" />
+    <style>
+      :root {
+        --accent: #0f2740;
+        --muted: #64748b;
+        --bg: #f8fafc;
+      }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: linear-gradient(120deg, #081420, #0f2740);
+        -webkit-font-smoothing: antialiased;
+      }
+      .container {
+        max-width: 980px;
+        margin: 40px auto;
+        padding: 24px;
+      }
+      .card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 28px;
+        box-shadow: 0 10px 30px rgba(2, 6, 23, 0.35);
+        max-width: 720px;
+        margin: 0 auto;
+      }
+      .card-header {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+      .avatar {
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--accent);
+      }
+      h1 {
+        margin: 0;
+        color: var(--accent);
+        font-size: 1.8rem;
+      }
+      .subtitle {
+        color: var(--muted);
+        margin-top: 6px;
+        font-size: 0.95rem;
+      }
+      .fields {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-top: 20px;
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+      }
+      label {
+        font-size: 0.85rem;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+      input {
+        font-size: 1rem;
+        padding: 8px 10px;
+        border-radius: 8px;
+        border: 1px solid #e6edf3;
+        background: #f8fafc;
+      }
+      input[readonly] {
+        background: #f1f5f9;
+      }
+      .actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        margin-top: 20px;
+      }
+      .btn {
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      .btn.ghost {
+        background: #fff;
+        color: var(--accent);
+        border: 1px solid #e6edf3;
+      }
+      .small {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+      }
+      @media (max-width: 700px) {
+        .fields {
+          grid-template-columns: 1fr;
+        }
+        .container {
+          padding: 12px;
+        }
+        .card {
+          padding: 18px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card" role="main">
+        <div class="card-header">
+          <img
+            id="profile-avatar"
+            class="avatar"
+            src="assets/img/default-avatar.svg"
+            alt="Profile avatar"
+          />
+          <div>
+            <h1 id="profile-display">Your profile</h1>
+            <div class="subtitle">Manage your account details</div>
+          </div>
+        </div>
+
+        <form id="profile-form" autocomplete="off">
+          <div class="fields">
+            <div class="field">
+              <label for="profile-name">Name</label>
+              <input id="profile-name" name="name" type="text" readonly />
+            </div>
+            <div class="field">
+              <label for="profile-email">Email</label>
+              <input id="profile-email" name="email" type="email" readonly />
+            </div>
+            <div class="field">
+              <label for="profile-phone">Phone</label>
+              <input id="profile-phone" name="phone" type="text" readonly />
+            </div>
+            <div class="field">
+              <label for="profile-country">Country Code</label>
+              <input
+                id="profile-country"
+                name="countryCode"
+                type="text"
+                readonly
+              />
+            </div>
+            <div class="field">
+              <label for="profile-role">Role</label>
+              <input id="profile-role" name="role" type="text" readonly />
+            </div>
+            <div class="field">
+              <label for="profile-custom">Custom code</label>
+              <input
+                id="profile-custom"
+                name="customCode"
+                type="text"
+                readonly
+              />
+            </div>
+          </div>
+
+          <div class="actions">
+            <button
+              type="button"
+              id="back-btn"
+              class="btn ghost small"
+              onclick="location.href = 'dashboard.html'"
+            >
+              Back
+            </button>
+            <button type="button" id="edit-btn" class="btn small">Edit</button>
+            <button
+              type="submit"
+              id="save-btn"
+              class="btn small"
+              style="display: none"
+            >
+              Save
+            </button>
+            <button
+              type="button"
+              id="cancel-btn"
+              class="btn ghost small"
+              style="display: none"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script type="module" src="assets/js/profile-page.js"></script>
+  </body>
+</html>
