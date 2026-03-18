@@ -514,6 +514,9 @@
             <button onclick="location.href = 'checkin.html'">
               Guest Check-in
             </button>
+            <button id="reset-btn" style="background: #ef4444; color: #fff">
+              Reset (Delete All)
+            </button>
           </div>
         </div>
 
@@ -574,6 +577,7 @@
         ref,
         get,
         child,
+        remove,
       } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
 
       const logoutOverlay = document.getElementById("logout-overlay");
@@ -599,12 +603,68 @@
       });
 
       // Firebase Auth session check
+      let currentUserUid = null;
       onAuthStateChanged(auth, (user) => {
         if (!user) {
           window.location.replace("index.html");
         } else {
           document.body.classList.remove("auth-pending");
+          currentUserUid = user.uid;
           loadDashboardData(user.uid);
+        }
+      });
+
+      // Reset button logic
+      document.addEventListener("DOMContentLoaded", () => {
+        const resetBtn = document.getElementById("reset-btn");
+        if (resetBtn) {
+          resetBtn.addEventListener("click", async () => {
+            if (!currentUserUid) {
+              alert("User not authenticated.");
+              return;
+            }
+            if (
+              !confirm(
+                "Are you sure you want to delete ALL your events and guests? This cannot be undone.",
+              )
+            )
+              return;
+            resetBtn.disabled = true;
+            resetBtn.textContent = "Resetting...";
+            try {
+              // Remove all events created by this user
+              const dbRef = ref(db);
+              const eventsSnap = await get(child(dbRef, "events"));
+              if (eventsSnap.exists()) {
+                const all = eventsSnap.val();
+                const toDelete = Object.entries(all).filter(
+                  ([k, v]) => v && v.createdBy === currentUserUid,
+                );
+                await Promise.all(
+                  toDelete.map(([k]) => remove(child(dbRef, `events/${k}`))),
+                );
+              }
+              // Remove all guests created by this user
+              const guestsSnap = await get(child(dbRef, "guests"));
+              if (guestsSnap.exists()) {
+                const allG = guestsSnap.val();
+                const toDeleteG = Object.entries(allG).filter(
+                  ([k, v]) => v && v.createdBy === currentUserUid,
+                );
+                await Promise.all(
+                  toDeleteG.map(([k]) => remove(child(dbRef, `guests/${k}`))),
+                );
+              }
+              alert("All your events and guests have been deleted.");
+              loadDashboardData(currentUserUid);
+            } catch (err) {
+              alert("Failed to reset data. See console for details.");
+              console.error(err);
+            } finally {
+              resetBtn.disabled = false;
+              resetBtn.textContent = "Reset (Delete All)";
+            }
+          });
         }
       });
 
