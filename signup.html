@@ -816,6 +816,20 @@
           }
         });
 
+      // Trigger sign up on Enter key
+      document
+        .getElementById("signup-form")
+        .addEventListener("keydown", function (e) {
+          if (e.key === "Enter" && e.target.tagName !== "TEXTAREA") {
+            e.preventDefault();
+            document
+              .getElementById("signup-form")
+              .dispatchEvent(
+                new Event("submit", { cancelable: true, bubbles: true }),
+              );
+          }
+        });
+
       window.addEventListener("DOMContentLoaded", generateCaptcha);
 
       (function () {

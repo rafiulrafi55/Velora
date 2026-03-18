@@ -884,8 +884,17 @@
         if (e.target === logoutOverlay)
           logoutOverlay.classList.remove("visible");
       });
+
+      // Bind Enter key to OK (logout) when popup is visible
       document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") logoutOverlay.classList.remove("visible");
+        if (logoutOverlay.classList.contains("visible")) {
+          if (e.key === "Escape") {
+            logoutOverlay.classList.remove("visible");
+          } else if (e.key === "Enter") {
+            e.preventDefault();
+            document.getElementById("logout-confirm").click();
+          }
+        }
       });
 
       let currentUserUid = null;

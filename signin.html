@@ -674,6 +674,14 @@
         }
       });
 
+      // Trigger sign in on Enter key
+      document.getElementById("signin-form").addEventListener("keydown", function(e) {
+        if (e.key === "Enter" && e.target.tagName !== "TEXTAREA") {
+          e.preventDefault();
+          document.getElementById("signin-form").dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+        }
+      });
+
       const forgotForm = document.getElementById("forgot-form");
       const forgotOverlay = document.getElementById("forgot-overlay");
       const forgotStatus = document.getElementById("forgot-status");
