@@ -20,6 +20,90 @@
         color: white;
       }
 
+      /* Animation keyframes */
+      @keyframes fadeSlideIn {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .animate-fade-slide {
+        opacity: 0;
+        animation: fadeSlideIn 0.7s cubic-bezier(0.4, 1.4, 0.6, 1) forwards;
+      }
+      .animate-fade {
+        opacity: 0;
+        animation: fadeIn 0.7s cubic-bezier(0.4, 1.4, 0.6, 1) forwards;
+      }
+
+      /* Staggered animation for stats cards */
+      .stats-grid .stat-card {
+        opacity: 0;
+        animation: fadeSlideIn 0.7s cubic-bezier(0.4, 1.4, 0.6, 1) forwards;
+      }
+      .stats-grid .stat-card:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .stats-grid .stat-card:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .stats-grid .stat-card:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      .stats-grid .stat-card:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+
+      /* Panels animation */
+      .dashboard-grid .panel,
+      .activity-panel {
+        opacity: 0;
+        animation: fadeSlideIn 0.8s cubic-bezier(0.4, 1.4, 0.6, 1) forwards;
+        animation-delay: 0.5s;
+      }
+
+      /* Dashboard header animation */
+      .dashboard-header {
+        opacity: 0;
+        animation: fadeSlideIn 0.8s cubic-bezier(0.4, 1.4, 0.6, 1) forwards;
+        animation-delay: 0.05s;
+      }
+
+      /* Activity list items animation */
+      .activity-list li {
+        opacity: 0;
+        animation: fadeIn 0.7s cubic-bezier(0.4, 1.4, 0.6, 1) forwards;
+      }
+      .activity-list li:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .activity-list li:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .activity-list li:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      .activity-list li:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+      .activity-list li:nth-child(5) {
+        animation-delay: 0.5s;
+      }
+
       body.auth-pending {
         visibility: hidden;
       }
@@ -563,6 +647,32 @@
     </main>
 
     <script src="assets/js/github-profile.js"></script>
+    <script>
+      // Animate dashboard elements on load
+      document.addEventListener("DOMContentLoaded", function () {
+        // Animate dashboard header
+        var header = document.querySelector(".dashboard-header");
+        if (header) header.classList.add("animate-fade-slide");
+
+        // Animate panels
+        var panels = document.querySelectorAll(
+          ".dashboard-grid .panel, .activity-panel",
+        );
+        panels.forEach(function (panel) {
+          panel.classList.add("animate-fade-slide");
+        });
+        // Animate stats cards (handled by CSS, but force reflow for animation)
+        var statCards = document.querySelectorAll(".stats-grid .stat-card");
+        statCards.forEach(function (card) {
+          card.style.opacity = "1"; // ensure visible for animation
+        });
+        // Animate activity list items (handled by CSS)
+        var activityItems = document.querySelectorAll(".activity-list li");
+        activityItems.forEach(function (li) {
+          li.style.opacity = "1";
+        });
+      });
+    </script>
     <script>
       // Mobile: route About/Contact triggers to dedicated mobile pages
       document.addEventListener("DOMContentLoaded", function () {
