@@ -7,6 +7,68 @@
     <link rel="stylesheet" href="assets/css/profile-cards.css" />
     <link rel="stylesheet" href="assets/css/confirm-modal.css" />
     <style>
+      /* Upcoming Events Popup (desktop only) */
+      .upcoming-popup-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 400;
+        justify-content: center;
+        align-items: center;
+      }
+      .upcoming-popup-overlay.visible {
+        display: flex;
+      }
+      .upcoming-popup-box {
+        background: #13263f;
+        border: 1px solid #2a3a52;
+        border-radius: 14px;
+        padding: 32px 28px 24px 28px;
+        max-width: 420px;
+        width: 92vw;
+        text-align: left;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        animation: popIn 0.22s ease;
+        color: #fff;
+      }
+      .upcoming-popup-box h2 {
+        font-size: 22px;
+        margin-bottom: 18px;
+        color: #f59e0b;
+      }
+      .upcoming-popup-box ul {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 10px 0;
+      }
+      .upcoming-popup-box li {
+        padding: 10px 0;
+        border-bottom: 1px solid #2a3a52;
+        color: #cbd5e1;
+      }
+      .upcoming-popup-close {
+        background: #22324b;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 18px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 12px;
+        float: right;
+        transition: background 0.2s;
+      }
+      .upcoming-popup-close:hover {
+        background: #f59e0b;
+        color: #131212;
+      }
+      @media (max-width: 768px) {
+        .upcoming-popup-overlay {
+          display: none !important;
+        }
+      }
       * {
         margin: 0;
         padding: 0;
@@ -300,7 +362,8 @@
         color: #f59e0b;
       }
 
-      .stat-card.clickable {
+      .stat-card.clickable,
+      #stat-upcoming-card {
         cursor: pointer;
         box-shadow: 0 0 0 2px #f59e0b33;
         transition:
@@ -308,7 +371,9 @@
           background 0.18s;
       }
       .stat-card.clickable:hover,
-      .stat-card.clickable:focus {
+      .stat-card.clickable:focus,
+      #stat-upcoming-card:hover,
+      #stat-upcoming-card:focus {
         background: #22324b;
         box-shadow: 0 0 0 3px #f59e0b;
         outline: none;
@@ -328,6 +393,20 @@
         border: 1px solid #2a3a52;
         border-radius: 10px;
         padding: 25px;
+        transition:
+          box-shadow 0.18s,
+          background 0.18s;
+      }
+
+      /* Highlight upcoming events panel on hover/focus (desktop only) */
+      @media (min-width: 769px) {
+        #upcoming-events-panel:hover,
+        #upcoming-events-panel:focus {
+          background: #22324b;
+          box-shadow: 0 0 0 3px #f59e0b;
+          outline: none;
+          cursor: pointer;
+        }
       }
 
       .panel h2 {
@@ -360,6 +439,16 @@
 
       .event-list {
         list-style: none;
+        margin-bottom: 0;
+      }
+      /* Compact event list items for panel (fit 3 without stretching) */
+      .upcoming-events .event-list li {
+        padding: 6px 0;
+        font-size: 14px;
+        line-height: 1.2;
+      }
+      .upcoming-events .event-list span {
+        font-size: 12px;
       }
 
       .event-list li {
@@ -584,7 +673,12 @@
           <p id="stat-events">...</p>
         </div>
 
-        <div class="stat-card">
+        <div
+          class="stat-card"
+          id="stat-upcoming-card"
+          tabindex="0"
+          title="Show all upcoming events"
+        >
           <h3>Upcoming Events</h3>
           <p id="stat-upcoming">...</p>
         </div>
@@ -630,7 +724,12 @@
           </div>
         </div>
 
-        <div class="panel upcoming-events">
+        <div
+          class="panel upcoming-events"
+          id="upcoming-events-panel"
+          tabindex="0"
+          title="Show all upcoming events"
+        >
           <h2>Upcoming Events</h2>
           <ul class="event-list">
             <li id="event-loading">Loading...</li>
@@ -646,7 +745,94 @@
       </section>
     </main>
 
+    <!-- Upcoming Events Popup (desktop only) -->
+    <div class="upcoming-popup-overlay" id="upcoming-popup-overlay">
+      <div class="upcoming-popup-box">
+        <h2>All Upcoming Events</h2>
+        <ul id="upcoming-popup-list">
+          <li>Loading...</li>
+        </ul>
+        <button class="upcoming-popup-close" id="upcoming-popup-close">
+          Close
+        </button>
+      </div>
+    </div>
+
     <script src="assets/js/github-profile.js"></script>
+    <script>
+      // Desktop-only: Show popup with all upcoming events when clicking the stat card
+      document.addEventListener("DOMContentLoaded", function () {
+        const statUpcomingCard = document.getElementById("stat-upcoming-card");
+        const upcomingEventsPanel = document.getElementById(
+          "upcoming-events-panel",
+        );
+        const popupOverlay = document.getElementById("upcoming-popup-overlay");
+        const popupList = document.getElementById("upcoming-popup-list");
+        const popupClose = document.getElementById("upcoming-popup-close");
+        // Only enable on desktop
+        function isDesktop() {
+          return window.matchMedia("(min-width: 769px)").matches;
+        }
+        // Store latest upcoming events for popup
+        let latestUpcoming = [];
+        // Listen for custom event to update popup list
+        window.addEventListener("updateUpcomingPopupList", function (e) {
+          latestUpcoming = e.detail.upcoming || [];
+        });
+        function renderPopupList() {
+          popupList.innerHTML = "";
+          if (latestUpcoming.length > 0) {
+            latestUpcoming.forEach((ev) => {
+              const li = document.createElement("li");
+              li.innerHTML = `<strong>${ev.name || "Event"}</strong><span style='display:block;font-size:13px;color:#94a3b8;'>${ev.date ? new Date(ev.date).toLocaleDateString() : "No date"} • ${ev.guestCount || 0} Guests</span>`;
+              popupList.appendChild(li);
+            });
+          } else {
+            popupList.innerHTML = "<li>No upcoming events</li>";
+          }
+        }
+        if (statUpcomingCard) {
+          statUpcomingCard.addEventListener("click", function (e) {
+            if (!isDesktop()) return;
+            renderPopupList();
+            popupOverlay.classList.add("visible");
+          });
+          statUpcomingCard.addEventListener("keydown", function (e) {
+            if (!isDesktop()) return;
+            if (e.key === "Enter" || e.key === " ") {
+              renderPopupList();
+              popupOverlay.classList.add("visible");
+            }
+          });
+        }
+        if (upcomingEventsPanel) {
+          upcomingEventsPanel.addEventListener("click", function (e) {
+            if (!isDesktop()) return;
+            renderPopupList();
+            popupOverlay.classList.add("visible");
+          });
+          upcomingEventsPanel.addEventListener("keydown", function (e) {
+            if (!isDesktop()) return;
+            if (e.key === "Enter" || e.key === " ") {
+              renderPopupList();
+              popupOverlay.classList.add("visible");
+            }
+          });
+        }
+        if (popupClose) {
+          popupClose.addEventListener("click", function () {
+            popupOverlay.classList.remove("visible");
+          });
+        }
+        popupOverlay.addEventListener("click", function (e) {
+          if (e.target === popupOverlay)
+            popupOverlay.classList.remove("visible");
+        });
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") popupOverlay.classList.remove("visible");
+        });
+      });
+    </script>
     <script>
       // Animate dashboard elements on load
       document.addEventListener("DOMContentLoaded", function () {
@@ -750,6 +936,7 @@
         }
       });
 
+      // (Removed upcomingEventsPanel popup logic from module script)
       // Reset button logic
       import { cleanDatabase } from "./clean-database.js";
       import { showConfirmModal } from "./assets/js/confirm-modal.js";
@@ -833,6 +1020,12 @@
           eventList.innerHTML = "";
           // Use matchMedia to check if mobile (<=768px)
           const isMobile = window.matchMedia("(max-width: 768px)").matches;
+          // Dispatch event to update popup with all upcoming events (for desktop)
+          window.dispatchEvent(
+            new CustomEvent("updateUpcomingPopupList", {
+              detail: { upcoming },
+            }),
+          );
           if (upcoming.length > 0) {
             const eventsToShow = isMobile ? upcoming : upcoming.slice(0, 3);
             eventsToShow.forEach((ev) => {
