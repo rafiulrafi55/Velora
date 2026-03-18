@@ -206,7 +206,6 @@
     gap: 10px;
     margin-top: 18px;
   }
-  /* Modal-specific button styles to ensure Add and Cancel match visually */
   .modal-actions .add-btn {
     background: #f59e0b;
     color: #131212;
@@ -230,7 +229,6 @@
     font-weight: 700;
     cursor: pointer;
   }
-  /* Ensure confirm modal buttons match modal Add/Cancel styling */
   #confirm-modal .add-btn {
     background: #f59e0b;
     color: #131212;
@@ -360,7 +358,6 @@
            background: #f59e0b;
       color: #131212;
         }
-      /* Unique styles for the new Add Guest button */
       .new-add-btn {
         width: 46px;
         height: 46px;
@@ -460,7 +457,6 @@
           background: #f59e0b;
           color: #131212;
         }
-        /* Responsive adjustments for mobile */
         @media (max-width: 720px) {
           .container {
             padding: 20px 16px;
@@ -479,7 +475,6 @@
             width: 100% !important;
             margin: 0 !important;
           }
-          /* Stretch the add (+) button to full width on mobile */
           #add-guest-btn {
             margin-right: 0 !important;
             margin-left: 0 !important;
@@ -492,22 +487,18 @@
             padding: 8px 12px !important;
             box-sizing: border-box !important;
           }
-          /* Make the circular styling adapt to full-width */
           #add-guest-btn.new-add-btn {
             background: linear-gradient(180deg, #ffb86b 0%, #ff8a00 100%) !important;
             box-shadow: 0 6px 20px rgba(255,138,0,0.18) !important;
             border: 1px solid rgba(255,255,255,0.06) !important;
           }
-          /* ensure delete button doesn't push layout unexpectedly */
           .danger-btn { width: 100% !important; }
-          /* Stretch the dashboard/back button to full width on mobile */
           .back-btn { display: block !important; width: 100% !important; text-align: center !important; box-sizing: border-box !important; }
           .danger-btn {
             width: 100%;
             justify-content: center;
             margin-left: 0;
           }
-          /* Make the table readable on small screens: hide headers and show rows as blocks */
           table {
             border-radius: 8px;
             overflow: hidden;
@@ -537,7 +528,7 @@
           }
           tbody tr td:nth-child(3),
           tbody tr td:nth-child(5) {
-            display: none; /* hide email and role on small screens */
+            display: none;
           }
           tbody tr td:nth-child(4) {
             color: #94a3b8;
@@ -686,7 +677,6 @@
       } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
       import { set } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
 
-      // --- Batch Import with Preview and Role Selection ---
       const importInput = document.getElementById("import-contacts");
       const batchImportModal = document.getElementById("batch-import-modal");
       const batchImportRole = document.getElementById("batch-import-role");
@@ -711,12 +701,10 @@
         if (!s) return "";
         const matches = s.match(/\+?\d[\d\s\-()]{6,}\d/g);
         const raw = matches && matches.length ? matches[0] : s;
-        // normalize: remove spaces, dashes and parentheses, keep leading +
         const cleaned = raw.replace(/[^\d+]/g, "");
         return cleaned;
       }
 
-      // Promise-based confirm dialog using the confirm modal
       function showConfirmDialog(
         message,
         okText = "OK",
@@ -728,17 +716,13 @@
           const okBtn = document.getElementById("confirm-modal-ok");
           const cancelBtn = document.getElementById("confirm-modal-cancel");
           if (!modal || !msg || !okBtn || !cancelBtn) {
-            // fallback to native
             resolve(window.confirm(message));
             return;
           }
-          // Ensure the modal is attached to body so it sits above other overlays
           try {
             if (modal.parentElement !== document.body)
               document.body.appendChild(modal);
-          } catch (e) {
-            // ignore
-          }
+          } catch (e) {}
           console.log("showConfirmDialog: opening confirm modal", message);
           msg.textContent = message;
           okBtn.textContent = okText;
@@ -861,7 +845,6 @@
             return;
           }
           renderBatchPreview();
-          // Ensure batch modal is attached to body so it isn't hidden by the Add Guest modal
           try {
             if (
               batchImportModal &&
@@ -869,11 +852,8 @@
             ) {
               document.body.appendChild(batchImportModal);
             }
-          } catch (err) {
-            // ignore
-          }
+          } catch (err) {}
           batchImportModal.classList.add("visible");
-          // Close the Add Guest modal since we're handling import separately
           const gm = document.getElementById("guest-modal-overlay");
           if (gm) {
             gm.classList.remove("visible");
@@ -881,7 +861,6 @@
             if (gf) gf.reset();
             gm.removeAttribute("data-edit-id");
           }
-          // Render batch preview with remove buttons
           function renderBatchPreview() {
             batchImportPreview.innerHTML = `<table style='width:100%;border-collapse:collapse;font-size:14px;'>
                 <thead><tr><th></th><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
@@ -889,7 +868,6 @@
                   ${batchContacts.map((c, i) => `<tr><td><button class='remove-batch-contact' data-idx='${i}' title='Remove' style='color:#fff;background:none;border:none;font-size:18px;line-height:1;padding:0 8px;cursor:pointer;'><span style='color:#e11d48;font-weight:bold;'>&#10006;</span></button></td><td>${c.name}</td><td>${c.email}</td><td>${c.phone}</td></tr>`).join("")}
                 </tbody>
               </table>`;
-            // Add event listeners for remove buttons
             batchImportPreview
               .querySelectorAll(".remove-batch-contact")
               .forEach((btn) => {
@@ -907,7 +885,6 @@
       });
 
       batchImportRole.addEventListener("change", () => {
-        // Update role for all contacts in preview
         batchContacts = batchContacts.map((c) => ({
           ...c,
           role: batchImportRole.value,
@@ -919,13 +896,11 @@
         if (!batchContacts.length) return;
         batchImportConfirm.disabled = true;
 
-        // Close preview immediately
         try {
           batchImportModal.classList.remove("visible");
         } catch (e) {}
 
         const total = batchContacts.length;
-        // create a loading overlay (circular progress) and append to body
         const loading = document.createElement("div");
         loading.className = "modal-overlay visible";
         loading.innerHTML = `
@@ -943,7 +918,6 @@
         `;
         document.body.appendChild(loading);
 
-        // initialize circular progress stroke
         (function initCircular() {
           const prog = loading.querySelector("#batch-loading-circle");
           const pctText = loading.querySelector("#batch-loading-percent");
@@ -953,7 +927,6 @@
             prog.style.transition = "stroke-dashoffset 180ms linear";
             prog.style.strokeDasharray = String(circumference);
             prog.style.strokeDashoffset = String(circumference);
-            // expose for update in loop
             loading._circ = circumference;
             loading._prog = prog;
             loading._pctText = pctText;
@@ -979,7 +952,6 @@
           }
           const counter = document.getElementById("batch-loading-count");
           if (counter) counter.textContent = `${i + 1}/${total}`;
-          // update circular progress if present
           try {
             const circ = loading._circ;
             const prog = loading._prog;
@@ -1016,7 +988,6 @@
       const cancelModalBtn = document.getElementById("cancel-modal-btn");
       const modalStatus = document.getElementById("modal-status");
 
-      // Event tabs state
       let selectedEventId = null;
       let guestsCache = {};
       let eventsInitialized = false;
@@ -1057,7 +1028,6 @@
         eventsContainer.innerHTML = "";
         if (!events) return;
         const entries = Object.entries(events);
-        // On first load, default to the first event if nothing selected
         if (!eventsInitialized && entries.length && !selectedEventId) {
           selectedEventId = entries[0][0];
           const hidden = document.getElementById("guest-event-id");
@@ -1077,7 +1047,6 @@
                 : null
               : null;
           const isActive = selectedEventId === id;
-          // use a small pill badge so current/expected can fit (e.g. "12/250")
           const badgeStyle = isActive
             ? "display:inline-flex;align-items:center;justify-content:center;margin-left:6px;border:1px solid #000000;color:#000000;border-radius:999px;padding:2px 6px;font-weight:700;font-size:11px;line-height:1;min-width:20px;"
             : "display:inline-flex;align-items:center;justify-content:center;margin-left:6px;border:1px solid #f59e0b;color:#f59e0b;border-radius:999px;padding:2px 6px;font-weight:700;font-size:11px;line-height:1;min-width:20px;";
@@ -1103,7 +1072,6 @@
       function renderGuests(guests) {
         guestTableBody.innerHTML = "";
         const entries = guests ? Object.entries(guests) : [];
-        // Filter by selected event if present
         const filteredByEvent = selectedEventId
           ? entries.filter(([, g]) => (g && g.eventId) === selectedEventId)
           : entries;
@@ -1119,7 +1087,6 @@
               );
             })
           : filteredByEvent;
-        // Always show a message if no guests
         if (!filtered.length) {
           let msg = "No guests found.";
           if (
@@ -1144,7 +1111,6 @@
             <td>${guest.phone || ""}</td>
             <td>${guest.role || ""}</td>
           `;
-          // Add click event for editing (ignore delete button)
           tr.addEventListener("click", (e) => {
             if (e.target.closest(".delete-guest-btn")) return;
             guestForm.reset();
@@ -1154,7 +1120,6 @@
             document.getElementById("guest-email").value = guest.email || "";
             document.getElementById("guest-phone").value = guest.phone || "";
             document.getElementById("guest-role").value = guest.role || "Other";
-            // ensure the hidden event id reflects this guest's event (or current selection)
             const hidden = document.getElementById("guest-event-id");
             if (hidden) hidden.value = guest.eventId || selectedEventId || "";
             guestModal.setAttribute("data-edit-id", id);
@@ -1162,10 +1127,8 @@
           guestTableBody.appendChild(tr);
         });
         updateEventStats();
-        // deletion handled via delegated listener on `guestTableBody`
       }
 
-      // Delegated handler for delete buttons to avoid duplicate listeners
       if (guestTableBody && !guestTableBody.dataset.delegationAttached) {
         guestTableBody.dataset.delegationAttached = "1";
         guestTableBody.addEventListener("click", async (e) => {
@@ -1198,41 +1161,34 @@
         );
       }
 
-      // Listen for guest changes. Only render after events are initialized
       onValue(ref(db, "guests"), (snapshot) => {
         guestsCache = snapshot.val() || {};
         if (eventsInitialized) {
           renderGuests(guestsCache);
           updateEventStats();
-          // refresh event badges
           try {
             renderEvents(eventsCache);
           } catch (e) {}
         }
       });
 
-      // Listen for events and render tabs
       onValue(ref(db, "events"), (snap) => {
         const events = snap.val() || {};
         eventsCache = events;
         renderEvents(events);
-        // If there are no events, show a message and stop loading guests
         if (Object.keys(events).length === 0) {
           guestTableBody.innerHTML = `<tr class="empty-row"><td colspan="5">No events found. Please create an event first.</td></tr>`;
           updateEventStats();
           return;
         }
-        // After events are initialized, render guests (if any cached)
         if (eventsInitialized) {
           renderGuests(guestsCache);
           updateEventStats();
         }
       });
 
-      // Show modal
       if (addGuestBtn && guestForm && modalStatus) {
         addGuestBtn.addEventListener("click", () => {
-          // If no events exist, show popup and abort
           if (!eventsCache || Object.keys(eventsCache).length === 0) {
             alert("Create an event first");
             return;
@@ -1241,7 +1197,6 @@
             guestForm.reset();
             modalStatus.textContent = "";
             if (guestModal) guestModal.classList.add("visible");
-            // ensure hidden event id reflects current selection
             const hidden = document.getElementById("guest-event-id");
             if (hidden) hidden.value = selectedEventId || "";
             const nameEl = document.getElementById("guest-name");
@@ -1258,7 +1213,6 @@
         });
       }
 
-      // Hide modal
       if (cancelModalBtn && guestModal) {
         cancelModalBtn.addEventListener("click", () => {
           try {
@@ -1270,7 +1224,6 @@
         guestModal.addEventListener(
           "click",
           (e) => {
-            // Only close if click is directly on the overlay, not on modal content or dropdown
             if (e.target === guestModal) {
               guestModal.classList.remove("visible");
             }
@@ -1279,7 +1232,6 @@
         );
       }
 
-      // Add guest submit
       guestForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         modalStatus.textContent = "";
@@ -1294,7 +1246,6 @@
         const editId = guestModal.getAttribute("data-edit-id");
         try {
           if (editId) {
-            // Update existing guest
             await import("https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js").then(
               ({ ref, update }) =>
                 update(ref(db, `guests/${editId}`), {
@@ -1306,8 +1257,6 @@
             );
             guestModal.removeAttribute("data-edit-id");
           } else {
-            // Add new guest
-            // Build payload and attach event id from hidden field (fall back to selectedEventId)
             const payload = { name, email, phone, role };
             const hiddenField = document.getElementById("guest-event-id");
             const eventIdToAttach =
@@ -1323,15 +1272,12 @@
             "Failed to save guest. Please check your internet connection or Firebase rules.";
         }
       });
-      // Clear edit mode on modal close
       cancelModalBtn.addEventListener("click", () => {
         guestModal.removeAttribute("data-edit-id");
       });
 
-      // Delete All behavior: delete only guests for selected event when an event is active
       const deleteAllBtn = document.getElementById("delete-all-guests-btn");
       if (deleteAllBtn) {
-        // avoid attaching multiple listeners
         if (!deleteAllBtn.dataset.deleteListenerAttached) {
           deleteAllBtn.dataset.deleteListenerAttached = "1";
           deleteAllBtn.addEventListener("click", async (evt) => {
@@ -1349,7 +1295,6 @@
                 selectedEventId ? (g && g.eventId) === selectedEventId : true,
               )
               .map(([id]) => id);
-            // If cache is empty or not yet populated, fallback to querying the DB
             if (!ids.length) {
               try {
                 if (selectedEventId) {

@@ -1,7 +1,5 @@
-// Custom confirmation modal for consistent UI
 export function showConfirmModal(message, options = {}) {
   return new Promise((resolve) => {
-    // Remove any existing modal
     document
       .querySelectorAll(".confirm-modal-overlay")
       .forEach((e) => e.remove());

@@ -157,7 +157,7 @@
       const editCancel = document.getElementById("edit-cancel");
 
       let uid = null;
-      let eventsMap = {}; // key -> data
+      let eventsMap = {};
       let editingKey = null;
 
       onAuthStateChanged(auth, async (user) => {
@@ -182,7 +182,6 @@
           const rows = [];
           eventsMap = {};
           Object.entries(all).forEach(([k, v]) => {
-            // only events created by this user (createdBy field expected)
             if (v && v.createdBy && v.createdBy === uid) {
               eventsMap[k] = v;
               rows.push({ key: k, data: v });
@@ -278,7 +277,6 @@
         }
       }
 
-      // small helper
       function escapeHtml(s) {
         return String(s).replace(/[&<>\"']/g, function (c) {
           return {

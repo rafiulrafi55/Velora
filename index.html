@@ -387,7 +387,7 @@
         position: fixed;
         inset: 0;
         background: rgba(0, 0, 0, 0.55);
-        z-index: 420; /* ensure overlays appear above popup-open backdrop */
+        z-index: 420;
         justify-content: center;
         align-items: center;
       }
@@ -972,14 +972,12 @@
           display: flex;
           justify-content: flex-start;
           padding: 16px;
-          /* make footer fixed to bottom on mobile */
           position: fixed;
           left: 0;
           right: 0;
           bottom: 0;
           z-index: 600;
         }
-        /* add bottom padding so page content isn't covered by fixed footer */
         body {
           padding-bottom: 72px;
         }
@@ -1798,7 +1796,7 @@
     </footer>
 
     <script src="assets/js/github-profile.js"></script>
-    
+
     <script type="module" src="assets/js/firebase-app.js"></script>
     <script type="module">
       document.addEventListener("DOMContentLoaded", async () => {
@@ -1812,7 +1810,6 @@
           const navAuthBtn = document.getElementById("nav-auth-btn");
           const heroAuthBtn = document.getElementById("hero-auth-btn");
 
-          // Hide both immediately to prevent flicker
           if (navDashboardLink) {
             navDashboardLink.style.display = "none";
             navDashboardLink.style.visibility = "hidden";
@@ -1829,16 +1826,13 @@
               }
               if (navAuthBtn) {
                 navAuthBtn.textContent = "Logout";
-                // open confirmation overlay instead of immediate sign-out
                 navAuthBtn.onclick = () => {
                   try {
                     window.openLogoutConfirm?.();
                   } catch (e) {
-                    // fallback: perform sign-out directly
                     signOut(auth).then(() => window.location.reload());
                   }
                 };
-                // export a global sign-out helper for the UI to call
                 try {
                   window._velora_signOut = async () => {
                     await signOut(auth);
@@ -1878,14 +1872,12 @@
             }
           });
         } catch (err) {
-          // swallow import errors; auth is optional for dropdowns
           console.error("Auth init failed:", err);
         }
       });
     </script>
     <script>
       (function () {
-        // UI script (wrapped in IIFE); auth module handled separately
         const navDashboardLink = document.getElementById("nav-dashboard-link");
         const navAuthBtn = document.getElementById("nav-auth-btn");
         const heroAuthBtn = document.getElementById("hero-auth-btn");
@@ -1917,7 +1909,6 @@
         const copyBkashBtn = document.getElementById("copy-bkash-btn");
         const openBkashSiteBtn = document.getElementById("open-bkash-site-btn");
 
-        // Hide both immediately to prevent flicker
         if (navDashboardLink) {
           navDashboardLink.style.display = "none";
           navDashboardLink.style.visibility = "hidden";
@@ -1926,9 +1917,6 @@
           navAuthBtn.style.visibility = "hidden";
         }
 
-        // Auth state is handled in the module script above; no-op here
-
-        // Remove PHP logout, use Firebase signOut (to be implemented in next step)
         logoutConfirmYes?.addEventListener("click", async () => {
           if (
             window._velora_signOut &&
@@ -2100,15 +2088,12 @@
           document.body.classList.remove("popup-open");
         }
 
-        // Expose modal helpers so module auth code can open/close them
         try {
           window.openLogoutConfirm = openLogoutConfirm;
           window.closeLogoutConfirm = closeLogoutConfirm;
           window.openDonateModal = openDonateModal;
           window.closeDonateModal = closeDonateModal;
-        } catch (e) {
-          // noop if window isn't writable in some contexts
-        }
+        } catch (e) {}
 
         const githubUser = "rafiulrafi55";
         let githubProfileLoaded = false;
@@ -2217,14 +2202,10 @@
           history.replaceState(null, "", window.location.pathname);
         }
 
-        // TODO: Replace PHP auth-status with Firebase Auth state check
-        // Firebase Auth integration will update navAuthBtn and heroAuthBtn based on user state
-
         if (aboutTrigger && aboutDropdown) {
           const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
           if (isMobile) {
-            // On mobile, navigate to dedicated mobile pages instead of opening dropdowns
             try {
               aboutTrigger?.addEventListener("click", (e) => {
                 e.preventDefault();
@@ -2234,9 +2215,7 @@
                 e.preventDefault();
                 window.location.href = "contact-mobile.html";
               });
-            } catch (e) {
-              // ignore if attach fails
-            }
+            } catch (e) {}
           } else {
             aboutDropdown.addEventListener("mouseenter", () => {
               loadGithubProfile();
@@ -2299,7 +2278,6 @@
               });
             }
           } else {
-            // Mobile: footer links go to dedicated mobile pages
             try {
               if (footerAboutBtn)
                 footerAboutBtn.setAttribute("href", "about-mobile.html");

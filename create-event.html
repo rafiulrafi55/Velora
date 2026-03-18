@@ -140,7 +140,6 @@
     </style>
   </head>
   <body>
-    
     <div class="container">
       <h1>Create Event</h1>
       <form id="create-event-form" autocomplete="off">
@@ -189,9 +188,7 @@
         push,
         serverTimestamp,
       } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
-      import {
-        onAuthStateChanged,
-      } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+      import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 
       const form = document.getElementById("create-event-form");
       const statusDiv = document.getElementById("status");

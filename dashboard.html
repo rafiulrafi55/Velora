@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="assets/css/profile-cards.css" />
     <link rel="stylesheet" href="assets/css/confirm-modal.css" />
     <style>
-      /* Upcoming Events Popup (desktop only) */
       .upcoming-popup-overlay {
         display: none;
         position: fixed;
@@ -82,7 +81,6 @@
         color: white;
       }
 
-      /* Animation keyframes */
       @keyframes fadeSlideIn {
         from {
           opacity: 0;
@@ -112,7 +110,6 @@
         animation: fadeIn 0.7s cubic-bezier(0.4, 1.4, 0.6, 1) forwards;
       }
 
-      /* Staggered animation for stats cards */
       .stats-grid .stat-card {
         opacity: 0;
         animation: fadeSlideIn 0.7s cubic-bezier(0.4, 1.4, 0.6, 1) forwards;
@@ -130,7 +127,6 @@
         animation-delay: 0.4s;
       }
 
-      /* Panels animation */
       .dashboard-grid .panel,
       .activity-panel {
         opacity: 0;
@@ -138,14 +134,12 @@
         animation-delay: 0.5s;
       }
 
-      /* Dashboard header animation */
       .dashboard-header {
         opacity: 0;
         animation: fadeSlideIn 0.8s cubic-bezier(0.4, 1.4, 0.6, 1) forwards;
         animation-delay: 0.05s;
       }
 
-      /* Activity list items animation */
       .activity-list li {
         opacity: 0;
         animation: fadeIn 0.7s cubic-bezier(0.4, 1.4, 0.6, 1) forwards;
@@ -333,8 +327,6 @@
         margin-bottom: 30px;
       }
 
-      /* stats */
-
       .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -379,8 +371,6 @@
         outline: none;
       }
 
-      /* panels */
-
       .dashboard-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -398,7 +388,6 @@
           background 0.18s;
       }
 
-      /* Highlight upcoming events panel on hover/focus (desktop only) */
       @media (min-width: 769px) {
         #upcoming-events-panel:hover,
         #upcoming-events-panel:focus {
@@ -412,8 +401,6 @@
       .panel h2 {
         margin-bottom: 18px;
       }
-
-      /* actions */
 
       .actions {
         display: grid;
@@ -435,13 +422,10 @@
         color: #111;
       }
 
-      /* event list */
-
       .event-list {
         list-style: none;
         margin-bottom: 0;
       }
-      /* Compact event list items for panel (fit 3 without stretching) */
       .upcoming-events .event-list li {
         padding: 6px 0;
         font-size: 14px;
@@ -462,8 +446,6 @@
         font-size: 13px;
       }
 
-      /* activity */
-
       .activity-list {
         list-style: none;
       }
@@ -473,8 +455,6 @@
         border-bottom: 1px solid #2a3a52;
         color: #cbd5e1;
       }
-
-      /* responsive */
 
       @media (max-width: 900px) {
         .dashboard {
@@ -499,7 +479,6 @@
           order: 1;
         }
 
-        /* On mobile, hide top nav links and show them in a mobile footer instead */
         nav ul {
           display: none;
         }
@@ -514,7 +493,6 @@
         .dashboard {
           padding-bottom: 84px;
         }
-        /* Mobile footer for nav links placed at end of page */
         .mobile-nav-footer {
           display: none;
         }
@@ -745,7 +723,6 @@
       </section>
     </main>
 
-    <!-- Upcoming Events Popup (desktop only) -->
     <div class="upcoming-popup-overlay" id="upcoming-popup-overlay">
       <div class="upcoming-popup-box">
         <h2>All Upcoming Events</h2>
@@ -760,7 +737,6 @@
 
     <script src="assets/js/github-profile.js"></script>
     <script>
-      // Desktop-only: Show popup with all upcoming events when clicking the stat card
       document.addEventListener("DOMContentLoaded", function () {
         const statUpcomingCard = document.getElementById("stat-upcoming-card");
         const upcomingEventsPanel = document.getElementById(
@@ -769,13 +745,10 @@
         const popupOverlay = document.getElementById("upcoming-popup-overlay");
         const popupList = document.getElementById("upcoming-popup-list");
         const popupClose = document.getElementById("upcoming-popup-close");
-        // Only enable on desktop
         function isDesktop() {
           return window.matchMedia("(min-width: 769px)").matches;
         }
-        // Store latest upcoming events for popup
         let latestUpcoming = [];
-        // Listen for custom event to update popup list
         window.addEventListener("updateUpcomingPopupList", function (e) {
           latestUpcoming = e.detail.upcoming || [];
         });
@@ -834,25 +807,20 @@
       });
     </script>
     <script>
-      // Animate dashboard elements on load
       document.addEventListener("DOMContentLoaded", function () {
-        // Animate dashboard header
         var header = document.querySelector(".dashboard-header");
         if (header) header.classList.add("animate-fade-slide");
 
-        // Animate panels
         var panels = document.querySelectorAll(
           ".dashboard-grid .panel, .activity-panel",
         );
         panels.forEach(function (panel) {
           panel.classList.add("animate-fade-slide");
         });
-        // Animate stats cards (handled by CSS, but force reflow for animation)
         var statCards = document.querySelectorAll(".stats-grid .stat-card");
         statCards.forEach(function (card) {
-          card.style.opacity = "1"; // ensure visible for animation
+          card.style.opacity = "1";
         });
-        // Animate activity list items (handled by CSS)
         var activityItems = document.querySelectorAll(".activity-list li");
         activityItems.forEach(function (li) {
           li.style.opacity = "1";
@@ -860,7 +828,6 @@
       });
     </script>
     <script>
-      // Mobile: route About/Contact triggers to dedicated mobile pages
       document.addEventListener("DOMContentLoaded", function () {
         try {
           const aboutTrigger = document.getElementById("about-trigger");
@@ -883,13 +850,10 @@
             if (footerContactBtn)
               footerContactBtn.setAttribute("href", "contact-mobile.html");
           }
-        } catch (e) {
-          // ignore
-        }
+        } catch (e) {}
       });
     </script>
     <script type="module">
-      // Firebase Auth, Database, and logout logic
       import { auth, db } from "./assets/js/firebase-app.js";
       import {
         signOut,
@@ -924,7 +888,6 @@
         if (e.key === "Escape") logoutOverlay.classList.remove("visible");
       });
 
-      // Firebase Auth session check
       let currentUserUid = null;
       onAuthStateChanged(auth, (user) => {
         if (!user) {
@@ -936,8 +899,6 @@
         }
       });
 
-      // (Removed upcomingEventsPanel popup logic from module script)
-      // Reset button logic
       import { cleanDatabase } from "./clean-database.js";
       import { showConfirmModal } from "./assets/js/confirm-modal.js";
       document.addEventListener("DOMContentLoaded", () => {
@@ -953,7 +914,6 @@
             resetBtn.textContent = "Resetting...";
             try {
               await cleanDatabase();
-              // Optionally reload dashboard data after cleaning
               if (typeof loadDashboardData === "function" && currentUserUid) {
                 loadDashboardData(currentUserUid);
               }
@@ -968,12 +928,9 @@
         }
       });
 
-      // Load dashboard data from Firebase
       async function loadDashboardData(uid) {
-        // Reference to root
         const dbRef = ref(db);
         try {
-          // Fetch all dashboard data in parallel
           const [eventsSnap, guestsSnap, checkinsSnap, activitySnap] =
             await Promise.all([
               get(child(dbRef, `events`)),
@@ -982,14 +939,12 @@
               get(child(dbRef, `activity`)),
             ]);
 
-          // Events
           let events = [];
           if (eventsSnap.exists()) {
             events = Object.values(eventsSnap.val());
           }
           document.getElementById("stat-events").textContent = events.length;
 
-          // Upcoming Events (filter by date in future, fallback: show all if no date)
           const now = new Date();
           let upcoming = events.filter((ev) => {
             if (!ev.date) return false;
@@ -998,14 +953,12 @@
           document.getElementById("stat-upcoming").textContent =
             upcoming.length;
 
-          // Guests
           let guests = [];
           if (guestsSnap.exists()) {
             guests = Object.values(guestsSnap.val());
           }
           document.getElementById("stat-guests").textContent = guests.length;
 
-          // Check-ins
           let checkins = [];
           if (checkinsSnap.exists()) {
             checkins = Object.values(checkinsSnap.val());
@@ -1013,14 +966,11 @@
           document.getElementById("stat-checkins").textContent =
             checkins.length;
 
-          // Upcoming Events List (max 3 on desktop, max 5 on mobile)
           const eventList = document.querySelector(
             ".upcoming-events .event-list",
           );
           eventList.innerHTML = "";
-          // Use matchMedia to check if mobile (<=768px)
           const isMobile = window.matchMedia("(max-width: 768px)").matches;
-          // Dispatch event to update popup with all upcoming events (for desktop)
           window.dispatchEvent(
             new CustomEvent("updateUpcomingPopupList", {
               detail: { upcoming },
@@ -1037,18 +987,15 @@
             eventList.innerHTML = "<li>No upcoming events</li>";
           }
 
-          // Listen for screen resize to update event list dynamically
           if (!window._upcomingEventsResizeListenerAdded) {
             window._upcomingEventsResizeListenerAdded = true;
             window.addEventListener("resize", () => {
-              // Only update if dashboard is visible
               if (document.querySelector(".upcoming-events .event-list")) {
                 loadDashboardData(currentUserUid);
               }
             });
           }
 
-          // Activity List
           const activityList = document.querySelector(".activity-list");
           activityList.innerHTML = "";
           if (activitySnap.exists()) {
@@ -1065,7 +1012,6 @@
             activityList.innerHTML = "<li>No recent activity</li>";
           }
         } catch (err) {
-          // Fallback: show error state if error
           document.getElementById("stat-events").textContent = "-";
           document.getElementById("stat-upcoming").textContent = "-";
           document.getElementById("stat-guests").textContent = "-";
@@ -1247,7 +1193,6 @@
 
       setTimeout(loadGithubProfile, 1200);
 
-      // Create mobile footer and clone nav links into it on small screens
       (function createMobileNavFooter() {
         try {
           const mq = window.matchMedia("(max-width: 768px)");
@@ -1268,7 +1213,6 @@
             if (e.matches) {
               if (!footer.querySelector("ul")) {
                 const clone = navUl.cloneNode(true);
-                // Transform About/Contact dropdowns into plain links for mobile
                 try {
                   const aboutLi = clone.querySelector(".about-dropdown");
                   if (aboutLi) {
@@ -1286,9 +1230,7 @@
                     a2.textContent = "Contact";
                     contactLi.parentElement.replaceChild(a2, contactLi);
                   }
-                } catch (e) {
-                  // ignore transformation errors
-                }
+                } catch (e) {}
                 footer.innerHTML = "";
                 footer.appendChild(clone);
               }

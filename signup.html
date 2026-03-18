@@ -386,7 +386,6 @@
         <span id="server-error-msg"></span>
       </div>
       <form id="signup-form" action="#" method="post" autocomplete="off">
-        
         <div class="section-title full-row">Profile</div>
         <div class="form-group">
           <label for="name">Full Name</label>
@@ -617,7 +616,6 @@
     </div>
 
     <script type="module">
-      // Expose functions globally for inline event handlers
       window.toggleCustomCode = function toggleCustomCode() {
         const countryCode = document.getElementById("country_code");
         const customCodeGroup = document.getElementById("custom_code_group");
@@ -710,7 +708,6 @@
           parseInt(captchaAnswer) === parseInt(captchaExpected);
         const customCodeOk = countryCode !== "custom" || customCode !== "";
 
-        // Show/hide captcha error
         if (showCaptchaError) {
           if (!captchaOk) {
             captchaGroup.classList.add("field-error");
@@ -737,7 +734,6 @@
         window.location.href = "index.html";
       };
 
-      // Firebase signup logic
       import { auth, db } from "./assets/js/firebase-app.js";
       import {
         createUserWithEmailAndPassword,
@@ -753,9 +749,7 @@
         .getElementById("signup-form")
         .addEventListener("submit", async function (e) {
           e.preventDefault();
-          // Validate form using existing validateForm(), show captcha error if wrong
           if (!validateForm(true)) {
-            // If captcha is wrong, regenerate it for security
             const captchaAnswer = document
               .getElementById("captcha_answer")
               .value.trim();
@@ -789,7 +783,6 @@
           serverMsg.textContent = "";
 
           try {
-            // Create user in Firebase Auth
             const userCredential = await createUserWithEmailAndPassword(
               auth,
               email,
@@ -798,7 +791,6 @@
             await updateProfile(userCredential.user, { displayName: name });
             await sendEmailVerification(userCredential.user);
 
-            // Save extra user info in Realtime Database
             await set(ref(db, "users/" + userCredential.user.uid), {
               name,
               email,
@@ -886,9 +878,7 @@
         window.location.href = "index.html";
       }
     </script>
-
-    
   </body>
-  
+
   <script type="module" src="assets/js/firebase-app.js"></script>
 </html>
