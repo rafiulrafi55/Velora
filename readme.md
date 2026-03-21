@@ -11,7 +11,7 @@
 
 ## Overview
 
-WGMS is a web-based guest management system designed for event organizers to manage events, guests, check-ins, and user profiles securely and efficiently. Built with vanilla HTML, CSS, and JavaScript, and powered by Firebase Authentication and Realtime Database, WGMS provides a modern, mobile-friendly interface for both users and administrators.
+Velora is a web-based guest management system designed for event organizers to manage events, guests, check-ins, and user profiles securely and efficiently. Built with vanilla HTML, CSS, and JavaScript, and powered by Firebase Authentication and Realtime Database, WGMS provides a modern, mobile-friendly interface for both users and administrators.
 
 ---
 
