@@ -664,7 +664,8 @@
       </table>
     </div>
     <script type="module">
-      import { db } from "./assets/js/firebase-app.js";
+      import { db, auth } from "./assets/js/firebase-app.js";
+      import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
       import {
         ref,
         onValue,
@@ -992,6 +993,7 @@
       let guestsCache = {};
       let eventsInitialized = false;
       let eventsCache = {};
+      let currentUid = null;
       let guestSearchTerm = "";
 
       function debounce(fn, wait = 200) {
@@ -1161,30 +1163,46 @@
         );
       }
 
-      onValue(ref(db, "guests"), (snapshot) => {
-        guestsCache = snapshot.val() || {};
-        if (eventsInitialized) {
-          renderGuests(guestsCache);
-          updateEventStats();
-          try {
-            renderEvents(eventsCache);
-          } catch (e) {}
-        }
-      });
-
-      onValue(ref(db, "events"), (snap) => {
-        const events = snap.val() || {};
-        eventsCache = events;
-        renderEvents(events);
-        if (Object.keys(events).length === 0) {
-          guestTableBody.innerHTML = `<tr class="empty-row"><td colspan="5">No events found. Please create an event first.</td></tr>`;
-          updateEventStats();
+      // Wait for auth, then subscribe to events for this user and guests
+      onAuthStateChanged(auth, (user) => {
+        if (!user) {
+          window.location.replace("index.html");
           return;
         }
-        if (eventsInitialized) {
-          renderGuests(guestsCache);
-          updateEventStats();
-        }
+        currentUid = user.uid;
+
+        // guests - keep a full listener but we'll filter when rendering
+        onValue(ref(db, "guests"), (snapshot) => {
+          guestsCache = snapshot.val() || {};
+          if (eventsInitialized) {
+            renderGuests(guestsCache);
+            updateEventStats();
+            try {
+              renderEvents(eventsCache);
+            } catch (e) {}
+          }
+        });
+
+        // events - only events created by this user
+        const eventsQuery = query(
+          ref(db, "events"),
+          orderByChild("createdBy"),
+          equalTo(currentUid),
+        );
+        onValue(eventsQuery, (snap) => {
+          const events = snap.val() || {};
+          eventsCache = events;
+          renderEvents(events);
+          if (Object.keys(events).length === 0) {
+            guestTableBody.innerHTML = `<tr class="empty-row"><td colspan="5">No events found. Please create an event first.</td></tr>`;
+            updateEventStats();
+            return;
+          }
+          if (eventsInitialized) {
+            renderGuests(guestsCache);
+            updateEventStats();
+          }
+        });
       });
 
       if (addGuestBtn && guestForm && modalStatus) {
