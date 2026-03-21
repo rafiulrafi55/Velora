@@ -662,8 +662,18 @@
               else if (m.includes('invalid_email') || m.includes('invalid email') || m.includes('invalid-email')) code = 'auth/invalid-email';
               else if (m.includes('too many requests') || m.includes('too_many_attempts') || m.includes('too many attempts')) code = 'auth/too-many-requests';
             }
-            if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') msg = 'Wrong password or email';
-            else if (code === 'auth/user-not-found') msg = 'No account found with that email.';
+            // Map some credential errors to friendlier messages.
+            if (code === 'auth/wrong-password') {
+              msg = 'Wrong password or email';
+            } else if (code === 'auth/invalid-credential') {
+              // Some backends return 400/invalid-credential for missing accounts or bad requests.
+              const raw = String(error && (error.message || error)).toLowerCase();
+              if (raw.includes('signinwithpassword') || raw.includes('accounts:signinwithpassword') || raw.includes('bad request') || raw.includes('400')) {
+                msg = 'No account found with that email.';
+              } else {
+                msg = 'Wrong password or email';
+              }
+            } else if (code === 'auth/user-not-found') msg = 'No account found with that email.';
             else if (code === 'auth/invalid-email') msg = 'Invalid email address.';
             else if (code === 'auth/too-many-requests') msg = 'Too many failed attempts. Please try again later.';
             else if (error && error.message) {

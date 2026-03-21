@@ -182,6 +182,14 @@
             >
               Change Password
             </button>
+            <button
+              type="button"
+              id="delete-account-btn"
+              class="btn small"
+              style="background: #ef4444; border: none"
+            >
+              Delete Account
+            </button>
             <button type="button" id="edit-btn" class="btn small">Edit</button>
             <button
               type="submit"
@@ -268,6 +276,52 @@
             </button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- Delete Account Modal -->
+    <div
+      class="confirm-modal-overlay"
+      id="delete-account-overlay"
+      style="display: none"
+    >
+      <div
+        class="confirm-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="delete-account-title"
+      >
+        <h3 id="delete-account-title">Confirm account deletion</h3>
+        <div style="margin-top: 8px; text-align: left">
+          <p style="color: #555; margin: 0 0 8px 0">
+            Enter your current password to confirm deleting your account and all
+            associated data.
+          </p>
+          <input
+            id="delete-account-password"
+            type="password"
+            placeholder="Current password"
+            style="
+              padding: 8px;
+              border-radius: 6px;
+              border: 1px solid #e6edf3;
+              width: 100%;
+            "
+          />
+        </div>
+        <div class="confirm-modal-btns" style="margin-top: 12px">
+          <button
+            id="delete-account-confirm"
+            class="confirm"
+            type="button"
+            style="background: #ef4444"
+          >
+            Confirm
+          </button>
+          <button id="delete-account-cancel" class="cancel" type="button">
+            Delete Account
+          </button>
+        </div>
       </div>
     </div>
 
