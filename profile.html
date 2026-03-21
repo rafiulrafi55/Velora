@@ -95,7 +95,7 @@
         cursor: pointer;
       }
       .btn.ghost {
-        background: #fff;
+        background: #faf9f9;
         color: var(--accent);
         border: 1px solid #e6edf3;
       }
@@ -175,6 +175,13 @@
             >
               Back
             </button>
+            <button
+              type="button"
+              id="change-password-btn"
+              class="btn ghost small"
+            >
+              Change Password
+            </button>
             <button type="button" id="edit-btn" class="btn small">Edit</button>
             <button
               type="submit"
@@ -190,6 +197,73 @@
               class="btn ghost small"
               style="display: none"
             >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div
+      class="confirm-modal-overlay"
+      id="change-password-overlay"
+      style="display: none"
+    >
+      <div
+        class="confirm-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="change-password-title"
+      >
+        <h3 id="change-password-title">Change password</h3>
+        <form id="change-password-form">
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              gap: 10px;
+              margin-top: 8px;
+              text-align: left;
+            "
+          >
+            <input
+              id="current-password"
+              type="password"
+              placeholder="Current password"
+              required
+              style="
+                padding: 8px;
+                border-radius: 6px;
+                border: 1px solid #e6edf3;
+              "
+            />
+            <input
+              id="new-password"
+              type="password"
+              placeholder="New password (min 6 chars)"
+              required
+              style="
+                padding: 8px;
+                border-radius: 6px;
+                border: 1px solid #e6edf3;
+              "
+            />
+            <input
+              id="confirm-password"
+              type="password"
+              placeholder="Confirm new password"
+              required
+              style="
+                padding: 8px;
+                border-radius: 6px;
+                border: 1px solid #e6edf3;
+              "
+            />
+          </div>
+          <div class="confirm-modal-btns">
+            <button type="submit" class="confirm">Change</button>
+            <button type="button" class="cancel" id="change-password-cancel">
               Cancel
             </button>
           </div>
