@@ -1,0 +1,33 @@
+WORK LOG — 2026-03-22
+
+Summary:
+- Implemented per-user deletion flow and safeguarded reset actions.
+- Added a `deleteUserData(uid)` helper and wired dashboard reset to it.
+- Restricted guest deletions to events owned by the current user (guests.html).
+- Removed unused `cleanDatabase` import from `dashboard.html`.
+- Added `.indexOn: ["eventId"]` to `activity` in `database.rules.json` to fix index errors.
+- Added Delete Account button + password-confirm modal to `profile.html`.
+- Implemented account-deletion flow in `assets/js/profile-page.js`:
+  - Reauthenticate (EmailAuthProvider), delete user's events and related `guests`, `checkins`, `activity`, `users/{uid}`, then delete Firebase Auth user.
+  - Replaced prompt()-based confirmation with a modal, added keyboard handlers, pointerdown guard, and diagnostic logging to help debug modal behavior.
+  - Fixed reattachment when other modals interfere and added safety timeout and cleanup.
+- Added debugging helpers (docCapture) to trace clicks while delete modal is open.
+- Updated `signin.html` error handling to map some `auth/invalid-credential` 400 responses to a friendlier "No account found with that email." message.
+
+Files changed (high level):
+- dashboard.html: wired reset to `deleteUserData(uid)`; removed cleanDatabase import; added debug logs.
+- guests.html: safe filtering for delete-all operations so only user's guests are removed.
+- database.rules.json: added `.indexOn` for `activity.eventId`.
+- profile.html: added Delete Account button and password modal markup.
+- assets/js/profile-page.js: added account deletion flow, modal handling, diagnostics, keyboard support, pointerdown safety.
+- signin.html: improved sign-in error mapping for clearer user messages.
+
+Notes & Next steps:
+- Deploy `database.rules.json` to Firebase (ensure rules & indices are active):
+  firebase login
+  firebase deploy --only database --project <project-id>
+- Test end-to-end: sign up -> sign in -> create event -> add guest -> delete my data -> confirm nothing else deleted.
+- Consider replacing remaining prompt/alert flows with consistent modal UX.
+- Remove docCapture debug code after verification.
+
+End of log.

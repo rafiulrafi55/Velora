@@ -298,6 +298,43 @@
         display: flex;
       }
 
+      /* Loading overlay shown during signup processing */
+      .loading-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 11000;
+        justify-content: center;
+        align-items: center;
+      }
+      .loading-overlay.visible {
+        display: flex;
+      }
+      .loading-box {
+        background: transparent;
+        color: #fff;
+        text-align: center;
+        font-size: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+      }
+      .loading-spinner {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        border: 8px solid rgba(255, 255, 255, 0.15);
+        border-top-color: #ffffff;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
       .popup-box {
         background: white;
         border-radius: 14px;
@@ -324,32 +361,25 @@
         font-size: 48px;
         margin-bottom: 14px;
       }
-
       .popup-box h2 {
         color: #111827;
         font-size: 20px;
         margin-bottom: 8px;
       }
-
       .popup-box p {
         color: #6b7280;
         font-size: 14px;
         margin-bottom: 24px;
       }
-
       .popup-btn {
         display: inline-block;
         padding: 11px 32px;
         background: #667eea;
-        color: white;
+        color: #fff;
         border: none;
         border-radius: 8px;
-        font-size: 15px;
         font-weight: bold;
-        cursor: pointer;
-        width: auto;
       }
-
       .popup-btn:hover {
         background: #5568d3;
       }
@@ -359,7 +389,6 @@
         margin-top: 20px;
         color: #666;
       }
-
       a {
         color: #667eea;
         text-decoration: none;
@@ -376,6 +405,14 @@
       </div>
     </div>
 
+    <!-- Signup loading overlay -->
+    <div class="loading-overlay" id="signup-loading-overlay" aria-hidden="true">
+      <div class="loading-box">
+        <div class="loading-spinner" aria-hidden="true"></div>
+        <div>Creating account — please wait</div>
+      </div>
+    </div>
+
     <div class="container">
       <h1>Sign Up</h1>
       <p class="subtitle">
@@ -385,6 +422,7 @@
         <span class="banner-icon">&#9888;</span>
         <span id="server-error-msg"></span>
       </div>
+
       <form id="signup-form" action="#" method="post" autocomplete="off">
         <div class="section-title full-row">Profile</div>
         <div class="form-group">
@@ -783,6 +821,11 @@
           serverMsg.textContent = "";
 
           try {
+            const loadingEl = document.getElementById("signup-loading-overlay");
+            const submitBtnEl = document.getElementById("submit-btn");
+            if (loadingEl) loadingEl.classList.add("visible");
+            if (submitBtnEl) submitBtnEl.disabled = true;
+
             const userCredential = await createUserWithEmailAndPassword(
               auth,
               email,
@@ -813,6 +856,15 @@
             }
             serverBanner.classList.remove("hidden");
             serverMsg.textContent = msg;
+          } finally {
+            try {
+              const loadingEl2 = document.getElementById(
+                "signup-loading-overlay",
+              );
+              const submitBtnEl2 = document.getElementById("submit-btn");
+              if (loadingEl2) loadingEl2.classList.remove("visible");
+              if (submitBtnEl2) submitBtnEl2.disabled = false;
+            } catch (e) {}
           }
         });
 

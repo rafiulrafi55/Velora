@@ -1,7 +1,3 @@
-// clean-database.js
-// Script to clean all user data from Firebase Realtime Database but keep structure
-// Usage: Import and call cleanDatabase() from your admin panel or dev console
-
 import { db } from "./assets/js/firebase-app.js";
 import {
   ref,
@@ -15,13 +11,9 @@ export async function cleanDatabase() {
       remove(ref(db, "guests")),
       remove(ref(db, "checkins")),
       remove(ref(db, "activity")),
-      // Add more collections if needed
     ]);
-    // Removed alert here to avoid double popup
   } catch (err) {
     alert("Failed to clean database. See console for details.");
     console.error(err);
   }
 }
-
-// To run: import { cleanDatabase } from './clean-database.js'; cleanDatabase();

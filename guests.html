@@ -863,19 +863,52 @@
             gm.removeAttribute("data-edit-id");
           }
           function renderBatchPreview() {
-            batchImportPreview.innerHTML = `<table style='width:100%;border-collapse:collapse;font-size:14px;'>
-                <thead><tr><th></th><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
-                <tbody>
-                  ${batchContacts.map((c, i) => `<tr><td><button class='remove-batch-contact' data-idx='${i}' title='Remove' style='color:#fff;background:none;border:none;font-size:18px;line-height:1;padding:0 8px;cursor:pointer;'><span style='color:#e11d48;font-weight:bold;'>&#10006;</span></button></td><td>${c.name}</td><td>${c.email}</td><td>${c.phone}</td></tr>`).join("")}
-                </tbody>
-              </table>`;
+            function escapeHtml(s) {
+              return String(s === undefined || s === null ? "" : s)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+            }
+
+            const rows = batchContacts
+              .map((c, i) => {
+                const name = escapeHtml(c.name);
+                const email = escapeHtml(c.email);
+                const phone = escapeHtml(c.phone);
+                return (
+                  "<tr>" +
+                  "<td><button class='remove-batch-contact' data-idx='" +
+                  i +
+                  "' title='Remove' style='color:#fff;background:none;border:none;font-size:18px;line-height:1;padding:0 8px;cursor:pointer;'><span style='color:#e11d48;font-weight:bold;'>&#10006;</span></button></td>" +
+                  "<td>" +
+                  name +
+                  "</td><td>" +
+                  email +
+                  "</td><td>" +
+                  phone +
+                  "</td></tr>"
+                );
+              })
+              .join("");
+
+            batchImportPreview.innerHTML =
+              "<table style='width:100%;border-collapse:collapse;font-size:14px;'>" +
+              "<thead><tr><th></th><th>Name</th><th>Email</th><th>Phone</th></tr></thead>" +
+              "<tbody>" +
+              rows +
+              "</tbody></table>";
+
             batchImportPreview
               .querySelectorAll(".remove-batch-contact")
               .forEach((btn) => {
                 btn.addEventListener("click", (e) => {
-                  const idx = parseInt(btn.getAttribute("data-idx"));
-                  batchContacts.splice(idx, 1);
-                  renderBatchPreview();
+                  const idx = parseInt(btn.getAttribute("data-idx"), 10);
+                  if (!Number.isNaN(idx)) {
+                    batchContacts.splice(idx, 1);
+                    renderBatchPreview();
+                  }
                 });
               });
           }
