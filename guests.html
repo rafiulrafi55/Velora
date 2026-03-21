@@ -1307,15 +1307,44 @@
             });
             if (deleteAllBtn.disabled) return;
             deleteAllBtn.disabled = true;
-            let all = guestsCache || {};
-            let ids = Object.entries(all)
-              .filter(([, g]) =>
-                selectedEventId ? (g && g.eventId) === selectedEventId : true,
+            // determine which event IDs belong to the current user
+            let allowedEventIds = new Set(Object.keys(eventsCache || {}));
+            if (!allowedEventIds.size && currentUid) {
+              try {
+                const evQ = query(
+                  ref(db, "events"),
+                  orderByChild("createdBy"),
+                  equalTo(currentUid),
+                );
+                const evSnap = await get(evQ);
+                evSnap.forEach((s) => allowedEventIds.add(s.key));
+              } catch (e) {
+                console.error(
+                  "Failed to fetch user events for deletion safeguard",
+                  e,
+                );
+              }
+            }
+
+            if (selectedEventId && !allowedEventIds.has(selectedEventId)) {
+              alert("Selected event is not owned by your account.");
+              deleteAllBtn.disabled = false;
+              return;
+            }
+
+            let ids = Object.entries(guestsCache || {})
+              .filter(
+                ([, g]) =>
+                  g &&
+                  g.eventId &&
+                  allowedEventIds.has(g.eventId) &&
+                  (selectedEventId ? g.eventId === selectedEventId : true),
               )
               .map(([id]) => id);
             if (!ids.length) {
               try {
                 if (selectedEventId) {
+                  // selectedEventId already checked to belong to user above
                   const q = query(
                     ref(db, "guests"),
                     orderByChild("eventId"),
@@ -1325,9 +1354,14 @@
                   ids = [];
                   snap.forEach((s) => ids.push(s.key));
                 } else {
+                  // fetch all guests but only keep those attached to user's events
                   const snap = await get(ref(db, "guests"));
                   ids = [];
-                  snap.forEach((s) => ids.push(s.key));
+                  snap.forEach((s) => {
+                    const g = s.val();
+                    if (g && g.eventId && allowedEventIds.has(g.eventId))
+                      ids.push(s.key);
+                  });
                 }
               } catch (err) {
                 console.error("Failed to query guests for deletion", err);

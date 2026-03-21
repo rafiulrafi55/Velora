@@ -918,26 +918,27 @@
         }
       });
 
-      import { cleanDatabase } from "./clean-database.js";
       import { showConfirmModal } from "./assets/js/confirm-modal.js";
       document.addEventListener("DOMContentLoaded", () => {
         const resetBtn = document.getElementById("reset-btn");
         if (resetBtn) {
           resetBtn.addEventListener("click", async () => {
             const confirmed = await showConfirmModal(
-              "Are you sure you want to delete ALL user data? This cannot be undone.",
-              { okText: "Delete All", cancelText: "Cancel" },
+              "Are you sure you want to delete ALL data belonging to your account? This cannot be undone.",
+              { okText: "Confirm", cancelText: "Cancel" },
             );
             if (!confirmed) return;
             resetBtn.disabled = true;
-            resetBtn.textContent = "Resetting...";
+            resetBtn.textContent = "Deleting...";
             try {
-              await cleanDatabase();
+              // Delete only data for the current user
+              if (!currentUserUid) throw new Error("Not authenticated");
+              await deleteUserData(currentUserUid);
               if (typeof loadDashboardData === "function" && currentUserUid) {
                 loadDashboardData(currentUserUid);
               }
             } catch (err) {
-              alert("Failed to reset data. See console for details.");
+              alert("Failed to delete your data. See console for details.");
               console.error(err);
             } finally {
               resetBtn.disabled = false;
@@ -946,6 +947,75 @@
           });
         }
       });
+
+      // Delete only the events and related data belonging to a single user
+      async function deleteUserData(uid) {
+        try {
+          // find events created by this user
+          const eventsQuery = query(
+            ref(db, "events"),
+            orderByChild("createdBy"),
+            equalTo(uid),
+          );
+          const eventsSnap = await get(eventsQuery);
+          const eventIds = [];
+          if (eventsSnap.exists()) {
+            eventsSnap.forEach((s) => eventIds.push(s.key));
+          }
+
+          const deletes = [];
+
+          for (const id of eventIds) {
+            // remove event
+            deletes.push(remove(ref(db, `events/${id}`)));
+
+            // remove guests for this event
+            const guestQ = query(
+              ref(db, "guests"),
+              orderByChild("eventId"),
+              equalTo(id),
+            );
+            const guestSnap = await get(guestQ);
+            if (guestSnap.exists()) {
+              guestSnap.forEach((g) =>
+                deletes.push(remove(ref(db, `guests/${g.key}`))),
+              );
+            }
+
+            // remove checkins for this event
+            const checkQ = query(
+              ref(db, "checkins"),
+              orderByChild("eventId"),
+              equalTo(id),
+            );
+            const checkSnap = await get(checkQ);
+            if (checkSnap.exists()) {
+              checkSnap.forEach((c) =>
+                deletes.push(remove(ref(db, `checkins/${c.key}`))),
+              );
+            }
+
+            // remove activity entries for this event (if any)
+            const actQ = query(
+              ref(db, "activity"),
+              orderByChild("eventId"),
+              equalTo(id),
+            );
+            const actSnap = await get(actQ);
+            if (actSnap.exists()) {
+              actSnap.forEach((a) =>
+                deletes.push(remove(ref(db, `activity/${a.key}`))),
+              );
+            }
+          }
+
+          // execute deletions in parallel
+          await Promise.all(deletes);
+        } catch (err) {
+          console.error("deleteUserData failed", err);
+          throw err;
+        }
+      }
 
       async function loadDashboardData(uid) {
         const dbRef = ref(db);
