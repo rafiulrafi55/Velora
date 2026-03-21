@@ -14,7 +14,6 @@ const nameInput = document.getElementById("profile-name");
 const emailInput = document.getElementById("profile-email");
 const phoneInput = document.getElementById("profile-phone");
 const countryInput = document.getElementById("profile-country");
-const roleInput = document.getElementById("profile-role");
 const editBtn = document.getElementById("edit-btn");
 const saveBtn = document.getElementById("save-btn");
 const cancelBtn = document.getElementById("cancel-btn");
@@ -24,7 +23,7 @@ let originalData = {};
 let currentUser = null;
 
 function setFieldsEditable(editable) {
-  [nameInput, phoneInput, countryInput, roleInput].forEach((input) => {
+  [nameInput, phoneInput, countryInput].forEach((input) => {
     input.readOnly = !editable;
     input.style.background = editable ? "#fff" : "#f1f5f9";
     input.style.border = editable ? "1px solid #cbd5e1" : "none";
@@ -39,7 +38,6 @@ function fillProfileFields(data) {
   emailInput.value = data.email || "";
   phoneInput.value = data.phone || "";
   countryInput.value = data.countryCode || "";
-  roleInput.value = data.role || "";
   if (data.avatarUrl) {
     avatar.src = data.avatarUrl;
   }
@@ -83,7 +81,6 @@ form.addEventListener("submit", async (e) => {
     email: emailInput.value.trim(),
     phone: phoneInput.value.trim(),
     countryCode: countryInput.value.trim(),
-    role: roleInput.value.trim(),
     avatarUrl: avatar.src,
   };
   // Save to database
