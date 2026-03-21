@@ -1,4 +1,4 @@
-# WGMS (Web-based Guest Management System)
+# Velora (Web-based Guest Management System)
 
 [![On Development](https://img.shields.io/badge/status-on--development-blueviolet)](#)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
