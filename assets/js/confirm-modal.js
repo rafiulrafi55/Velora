@@ -1,7 +1,5 @@
-// Custom confirmation modal for consistent UI
 export function showConfirmModal(message, options = {}) {
   return new Promise((resolve) => {
-    // Remove any existing modal
     document
       .querySelectorAll(".confirm-modal-overlay")
       .forEach((e) => e.remove());
@@ -48,12 +46,23 @@ export function showConfirmModal(message, options = {}) {
         resolve(false);
       }
     });
-    document.addEventListener("keydown", function escHandler(e) {
+    function escHandler(e) {
       if (e.key === "Escape") {
         overlay.remove();
         resolve(false);
         document.removeEventListener("keydown", escHandler);
+        document.removeEventListener("keydown", enterHandler);
       }
-    });
+    }
+    function enterHandler(e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        okBtn.click();
+        document.removeEventListener("keydown", escHandler);
+        document.removeEventListener("keydown", enterHandler);
+      }
+    }
+    document.addEventListener("keydown", escHandler);
+    document.addEventListener("keydown", enterHandler);
   });
 }

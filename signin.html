@@ -138,12 +138,10 @@
         background: transparent;
       }
 
-      /* remove mobile blue highlight on tap */
       .toggle-password {
         -webkit-tap-highlight-color: transparent;
       }
 
-      /* Keep the icon appearance consistent on hover/active */
       .toggle-password:hover {
         background: transparent;
         color: #6b7280;
@@ -639,11 +637,9 @@
       </div>
 
     <script type="module">
-      // Firebase Auth login and password reset
       import { auth } from "./assets/js/firebase-app.js";
       import { signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 
-      // Login logic
       document.getElementById("signin-form").addEventListener("submit", async function (e) {
         e.preventDefault();
         const email = document.getElementById("email").value.trim();
@@ -654,12 +650,10 @@
         errorMsg.textContent = "";
         try {
           const userCredential = await signInWithEmailAndPassword(auth, email, password);
-          // Optionally check for email verification: if (!userCredential.user.emailVerified) { ... }
           window.location.replace("dashboard.html");
         } catch (error) {
             console.error("Sign-in error:", error);
             let msg = "Login failed. Please try again.";
-            // Try to determine a normalized code from FirebaseError or error.message text
             let code = (error && error.code) || '';
             if (!code && error && error.message) {
               const m = String(error.message).toLowerCase();
@@ -668,12 +662,21 @@
               else if (m.includes('invalid_email') || m.includes('invalid email') || m.includes('invalid-email')) code = 'auth/invalid-email';
               else if (m.includes('too many requests') || m.includes('too_many_attempts') || m.includes('too many attempts')) code = 'auth/too-many-requests';
             }
-            if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') msg = 'Wrong password or email';
-            else if (code === 'auth/user-not-found') msg = 'No account found with that email.';
+            // Map some credential errors to friendlier messages.
+            if (code === 'auth/wrong-password') {
+              msg = 'Wrong password or email';
+            } else if (code === 'auth/invalid-credential') {
+              // Some backends return 400/invalid-credential for missing accounts or bad requests.
+              const raw = String(error && (error.message || error)).toLowerCase();
+              if (raw.includes('signinwithpassword') || raw.includes('accounts:signinwithpassword') || raw.includes('bad request') || raw.includes('400')) {
+                msg = 'No account found with that email.';
+              } else {
+                msg = 'Wrong password or email';
+              }
+            } else if (code === 'auth/user-not-found') msg = 'No account found with that email.';
             else if (code === 'auth/invalid-email') msg = 'Invalid email address.';
             else if (code === 'auth/too-many-requests') msg = 'Too many failed attempts. Please try again later.';
             else if (error && error.message) {
-              // Fallback: show the server message without Firebase prefix and auth code suffix
               msg = String(error.message).replace(/^Firebase:\s*/i, '').replace(/\s*\(auth\/.*\)$/, '').trim();
             }
             errorBanner.classList.remove('hidden');
@@ -681,14 +684,20 @@
         }
       });
 
-      // Forgot password logic
+      // Trigger sign in on Enter key
+      document.getElementById("signin-form").addEventListener("keydown", function(e) {
+        if (e.key === "Enter" && e.target.tagName !== "TEXTAREA") {
+          e.preventDefault();
+          document.getElementById("signin-form").dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+        }
+      });
+
       const forgotForm = document.getElementById("forgot-form");
       const forgotOverlay = document.getElementById("forgot-overlay");
       const forgotStatus = document.getElementById("forgot-status");
       const forgotStatusText = document.getElementById("forgot-status-text");
       const forgotSendBtn = document.getElementById("forgot-send-btn");
 
-      // Password visibility toggle
       const togglePasswordBtn = document.getElementById('toggle-password');
       if (togglePasswordBtn) {
         togglePasswordBtn.addEventListener('click', function () {
@@ -725,7 +734,6 @@
         try {
           await sendPasswordResetEmail(auth, email);
           forgotStatus.classList.add("success");
-          // Add a tick icon before the message
           forgotStatusText.innerHTML = '<span style="font-size:18px;color:#16a34a;vertical-align:middle;">&#10003;</span> Password reset email sent! Check your inbox or spam folder';
         } catch (error) {
           forgotStatus.classList.add("error");

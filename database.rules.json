@@ -1,0 +1,30 @@
+{
+  "rules": {
+    "events": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["createdBy"]
+    },
+    "guests": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["eventId"]
+    },
+    "checkins": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["eventId"]
+    },
+    "activity": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["eventId"]
+    },
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    }
+  }
+}

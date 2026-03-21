@@ -7,6 +7,67 @@
     <link rel="stylesheet" href="assets/css/profile-cards.css" />
     <link rel="stylesheet" href="assets/css/confirm-modal.css" />
     <style>
+      .upcoming-popup-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 400;
+        justify-content: center;
+        align-items: center;
+      }
+      .upcoming-popup-overlay.visible {
+        display: flex;
+      }
+      .upcoming-popup-box {
+        background: #13263f;
+        border: 1px solid #2a3a52;
+        border-radius: 14px;
+        padding: 32px 28px 24px 28px;
+        max-width: 420px;
+        width: 92vw;
+        text-align: left;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        animation: popIn 0.22s ease;
+        color: #fff;
+      }
+      .upcoming-popup-box h2 {
+        font-size: 22px;
+        margin-bottom: 18px;
+        color: #f59e0b;
+      }
+      .upcoming-popup-box ul {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 10px 0;
+      }
+      .upcoming-popup-box li {
+        padding: 10px 0;
+        border-bottom: 1px solid #2a3a52;
+        color: #cbd5e1;
+      }
+      .upcoming-popup-close {
+        background: #22324b;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 18px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 12px;
+        float: right;
+        transition: background 0.2s;
+      }
+      .upcoming-popup-close:hover {
+        background: #f59e0b;
+        color: #131212;
+      }
+      @media (max-width: 768px) {
+        .upcoming-popup-overlay {
+          display: none !important;
+        }
+      }
       * {
         margin: 0;
         padding: 0;
@@ -18,6 +79,85 @@
         min-height: 100vh;
         background: #0d1b2a;
         color: white;
+      }
+
+      @keyframes fadeSlideIn {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .animate-fade-slide {
+        opacity: 0;
+        animation: fadeSlideIn 0.7s cubic-bezier(0.4, 1.4, 0.6, 1) forwards;
+      }
+      .animate-fade {
+        opacity: 0;
+        animation: fadeIn 0.7s cubic-bezier(0.4, 1.4, 0.6, 1) forwards;
+      }
+
+      .stats-grid .stat-card {
+        opacity: 0;
+        animation: fadeSlideIn 0.7s cubic-bezier(0.4, 1.4, 0.6, 1) forwards;
+      }
+      .stats-grid .stat-card:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .stats-grid .stat-card:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .stats-grid .stat-card:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      .stats-grid .stat-card:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+
+      .dashboard-grid .panel,
+      .activity-panel {
+        opacity: 0;
+        animation: fadeSlideIn 0.8s cubic-bezier(0.4, 1.4, 0.6, 1) forwards;
+        animation-delay: 0.5s;
+      }
+
+      .dashboard-header {
+        opacity: 0;
+        animation: fadeSlideIn 0.8s cubic-bezier(0.4, 1.4, 0.6, 1) forwards;
+        animation-delay: 0.05s;
+      }
+
+      .activity-list li {
+        opacity: 0;
+        animation: fadeIn 0.7s cubic-bezier(0.4, 1.4, 0.6, 1) forwards;
+      }
+      .activity-list li:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .activity-list li:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .activity-list li:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      .activity-list li:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+      .activity-list li:nth-child(5) {
+        animation-delay: 0.5s;
       }
 
       body.auth-pending {
@@ -187,8 +327,6 @@
         margin-bottom: 30px;
       }
 
-      /* stats */
-
       .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -216,7 +354,8 @@
         color: #f59e0b;
       }
 
-      .stat-card.clickable {
+      .stat-card.clickable,
+      #stat-upcoming-card {
         cursor: pointer;
         box-shadow: 0 0 0 2px #f59e0b33;
         transition:
@@ -224,13 +363,13 @@
           background 0.18s;
       }
       .stat-card.clickable:hover,
-      .stat-card.clickable:focus {
+      .stat-card.clickable:focus,
+      #stat-upcoming-card:hover,
+      #stat-upcoming-card:focus {
         background: #22324b;
         box-shadow: 0 0 0 3px #f59e0b;
         outline: none;
       }
-
-      /* panels */
 
       .dashboard-grid {
         display: grid;
@@ -244,13 +383,24 @@
         border: 1px solid #2a3a52;
         border-radius: 10px;
         padding: 25px;
+        transition:
+          box-shadow 0.18s,
+          background 0.18s;
+      }
+
+      @media (min-width: 769px) {
+        #upcoming-events-panel:hover,
+        #upcoming-events-panel:focus {
+          background: #22324b;
+          box-shadow: 0 0 0 3px #f59e0b;
+          outline: none;
+          cursor: pointer;
+        }
       }
 
       .panel h2 {
         margin-bottom: 18px;
       }
-
-      /* actions */
 
       .actions {
         display: grid;
@@ -272,10 +422,17 @@
         color: #111;
       }
 
-      /* event list */
-
       .event-list {
         list-style: none;
+        margin-bottom: 0;
+      }
+      .upcoming-events .event-list li {
+        padding: 6px 0;
+        font-size: 14px;
+        line-height: 1.2;
+      }
+      .upcoming-events .event-list span {
+        font-size: 12px;
       }
 
       .event-list li {
@@ -289,8 +446,6 @@
         font-size: 13px;
       }
 
-      /* activity */
-
       .activity-list {
         list-style: none;
       }
@@ -300,8 +455,6 @@
         border-bottom: 1px solid #2a3a52;
         color: #cbd5e1;
       }
-
-      /* responsive */
 
       @media (max-width: 900px) {
         .dashboard {
@@ -326,7 +479,6 @@
           order: 1;
         }
 
-        /* On mobile, hide top nav links and show them in a mobile footer instead */
         nav ul {
           display: none;
         }
@@ -341,7 +493,6 @@
         .dashboard {
           padding-bottom: 84px;
         }
-        /* Mobile footer for nav links placed at end of page */
         .mobile-nav-footer {
           display: none;
         }
@@ -500,7 +651,12 @@
           <p id="stat-events">...</p>
         </div>
 
-        <div class="stat-card">
+        <div
+          class="stat-card"
+          id="stat-upcoming-card"
+          tabindex="0"
+          title="Show all upcoming events"
+        >
           <h3>Upcoming Events</h3>
           <p id="stat-upcoming">...</p>
         </div>
@@ -539,13 +695,19 @@
             <button onclick="location.href = 'checkin.html'">
               Guest Check-in
             </button>
+            <button onclick="location.href = 'profile.html'">Profile</button>
             <button id="reset-btn" style="background: #ef4444; color: #fff">
               Reset (Delete All)
             </button>
           </div>
         </div>
 
-        <div class="panel upcoming-events">
+        <div
+          class="panel upcoming-events"
+          id="upcoming-events-panel"
+          tabindex="0"
+          title="Show all upcoming events"
+        >
           <h2>Upcoming Events</h2>
           <ul class="event-list">
             <li id="event-loading">Loading...</li>
@@ -561,9 +723,111 @@
       </section>
     </main>
 
+    <div class="upcoming-popup-overlay" id="upcoming-popup-overlay">
+      <div class="upcoming-popup-box">
+        <h2>All Upcoming Events</h2>
+        <ul id="upcoming-popup-list">
+          <li>Loading...</li>
+        </ul>
+        <button class="upcoming-popup-close" id="upcoming-popup-close">
+          Close
+        </button>
+      </div>
+    </div>
+
     <script src="assets/js/github-profile.js"></script>
     <script>
-      // Mobile: route About/Contact triggers to dedicated mobile pages
+      document.addEventListener("DOMContentLoaded", function () {
+        const statUpcomingCard = document.getElementById("stat-upcoming-card");
+        const upcomingEventsPanel = document.getElementById(
+          "upcoming-events-panel",
+        );
+        const popupOverlay = document.getElementById("upcoming-popup-overlay");
+        const popupList = document.getElementById("upcoming-popup-list");
+        const popupClose = document.getElementById("upcoming-popup-close");
+        function isDesktop() {
+          return window.matchMedia("(min-width: 769px)").matches;
+        }
+        let latestUpcoming = [];
+        window.addEventListener("updateUpcomingPopupList", function (e) {
+          latestUpcoming = e.detail.upcoming || [];
+        });
+        function renderPopupList() {
+          popupList.innerHTML = "";
+          if (latestUpcoming.length > 0) {
+            latestUpcoming.forEach((ev) => {
+              const li = document.createElement("li");
+              li.innerHTML = `<strong>${ev.name || "Event"}</strong><span style='display:block;font-size:13px;color:#94a3b8;'>${ev.date ? new Date(ev.date).toLocaleDateString() : "No date"} • ${ev.guestCount || 0} Guests</span>`;
+              popupList.appendChild(li);
+            });
+          } else {
+            popupList.innerHTML = "<li>No upcoming events</li>";
+          }
+        }
+        if (statUpcomingCard) {
+          statUpcomingCard.addEventListener("click", function (e) {
+            if (!isDesktop()) return;
+            renderPopupList();
+            popupOverlay.classList.add("visible");
+          });
+          statUpcomingCard.addEventListener("keydown", function (e) {
+            if (!isDesktop()) return;
+            if (e.key === "Enter" || e.key === " ") {
+              renderPopupList();
+              popupOverlay.classList.add("visible");
+            }
+          });
+        }
+        if (upcomingEventsPanel) {
+          upcomingEventsPanel.addEventListener("click", function (e) {
+            if (!isDesktop()) return;
+            renderPopupList();
+            popupOverlay.classList.add("visible");
+          });
+          upcomingEventsPanel.addEventListener("keydown", function (e) {
+            if (!isDesktop()) return;
+            if (e.key === "Enter" || e.key === " ") {
+              renderPopupList();
+              popupOverlay.classList.add("visible");
+            }
+          });
+        }
+        if (popupClose) {
+          popupClose.addEventListener("click", function () {
+            popupOverlay.classList.remove("visible");
+          });
+        }
+        popupOverlay.addEventListener("click", function (e) {
+          if (e.target === popupOverlay)
+            popupOverlay.classList.remove("visible");
+        });
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") popupOverlay.classList.remove("visible");
+        });
+      });
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var header = document.querySelector(".dashboard-header");
+        if (header) header.classList.add("animate-fade-slide");
+
+        var panels = document.querySelectorAll(
+          ".dashboard-grid .panel, .activity-panel",
+        );
+        panels.forEach(function (panel) {
+          panel.classList.add("animate-fade-slide");
+        });
+        var statCards = document.querySelectorAll(".stats-grid .stat-card");
+        statCards.forEach(function (card) {
+          card.style.opacity = "1";
+        });
+        var activityItems = document.querySelectorAll(".activity-list li");
+        activityItems.forEach(function (li) {
+          li.style.opacity = "1";
+        });
+      });
+    </script>
+    <script>
       document.addEventListener("DOMContentLoaded", function () {
         try {
           const aboutTrigger = document.getElementById("about-trigger");
@@ -586,13 +850,10 @@
             if (footerContactBtn)
               footerContactBtn.setAttribute("href", "contact-mobile.html");
           }
-        } catch (e) {
-          // ignore
-        }
+        } catch (e) {}
       });
     </script>
     <script type="module">
-      // Firebase Auth, Database, and logout logic
       import { auth, db } from "./assets/js/firebase-app.js";
       import {
         signOut,
@@ -603,6 +864,9 @@
         get,
         child,
         remove,
+        query,
+        orderByChild,
+        equalTo,
       } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
 
       const logoutOverlay = document.getElementById("logout-overlay");
@@ -623,44 +887,58 @@
         if (e.target === logoutOverlay)
           logoutOverlay.classList.remove("visible");
       });
+
+      // Bind Enter key to OK (logout) when popup is visible
       document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") logoutOverlay.classList.remove("visible");
+        if (logoutOverlay.classList.contains("visible")) {
+          if (e.key === "Escape") {
+            logoutOverlay.classList.remove("visible");
+          } else if (e.key === "Enter") {
+            e.preventDefault();
+            document.getElementById("logout-confirm").click();
+          }
+        }
       });
 
-      // Firebase Auth session check
       let currentUserUid = null;
       onAuthStateChanged(auth, (user) => {
         if (!user) {
           window.location.replace("index.html");
         } else {
+          // Debug: log auth state for troubleshooting permission errors
+          console.log("onAuthStateChanged - user:", user);
+          try {
+            console.log("auth.currentUser:", auth.currentUser);
+            window.__debugAuth = auth.currentUser;
+          } catch (e) {}
           document.body.classList.remove("auth-pending");
           currentUserUid = user.uid;
+          console.log("Calling loadDashboardData with uid:", user.uid);
           loadDashboardData(user.uid);
         }
       });
 
-      // Reset button logic
-      import { cleanDatabase } from "./clean-database.js";
       import { showConfirmModal } from "./assets/js/confirm-modal.js";
       document.addEventListener("DOMContentLoaded", () => {
         const resetBtn = document.getElementById("reset-btn");
         if (resetBtn) {
           resetBtn.addEventListener("click", async () => {
             const confirmed = await showConfirmModal(
-              "Are you sure you want to delete ALL user data? This cannot be undone.",
-              { okText: "Delete All", cancelText: "Cancel" },
+              "Are you sure you want to delete ALL data belonging to your account? This cannot be undone.",
+              { okText: "Confirm", cancelText: "Cancel" },
             );
             if (!confirmed) return;
             resetBtn.disabled = true;
-            resetBtn.textContent = "Resetting...";
+            resetBtn.textContent = "Deleting...";
             try {
-              await cleanDatabase();
-              // Optionally reload dashboard data after cleaning
+              // Delete only data for the current user
+              if (!currentUserUid) throw new Error("Not authenticated");
+              await deleteUserData(currentUserUid);
               if (typeof loadDashboardData === "function" && currentUserUid) {
                 loadDashboardData(currentUserUid);
               }
             } catch (err) {
-              alert("Failed to reset data. See console for details.");
+              alert("Failed to delete your data. See console for details.");
               console.error(err);
             } finally {
               resetBtn.disabled = false;
@@ -670,28 +948,124 @@
         }
       });
 
-      // Load dashboard data from Firebase
-      async function loadDashboardData(uid) {
-        // Reference to root
-        const dbRef = ref(db);
+      // Delete only the events and related data belonging to a single user
+      async function deleteUserData(uid) {
         try {
-          // Fetch all dashboard data in parallel
+          // find events created by this user
+          const eventsQuery = query(
+            ref(db, "events"),
+            orderByChild("createdBy"),
+            equalTo(uid),
+          );
+          const eventsSnap = await get(eventsQuery);
+          const eventIds = [];
+          if (eventsSnap.exists()) {
+            eventsSnap.forEach((s) => eventIds.push(s.key));
+          }
+
+          const deletes = [];
+
+          for (const id of eventIds) {
+            // remove event
+            deletes.push(remove(ref(db, `events/${id}`)));
+
+            // remove guests for this event
+            const guestQ = query(
+              ref(db, "guests"),
+              orderByChild("eventId"),
+              equalTo(id),
+            );
+            const guestSnap = await get(guestQ);
+            if (guestSnap.exists()) {
+              guestSnap.forEach((g) =>
+                deletes.push(remove(ref(db, `guests/${g.key}`))),
+              );
+            }
+
+            // remove checkins for this event
+            const checkQ = query(
+              ref(db, "checkins"),
+              orderByChild("eventId"),
+              equalTo(id),
+            );
+            const checkSnap = await get(checkQ);
+            if (checkSnap.exists()) {
+              checkSnap.forEach((c) =>
+                deletes.push(remove(ref(db, `checkins/${c.key}`))),
+              );
+            }
+
+            // remove activity entries for this event (if any)
+            const actQ = query(
+              ref(db, "activity"),
+              orderByChild("eventId"),
+              equalTo(id),
+            );
+            const actSnap = await get(actQ);
+            if (actSnap.exists()) {
+              actSnap.forEach((a) =>
+                deletes.push(remove(ref(db, `activity/${a.key}`))),
+              );
+            }
+          }
+
+          // execute deletions in parallel
+          await Promise.all(deletes);
+        } catch (err) {
+          console.error("deleteUserData failed", err);
+          throw err;
+        }
+      }
+
+      async function loadDashboardData(uid) {
+        const dbRef = ref(db);
+        // Debug: log that we have an ID token for DB requests
+        try {
+          if (auth && auth.currentUser) {
+            auth.currentUser
+              .getIdToken()
+              .then((t) => console.log("auth idToken length:", t.length))
+              .catch((e) => console.warn("getIdToken error:", e && e.message));
+          }
+        } catch (e) {
+          console.warn("token debug failed", e && e.message);
+        }
+        try {
+          // Load only events created by this user, then load other nodes
+          const eventsQuery = query(
+            ref(db, "events"),
+            orderByChild("createdBy"),
+            equalTo(uid),
+          );
           const [eventsSnap, guestsSnap, checkinsSnap, activitySnap] =
             await Promise.all([
-              get(child(dbRef, `events`)),
+              get(eventsQuery),
               get(child(dbRef, `guests`)),
               get(child(dbRef, `checkins`)),
               get(child(dbRef, `activity`)),
             ]);
 
-          // Events
           let events = [];
+          let eventsObj = {};
           if (eventsSnap.exists()) {
-            events = Object.values(eventsSnap.val());
+            eventsObj = eventsSnap.val();
+            events = Object.values(eventsObj);
+          } else {
+            // Fallback: if no results from query (maybe older events lack createdBy),
+            // try loading all events and filter client-side by createdBy === uid
+            const allEventsSnap = await get(child(dbRef, `events`));
+            if (allEventsSnap.exists()) {
+              const allObj = allEventsSnap.val();
+              // keep only events that match this uid
+              const filtered = Object.entries(allObj).filter(([, v]) =>
+                v && v.createdBy ? v.createdBy === uid : false,
+              );
+              eventsObj = Object.fromEntries(filtered);
+              events = Object.values(eventsObj);
+            }
           }
           document.getElementById("stat-events").textContent = events.length;
 
-          // Upcoming Events (filter by date in future, fallback: show all if no date)
           const now = new Date();
           let upcoming = events.filter((ev) => {
             if (!ev.date) return false;
@@ -700,28 +1074,42 @@
           document.getElementById("stat-upcoming").textContent =
             upcoming.length;
 
-          // Guests
+          // Only count guests attached to this user's events
           let guests = [];
           if (guestsSnap.exists()) {
-            guests = Object.values(guestsSnap.val());
+            const guestsObj = guestsSnap.val();
+            const eventIds = new Set(Object.keys(eventsObj));
+            guests = Object.values(guestsObj).filter((g) =>
+              g && g.eventId ? eventIds.has(g.eventId) : false,
+            );
           }
           document.getElementById("stat-guests").textContent = guests.length;
 
-          // Check-ins
+          // Only count checkins for this user's events (if checkins store eventId)
           let checkins = [];
           if (checkinsSnap.exists()) {
-            checkins = Object.values(checkinsSnap.val());
+            const checkinsObj = checkinsSnap.val();
+            const eventIds = new Set(Object.keys(eventsObj));
+            checkins = Object.values(checkinsObj).filter((c) =>
+              c && c.eventId ? eventIds.has(c.eventId) : false,
+            );
           }
           document.getElementById("stat-checkins").textContent =
             checkins.length;
 
-          // Upcoming Events List
           const eventList = document.querySelector(
             ".upcoming-events .event-list",
           );
           eventList.innerHTML = "";
+          const isMobile = window.matchMedia("(max-width: 768px)").matches;
+          window.dispatchEvent(
+            new CustomEvent("updateUpcomingPopupList", {
+              detail: { upcoming },
+            }),
+          );
           if (upcoming.length > 0) {
-            upcoming.slice(0, 5).forEach((ev) => {
+            const eventsToShow = isMobile ? upcoming : upcoming.slice(0, 3);
+            eventsToShow.forEach((ev) => {
               const li = document.createElement("li");
               li.innerHTML = `<strong>${ev.name || "Event"}</strong><span>${ev.date ? new Date(ev.date).toLocaleDateString() : "No date"} • ${ev.guestCount || 0} Guests</span>`;
               eventList.appendChild(li);
@@ -730,7 +1118,15 @@
             eventList.innerHTML = "<li>No upcoming events</li>";
           }
 
-          // Activity List
+          if (!window._upcomingEventsResizeListenerAdded) {
+            window._upcomingEventsResizeListenerAdded = true;
+            window.addEventListener("resize", () => {
+              if (document.querySelector(".upcoming-events .event-list")) {
+                loadDashboardData(currentUserUid);
+              }
+            });
+          }
+
           const activityList = document.querySelector(".activity-list");
           activityList.innerHTML = "";
           if (activitySnap.exists()) {
@@ -747,7 +1143,7 @@
             activityList.innerHTML = "<li>No recent activity</li>";
           }
         } catch (err) {
-          // Fallback: show error state if error
+          console.error("loadDashboardData error", err);
           document.getElementById("stat-events").textContent = "-";
           document.getElementById("stat-upcoming").textContent = "-";
           document.getElementById("stat-guests").textContent = "-";
@@ -929,7 +1325,6 @@
 
       setTimeout(loadGithubProfile, 1200);
 
-      // Create mobile footer and clone nav links into it on small screens
       (function createMobileNavFooter() {
         try {
           const mq = window.matchMedia("(max-width: 768px)");
@@ -950,7 +1345,6 @@
             if (e.matches) {
               if (!footer.querySelector("ul")) {
                 const clone = navUl.cloneNode(true);
-                // Transform About/Contact dropdowns into plain links for mobile
                 try {
                   const aboutLi = clone.querySelector(".about-dropdown");
                   if (aboutLi) {
@@ -968,9 +1362,7 @@
                     a2.textContent = "Contact";
                     contactLi.parentElement.replaceChild(a2, contactLi);
                   }
-                } catch (e) {
-                  // ignore transformation errors
-                }
+                } catch (e) {}
                 footer.innerHTML = "";
                 footer.appendChild(clone);
               }
