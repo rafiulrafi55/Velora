@@ -888,7 +888,6 @@
           logoutOverlay.classList.remove("visible");
       });
 
-      // Bind Enter key to OK (logout) when popup is visible
       document.addEventListener("keydown", (e) => {
         if (logoutOverlay.classList.contains("visible")) {
           if (e.key === "Escape") {
@@ -905,7 +904,6 @@
         if (!user) {
           window.location.replace("index.html");
         } else {
-          // Debug: log auth state for troubleshooting permission errors
           console.log("onAuthStateChanged - user:", user);
           try {
             console.log("auth.currentUser:", auth.currentUser);
@@ -931,7 +929,6 @@
             resetBtn.disabled = true;
             resetBtn.textContent = "Deleting...";
             try {
-              // Delete only data for the current user
               if (!currentUserUid) throw new Error("Not authenticated");
               await deleteUserData(currentUserUid);
               if (typeof loadDashboardData === "function" && currentUserUid) {
@@ -948,10 +945,8 @@
         }
       });
 
-      // Delete only the events and related data belonging to a single user
       async function deleteUserData(uid) {
         try {
-          // find events created by this user
           const eventsQuery = query(
             ref(db, "events"),
             orderByChild("createdBy"),
@@ -966,10 +961,8 @@
           const deletes = [];
 
           for (const id of eventIds) {
-            // remove event
             deletes.push(remove(ref(db, `events/${id}`)));
 
-            // remove guests for this event
             const guestQ = query(
               ref(db, "guests"),
               orderByChild("eventId"),
@@ -982,7 +975,6 @@
               );
             }
 
-            // remove checkins for this event
             const checkQ = query(
               ref(db, "checkins"),
               orderByChild("eventId"),
@@ -995,7 +987,6 @@
               );
             }
 
-            // remove activity entries for this event (if any)
             const actQ = query(
               ref(db, "activity"),
               orderByChild("eventId"),
@@ -1009,7 +1000,6 @@
             }
           }
 
-          // execute deletions in parallel
           await Promise.all(deletes);
         } catch (err) {
           console.error("deleteUserData failed", err);
@@ -1019,7 +1009,6 @@
 
       async function loadDashboardData(uid) {
         const dbRef = ref(db);
-        // Debug: log that we have an ID token for DB requests
         try {
           if (auth && auth.currentUser) {
             auth.currentUser
@@ -1031,7 +1020,6 @@
           console.warn("token debug failed", e && e.message);
         }
         try {
-          // Load only events created by this user, then load other nodes
           const eventsQuery = query(
             ref(db, "events"),
             orderByChild("createdBy"),
@@ -1051,12 +1039,9 @@
             eventsObj = eventsSnap.val();
             events = Object.values(eventsObj);
           } else {
-            // Fallback: if no results from query (maybe older events lack createdBy),
-            // try loading all events and filter client-side by createdBy === uid
             const allEventsSnap = await get(child(dbRef, `events`));
             if (allEventsSnap.exists()) {
               const allObj = allEventsSnap.val();
-              // keep only events that match this uid
               const filtered = Object.entries(allObj).filter(([, v]) =>
                 v && v.createdBy ? v.createdBy === uid : false,
               );
@@ -1074,7 +1059,6 @@
           document.getElementById("stat-upcoming").textContent =
             upcoming.length;
 
-          // Only count guests attached to this user's events
           let guests = [];
           if (guestsSnap.exists()) {
             const guestsObj = guestsSnap.val();
@@ -1085,7 +1069,6 @@
           }
           document.getElementById("stat-guests").textContent = guests.length;
 
-          // Only count checkins for this user's events (if checkins store eventId)
           let checkins = [];
           if (checkinsSnap.exists()) {
             const checkinsObj = checkinsSnap.val();
