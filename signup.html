@@ -393,6 +393,115 @@
         color: #667eea;
         text-decoration: none;
       }
+
+      .social-signup {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin-bottom: 24px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .social-btn {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: 2px solid #e5e7eb;
+        background: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .social-logo {
+        width: 24px;
+        height: 24px;
+        display: block;
+        object-fit: contain;
+      }
+
+      .social-btn:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      .social-btn.google {
+        border-color: #dadce0;
+      }
+
+      .social-btn.google:hover {
+        background: #fff5f5;
+      }
+
+      .social-btn.facebook {
+        border-color: #dbe3fb;
+      }
+
+      .social-btn.facebook:hover {
+        background: #f0f7ff;
+      }
+
+      .social-btn.github {
+        border-color: #d7d7d7;
+      }
+
+      .social-btn.github:hover {
+        background: #f5f5f5;
+      }
+
+      .social-btn.apple {
+        border-color: #d7d7d7;
+      }
+
+      .social-btn.apple:hover {
+        background: #f5f5f5;
+      }
+
+      .social-tooltip {
+        position: absolute;
+        bottom: -28px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #333;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s;
+      }
+
+      .social-btn:hover .social-tooltip {
+        opacity: 1;
+      }
+
+      .social-divider {
+        text-align: center;
+        color: #9ca3af;
+        font-size: 13px;
+        margin-bottom: 18px;
+      }
+
+      @media (max-width: 720px) {
+        .social-signup {
+          margin-bottom: 18px;
+          padding-bottom: 16px;
+          gap: 10px;
+        }
+
+        .social-btn {
+          width: 44px;
+          height: 44px;
+          font-size: 20px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -418,6 +527,64 @@
       <p class="subtitle">
         Create your profile and set up secure access in less than a minute.
       </p>
+
+      <!-- Social Sign Up Options -->
+      <div class="social-signup">
+        <button
+          type="button"
+          class="social-btn google"
+          title="Sign up with Google"
+          onclick="handleSocialSignup('google')"
+        >
+          <img
+            class="social-logo"
+            src="assets/img/google-icon.svg"
+            alt="Google logo"
+          />
+          <span class="social-tooltip">Google</span>
+        </button>
+        <button
+          type="button"
+          class="social-btn facebook"
+          title="Sign up with Facebook"
+          onclick="handleSocialSignup('facebook')"
+        >
+          <img
+            class="social-logo"
+            src="assets/img/facebook.svg"
+            alt="Facebook logo"
+          />
+          <span class="social-tooltip">Facebook</span>
+        </button>
+        <button
+          type="button"
+          class="social-btn github"
+          title="Sign up with GitHub"
+          onclick="handleSocialSignup('github')"
+        >
+          <img
+            class="social-logo"
+            src="assets/img/github.svg"
+            alt="GitHub logo"
+          />
+          <span class="social-tooltip">GitHub</span>
+        </button>
+        <button
+          type="button"
+          class="social-btn apple"
+          title="Sign up with Apple"
+          onclick="handleSocialSignup('apple')"
+        >
+          <img
+            class="social-logo"
+            src="assets/img/apple-black.svg"
+            alt="Apple logo"
+          />
+          <span class="social-tooltip">Apple</span>
+        </button>
+      </div>
+      <div class="social-divider">or continue with email</div>
+
       <div id="server-error-banner" class="server-error-banner hidden">
         <span class="banner-icon">&#9888;</span>
         <span id="server-error-msg"></span>
@@ -654,6 +821,114 @@
     </div>
 
     <script type="module">
+      import { auth, db } from "./assets/js/firebase-app.js";
+      import {
+        GoogleAuthProvider,
+        GithubAuthProvider,
+        createUserWithEmailAndPassword,
+        signInWithPopup,
+        updateProfile,
+        sendEmailVerification,
+      } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+      import {
+        get,
+        ref,
+        set,
+      } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+
+      window.handleSocialSignup = function handleSocialSignup(provider) {
+        if (provider !== "google" && provider !== "github") {
+          const messages = {
+            facebook: "Facebook sign up integration coming soon!",
+            apple: "Apple sign up integration coming soon!",
+          };
+          alert(
+            messages[provider] || "Social sign up feature is being prepared.",
+          );
+          return;
+        }
+
+        const serverBanner = document.getElementById("server-error-banner");
+        const serverMsg = document.getElementById("server-error-msg");
+        const loadingEl = document.getElementById("signup-loading-overlay");
+        const submitBtnEl = document.getElementById("submit-btn");
+
+        serverBanner.classList.add("hidden");
+        serverBanner.classList.remove("success");
+        serverMsg.textContent = "";
+
+        (async () => {
+          try {
+            if (loadingEl) loadingEl.classList.add("visible");
+            if (submitBtnEl) submitBtnEl.disabled = true;
+
+            let authProvider;
+            if (provider === "google") {
+              authProvider = new GoogleAuthProvider();
+              authProvider.setCustomParameters({ prompt: "select_account" });
+            } else if (provider === "github") {
+              authProvider = new GithubAuthProvider();
+              // request user's email if not public
+              try {
+                authProvider.addScope && authProvider.addScope("user:email");
+              } catch (e) {}
+            }
+
+            const result = await signInWithPopup(auth, authProvider);
+            const user = result.user;
+            const userRef = ref(db, "users/" + user.uid);
+            const snapshot = await get(userRef);
+
+            if (!snapshot.exists()) {
+              await set(userRef, {
+                name: user.displayName || "",
+                email: user.email || "",
+                countryCode: "",
+                phone: "",
+                role: "user",
+                adminKey: null,
+                avatarUrl: user.photoURL || "",
+                authProvider: provider === "github" ? "github" : "google",
+                createdAt: new Date().toISOString(),
+              });
+            }
+
+            window.location.replace("dashboard.html");
+          } catch (error) {
+            console.error("Social sign-in error:", error);
+            let msg =
+              provider === "github"
+                ? "GitHub sign in failed. Please try again."
+                : "Google sign in failed. Please try again.";
+            if (error && error.code === "auth/popup-closed-by-user") {
+              msg =
+                provider === "github"
+                  ? "GitHub sign in was cancelled."
+                  : "Google sign in was cancelled.";
+            } else if (error && error.code === "auth/popup-blocked") {
+              msg =
+                "Popup was blocked by your browser. Allow popups and try again.";
+            } else if (
+              error &&
+              error.code === "auth/account-exists-with-different-credential"
+            ) {
+              msg =
+                "An account already exists with this email using another sign-in method.";
+            } else if (error && error.message) {
+              msg = String(error.message)
+                .replace(/^Firebase:\s*/i, "")
+                .replace(/\s*\(auth\/.*\)$/, "")
+                .trim();
+            }
+            serverBanner.classList.remove("hidden");
+            serverMsg.textContent = msg;
+          } finally {
+            if (loadingEl) loadingEl.classList.remove("visible");
+            if (submitBtnEl) submitBtnEl.disabled = false;
+          }
+        })();
+      };
+
       window.toggleCustomCode = function toggleCustomCode() {
         const countryCode = document.getElementById("country_code");
         const customCodeGroup = document.getElementById("custom_code_group");
@@ -771,17 +1046,6 @@
       window.closePopup = function closePopup() {
         window.location.href = "index.html";
       };
-
-      import { auth, db } from "./assets/js/firebase-app.js";
-      import {
-        createUserWithEmailAndPassword,
-        updateProfile,
-        sendEmailVerification,
-      } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
-      import {
-        ref,
-        set,
-      } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
 
       document
         .getElementById("signup-form")
