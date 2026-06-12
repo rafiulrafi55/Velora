@@ -662,14 +662,14 @@
               else if (m.includes('invalid_email') || m.includes('invalid email') || m.includes('invalid-email')) code = 'auth/invalid-email';
               else if (m.includes('too many requests') || m.includes('too_many_attempts') || m.includes('too many attempts')) code = 'auth/too-many-requests';
             }
-            // Map some credential errors to friendlier messages.
+            
             if (code === 'auth/wrong-password') {
               msg = 'Wrong password or email';
             } else if (code === 'auth/invalid-credential') {
-              // Some backends return 400/invalid-credential for missing accounts or bad requests.
+             
               const raw = String(error && (error.message || error)).toLowerCase();
               if (raw.includes('signinwithpassword') || raw.includes('accounts:signinwithpassword') || raw.includes('bad request') || raw.includes('400')) {
-                msg = 'No account found with that email.';
+                msg = 'No account found with that email';
               } else {
                 msg = 'Wrong password or email';
               }
@@ -684,7 +684,7 @@
         }
       });
 
-      // Trigger sign in on Enter key
+      
       document.getElementById("signin-form").addEventListener("keydown", function(e) {
         if (e.key === "Enter" && e.target.tagName !== "TEXTAREA") {
           e.preventDefault();
