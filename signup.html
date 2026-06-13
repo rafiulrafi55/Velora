@@ -865,10 +865,9 @@
             let authProvider;
             if (provider === "google") {
               authProvider = new GoogleAuthProvider();
-              authProvider.setCustomParameters({ prompt: "select_account" });
+              authProvider.setCustomParameters({ prompt: "select account" });
             } else if (provider === "github") {
               authProvider = new GithubAuthProvider();
-              // request user's email if not public
               try {
                 authProvider.addScope && authProvider.addScope("user:email");
               } catch (e) {}
@@ -907,13 +906,13 @@
                   : "Google sign in was cancelled.";
             } else if (error && error.code === "auth/popup-blocked") {
               msg =
-                "Popup was blocked by your browser. Allow popups and try again.";
+                "Popup was blocked by your browser. Allow popups and try again";
             } else if (
               error &&
               error.code === "auth/account-exists-with-different-credential"
             ) {
               msg =
-                "An account already exists with this email using another sign-in method.";
+                "An account already exists with this email using another sign-in method";
             } else if (error && error.message) {
               msg = String(error.message)
                 .replace(/^Firebase:\s*/i, "")
@@ -972,12 +971,12 @@
           return;
         }
         if (password === confirm) {
-          feedback.textContent = "✓ Passwords match";
+          feedback.textContent = "Passwords match";
           feedback.classList.remove("hidden", "error");
           feedback.classList.add("success");
           submitBtn.disabled = false;
         } else {
-          feedback.textContent = "✗ Passwords do not match";
+          feedback.textContent = "Passwords do not match";
           feedback.classList.remove("hidden", "success");
           feedback.classList.add("error");
           submitBtn.disabled = true;
@@ -1132,7 +1131,6 @@
           }
         });
 
-      // Trigger sign up on Enter key
       document
         .getElementById("signup-form")
         .addEventListener("keydown", function (e) {
@@ -1162,7 +1160,7 @@
           banner.classList.remove("hidden");
           banner.classList.add("success");
           msg.textContent =
-            "Verification email sent. Open the link in your inbox to finish creating your account.";
+            "Verification email sent Open the link in your inbox to finish creating your account.";
           banner.scrollIntoView({ behavior: "smooth", block: "center" });
           history.replaceState(null, "", window.location.pathname);
         }
