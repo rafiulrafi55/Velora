@@ -748,6 +748,7 @@
         push,
         query,
         ref,
+        update,
         serverTimestamp,
       } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
 
@@ -839,6 +840,17 @@
           }
         }
         return null;
+      }
+
+      async function expireGuestQrToken(guestId) {
+        if (!guestId) return;
+        await update(ref(db, `guests/${guestId}`), { qrToken: "" });
+        if (allGuestsCache && allGuestsCache[guestId]) {
+          allGuestsCache[guestId].qrToken = "";
+        }
+        if (guestsCache && guestsCache[guestId]) {
+          guestsCache[guestId].qrToken = "";
+        }
       }
 
       function getGuestKey(guest) {
@@ -1150,7 +1162,7 @@
         const event = getActiveEvent();
         if (!event || !selectedEventId) {
           setStatus("Select an event before checking in guests.", "error");
-          return;
+          return false;
         }
 
         const payload = {
@@ -1176,19 +1188,22 @@
             `${guestData.name || "Guest"} is already checked in.`,
             "info",
           );
-          return;
+          return false;
         }
 
         try {
           await push(ref(db, "checkins"), payload);
+          await expireGuestQrToken(guestId);
           setStatus(
             `${guestData.name || "Guest"} checked in successfully.`,
             "success",
           );
           await loadRosterData();
+          return true;
         } catch (error) {
           console.error("Failed to check in guest", error);
           setStatus("Failed to check in guest. Please try again.", "error");
+          return false;
         }
       }
 
@@ -1202,7 +1217,10 @@
 
           const match = findGuestByQrToken(token);
           if (!match) {
-            setScanStatus("No guest matched that QR code.", "error");
+            setScanStatus(
+              "This QR code or check-in link has expired or was already used.",
+              "error",
+            );
             return;
           }
 
@@ -1211,11 +1229,13 @@
             eventSelect.value = selectedEventId;
           }
           await loadRosterData();
-          await checkInGuest(match.guestId, match.guest);
-          setScanStatus(
-            `${match.guest.name || "Guest"} scanned successfully.`,
-            "success",
-          );
+          const checkedIn = await checkInGuest(match.guestId, match.guest);
+          if (checkedIn) {
+            setScanStatus(
+              `${match.guest.name || "Guest"} scanned successfully.`,
+              "success",
+            );
+          }
         })();
       }
 
