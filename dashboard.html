@@ -671,7 +671,12 @@
           <p id="stat-guests">...</p>
         </div>
 
-        <div class="stat-card">
+        <div
+          class="stat-card clickable"
+          id="stat-checkins-card"
+          tabindex="0"
+          title="Open guest check-in"
+        >
           <h3>Checked-In</h3>
           <p id="stat-checkins">...</p>
         </div>
@@ -1416,6 +1421,18 @@
         statGuestsCard.addEventListener("keydown", (e) => {
           if (e.key === "Enter" || e.key === " ") {
             window.location.href = "guests.html";
+          }
+        });
+      }
+
+      const statCheckinsCard = document.getElementById("stat-checkins-card");
+      if (statCheckinsCard) {
+        statCheckinsCard.addEventListener("click", () => {
+          window.location.href = "checkin.html";
+        });
+        statCheckinsCard.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            window.location.href = "checkin.html";
           }
         });
       }
