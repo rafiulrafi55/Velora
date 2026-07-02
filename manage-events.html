@@ -118,6 +118,10 @@
             <input id="edit-date" type="date" required />
           </div>
           <div style="margin-bottom: 8px">
+            <label>Time</label>
+            <input id="edit-time" type="time" required />
+          </div>
+          <div style="margin-bottom: 8px">
             <label>Guest count</label>
             <input id="edit-guest" type="number" min="1" required />
           </div>
@@ -153,6 +157,7 @@
       const editForm = document.getElementById("edit-form");
       const editName = document.getElementById("edit-name");
       const editDate = document.getElementById("edit-date");
+      const editTime = document.getElementById("edit-time");
       const editGuest = document.getElementById("edit-guest");
       const editCancel = document.getElementById("edit-cancel");
 
@@ -195,14 +200,16 @@
           const table = document.createElement("table");
           table.className = "events-table";
           table.innerHTML =
-            "<thead><tr><th>Name</th><th>Date</th><th>Guests</th><th>Actions</th></tr></thead>";
+            "<thead><tr><th>Name</th><th>Date</th><th>Time</th><th>Guests</th><th>Actions</th></tr></thead>";
           const tbody = document.createElement("tbody");
           rows.sort((a, b) =>
-            (a.data.date || "").localeCompare(b.data.date || ""),
+            `${a.data.date || ""} ${a.data.time || ""}`.localeCompare(
+              `${b.data.date || ""} ${b.data.time || ""}`,
+            ),
           );
           rows.forEach((r) => {
             const tr = document.createElement("tr");
-            tr.innerHTML = `<td>${escapeHtml(r.data.name || "")}</td><td>${r.data.date ? new Date(r.data.date).toLocaleDateString() : "—"}</td><td>${r.data.guestCount || 0}</td>`;
+            tr.innerHTML = `<td>${escapeHtml(r.data.name || "")}</td><td>${r.data.date ? new Date(r.data.date).toLocaleDateString() : "—"}</td><td>${r.data.time || "—"}</td><td>${r.data.guestCount || 0}</td>`;
             const actionTd = document.createElement("td");
             actionTd.className = "actions";
             const editBtn = document.createElement("button");
@@ -233,6 +240,7 @@
         editingKey = key;
         editName.value = data.name || "";
         editDate.value = data.date || "";
+        editTime.value = data.time || "";
         editGuest.value = data.guestCount || "";
         editModal.classList.add("open");
       }
@@ -248,6 +256,7 @@
         const upd = {
           name: editName.value.trim(),
           date: editDate.value,
+          time: editTime.value,
           guestCount: Number(editGuest.value) || 0,
         };
         try {

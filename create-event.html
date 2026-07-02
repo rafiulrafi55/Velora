@@ -159,6 +159,10 @@
           <input type="date" id="event-date" name="event_date" required />
         </div>
         <div>
+          <label for="event-time">Event Time</label>
+          <input type="time" id="event-time" name="event_time" required />
+        </div>
+        <div>
           <label for="guest-count">Expected Guest Count</label>
           <input
             type="number"
@@ -208,11 +212,12 @@
         statusDiv.textContent = "";
         const name = document.getElementById("event-name").value.trim();
         const date = document.getElementById("event-date").value;
+        const time = document.getElementById("event-time").value;
         const guestCount = parseInt(
           document.getElementById("guest-count").value,
           10,
         );
-        if (!name || !date || !guestCount) {
+        if (!name || !date || !time || !guestCount) {
           statusDiv.className = "status error";
           statusDiv.textContent = "Please fill in all fields.";
           return;
@@ -226,6 +231,7 @@
           await push(ref(db, "events"), {
             name,
             date,
+            time,
             guestCount,
             createdAt: serverTimestamp(),
             createdBy: currentUid,
