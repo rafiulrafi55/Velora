@@ -1448,7 +1448,7 @@
           <div class="donate-modal-title-wrap">
             <span class="donate-modal-kicker">Support Velora</span>
             <h2 class="donate-modal-title" id="donate-title">
-              Help fund new features and maintenance
+              Support the project on your preferred platform
             </h2>
           </div>
           <button
@@ -1462,45 +1462,29 @@
         <div class="donate-modal-body">
           <div class="donate-grid">
             <div class="donate-panel">
-              <h3>Send support via bKash</h3>
+              <h3>Choose a support link</h3>
               <p>
-                Use the bKash number below to send any amount you want to
-                donate.
+                Use either platform below to support WGMS. Both links open a new
+                tab and use the username <strong>rafiulrafi55</strong>.
               </p>
 
-              <div class="donate-local-box visible" id="donate-bkash-box">
-                <h4>bKash donation address</h4>
-                <p>
-                  Send your chosen amount directly to this bKash personal
-                  number.
-                </p>
-                <ol class="donate-local-steps">
-                  <li>Copy the bKash number below.</li>
-                  <li>Complete payment from your bKash app.</li>
-                </ol>
-                <div class="donate-local-placeholder">
-                  Checkout integration is disabled because no merchant account
-                  is connected right now.
-                </div>
-                <div class="donate-placeholder-field">
-                  <label class="donate-field-label" for="donate-bkash-number"
-                    >bKash number</label
-                  >
-                  <input
-                    class="donate-placeholder-input"
-                    id="donate-bkash-number"
-                    type="text"
-                    value="01755375747"
-                    readonly
-                  />
-                  <label class="donate-field-label" style="margin-top: 10px"
-                    >Account type: Personal</label
-                  >
-                </div>
-              </div>
-
-              <div class="donate-status" id="donate-status">
-                Send your donation to the bKash number above.
+              <div class="donate-actions">
+                <a
+                  class="donate-primary-btn"
+                  href="https://ko-fi.com/rafiulrafi55"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Ko-fi
+                </a>
+                <a
+                  class="donate-secondary-btn"
+                  href="https://www.buymeacoffee.com/rafiulrafi55"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Buy Me a Coffee
+                </a>
               </div>
             </div>
 
@@ -1526,31 +1510,17 @@
               </ul>
 
               <p class="donate-note">
-                Donate by sending money to the bKash number shown above. No
-                payment gateway checkout is used here.
+                Support goes toward maintenance, bug fixes, and feature work. No
+                payment details are collected on this site.
               </p>
 
               <div class="donate-actions">
                 <button
                   type="button"
-                  class="donate-primary-btn"
-                  id="copy-bkash-btn"
-                >
-                  Copy bKash Number
-                </button>
-                <button
-                  type="button"
-                  class="donate-secondary-btn"
-                  id="open-bkash-site-btn"
-                >
-                  Open bKash Website
-                </button>
-                <button
-                  type="button"
                   class="donate-secondary-btn"
                   id="donate-close-secondary-btn"
                 >
-                  Maybe Later
+                  Close
                 </button>
               </div>
             </div>
@@ -1729,7 +1699,7 @@
           >
             Email Us
           </button>
-          <button class="secondary-btn" id="open-donate-btn">Donate</button>
+          <button class="secondary-btn" id="open-donate-btn">Support</button>
         </div>
 
         <a
@@ -1902,13 +1872,6 @@
           "donate-close-secondary-btn",
         );
         const donateOverlay = document.getElementById("donate-overlay");
-        const donateBkashBox = document.getElementById("donate-bkash-box");
-        const donateBkashNumber = document.getElementById(
-          "donate-bkash-number",
-        );
-        const donateStatus = document.getElementById("donate-status");
-        const copyBkashBtn = document.getElementById("copy-bkash-btn");
-        const openBkashSiteBtn = document.getElementById("open-bkash-site-btn");
 
         if (navDashboardLink) {
           navDashboardLink.style.display = "none";
@@ -1970,51 +1933,6 @@
           if (event.target === donateOverlay) {
             closeDonateModal();
           }
-        });
-
-        donateBkashBox?.classList.add("visible");
-
-        copyBkashBtn?.addEventListener("click", async () => {
-          const bkashNumber = donateBkashNumber?.value?.trim();
-          if (!bkashNumber) {
-            if (donateStatus) {
-              donateStatus.textContent = "bKash number unavailable right now.";
-            }
-            return;
-          }
-
-          try {
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-              await navigator.clipboard.writeText(bkashNumber);
-            } else if (donateBkashNumber) {
-              donateBkashNumber.focus();
-              donateBkashNumber.select();
-              const copied = document.execCommand("copy");
-              donateBkashNumber.setSelectionRange(0, bkashNumber.length);
-              if (!copied) {
-                throw new Error("Copy command failed");
-              }
-            } else {
-              throw new Error("No copy fallback available");
-            }
-
-            if (donateStatus) {
-              donateStatus.textContent = `Copied ${bkashNumber}. Paste it in your bKash app to complete the donation.`;
-            }
-          } catch (_) {
-            if (donateStatus) {
-              donateStatus.textContent =
-                "Could not copy automatically. Please copy the number manually.";
-            }
-          }
-        });
-
-        openBkashSiteBtn?.addEventListener("click", () => {
-          window.open(
-            "https://www.bkash.com/",
-            "_blank",
-            "noopener,noreferrer",
-          );
         });
 
         const aboutDropdown = document.getElementById("about-dropdown");
@@ -2080,8 +1998,6 @@
         function openDonateModal() {
           donateOverlay?.classList.add("visible");
           document.body.classList.add("popup-open");
-          donateBkashBox?.classList.add("visible");
-          if (donateStatus) donateStatus.textContent = "";
         }
 
         function closeDonateModal() {
