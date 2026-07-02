@@ -555,11 +555,11 @@
       <section class="hero">
         <div class="hero-card">
           <span class="eyebrow">Live check-in desk</span>
-          <h2>Move guests through the door without losing the roster.</h2>
+          <h2>Move guests through the door without losing the roster</h2>
           <p>
             Select an event, search the guest list, and mark arrivals in one
             tap. You can also record a walk-in guest manually when someone shows
-            up off the list.
+            up off the list
           </p>
           <div class="hero-actions">
             <button class="button" type="button" id="refresh-btn">
@@ -587,19 +587,19 @@
             <div class="panel metric">
               <div class="label">Guests</div>
               <div class="value" id="metric-total">0</div>
-              <div class="subtext">Matching the selected event roster.</div>
+              <div class="subtext">Matching the selected event roster</div>
             </div>
             <div class="panel metric">
               <div class="label">Checked in</div>
               <div class="value" id="metric-checked">0</div>
-              <div class="subtext">Recorded in the check-ins table.</div>
+              <div class="subtext">Recorded in the check-ins table</div>
             </div>
           </div>
 
           <div class="panel metric">
             <div class="label">Remaining</div>
             <div class="value" id="metric-remaining">0</div>
-            <div class="subtext">Guests still waiting to be marked.</div>
+            <div class="subtext">Guests still waiting to be marked</div>
           </div>
         </div>
       </section>
@@ -609,7 +609,7 @@
           <h3>Event roster</h3>
           <p>
             Choose an event, search the roster, and check people in from the
-            list.
+            list
           </p>
 
           <div class="controls">
@@ -649,7 +649,7 @@
 
         <aside class="panel">
           <h3>Quick check-in</h3>
-          <p>Use this for walk-ins or guests who are not on the roster yet.</p>
+          <p>Use this for walk-ins or guests who are not on the roster yet</p>
 
           <form id="quick-checkin-form" autocomplete="off">
             <div class="controls">
@@ -711,7 +711,7 @@
             <h3 style="margin-bottom: 10px">Scan QR code</h3>
             <p style="margin-bottom: 12px">
               Use your camera to scan a guest QR code and check them in
-              instantly.
+              instantly
             </p>
             <div
               id="qr-reader"
@@ -735,7 +735,7 @@
       </section>
     </div>
 
-    <script src="https://unpkg.com/html5-qrcode@2.3.10/html5-qrcode.min.js"></script>
+    <script src="assets/js/html5-qrcode.min.js"></script>
 
     <script type="module">
       import { auth, db } from "./assets/js/firebase-app.js";
@@ -1331,7 +1331,7 @@
       async function startQrScanner() {
         if (!window.Html5Qrcode) {
           setScanStatus(
-            "Camera scanner is unavailable in this browser.",
+            "QR scanner library failed to load. Check the bundled asset or reload the page.",
             "error",
           );
           return;
