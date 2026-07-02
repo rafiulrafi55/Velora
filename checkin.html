@@ -706,9 +706,36 @@
             <h3 style="margin-bottom: 10px">Recent check-ins</h3>
             <div id="recent-list" class="recent-list"></div>
           </div>
+
+          <div style="margin-top: 18px">
+            <h3 style="margin-bottom: 10px">Scan QR code</h3>
+            <p style="margin-bottom: 12px">
+              Use your camera to scan a guest QR code and check them in
+              instantly.
+            </p>
+            <div
+              id="qr-reader"
+              style="width: 100%; overflow: hidden; border-radius: 14px"
+            ></div>
+            <div class="hero-actions" style="margin-top: 12px">
+              <button class="button" type="button" id="start-scan-btn">
+                Start camera
+              </button>
+              <button class="button-secondary" type="button" id="stop-scan-btn">
+                Stop camera
+              </button>
+            </div>
+            <div
+              id="scan-status"
+              class="status hidden"
+              aria-live="polite"
+            ></div>
+          </div>
         </aside>
       </section>
     </div>
+
+    <script src="https://unpkg.com/html5-qrcode@2.3.10/html5-qrcode.min.js"></script>
 
     <script type="module">
       import { auth, db } from "./assets/js/firebase-app.js";
@@ -739,10 +766,14 @@
 
       let currentUid = null;
       let eventsCache = {};
+      let allGuestsCache = {};
+      let allCheckinsCache = {};
       let guestsCache = {};
       let checkinsCache = {};
       let selectedEventId = "";
       let searchTerm = "";
+      let qrScanner = null;
+      let scanInFlight = false;
 
       function escapeText(value) {
         return String(value ?? "");
@@ -761,6 +792,19 @@
         checkinStatus.textContent = message;
       }
 
+      function setScanStatus(message, kind = "info") {
+        const scanStatus = document.getElementById("scan-status");
+        if (!scanStatus) return;
+        scanStatus.classList.remove("hidden", "info", "success", "error");
+        if (!message) {
+          scanStatus.classList.add("hidden");
+          scanStatus.textContent = "";
+          return;
+        }
+        scanStatus.classList.add(kind);
+        scanStatus.textContent = message;
+      }
+
       function clearStatus() {
         checkinStatus.classList.add("hidden");
         checkinStatus.textContent = "";
@@ -769,6 +813,32 @@
       function getActiveEvent() {
         if (!selectedEventId) return null;
         return eventsCache[selectedEventId] || null;
+      }
+
+      function parseQrToken(scannedText) {
+        const raw = String(scannedText || "").trim();
+        if (!raw) return "";
+        try {
+          const parsedUrl = new URL(raw);
+          return parsedUrl.searchParams.get("token") || raw;
+        } catch (err) {
+          return raw;
+        }
+      }
+
+      function findGuestByQrToken(token) {
+        const normalized = String(token || "").trim();
+        if (!normalized) return null;
+        for (const [guestId, guest] of Object.entries(allGuestsCache || {})) {
+          if (
+            guest &&
+            guest.qrToken &&
+            String(guest.qrToken).trim() === normalized
+          ) {
+            return { guestId, guest };
+          }
+        }
+        return null;
       }
 
       function getGuestKey(guest) {
@@ -1012,6 +1082,8 @@
 
       async function loadRosterData() {
         if (!selectedEventId) {
+          allGuestsCache = {};
+          allCheckinsCache = {};
           guestsCache = {};
           checkinsCache = {};
           renderRoster();
@@ -1022,35 +1094,46 @@
         rosterStatus.textContent = "Loading guests and check-ins...";
 
         const [guestsSnap, checkinsSnap] = await Promise.all([
-          get(
-            query(
-              ref(db, "guests"),
-              orderByChild("eventId"),
-              equalTo(selectedEventId),
-            ),
-          ),
-          get(
-            query(
-              ref(db, "checkins"),
-              orderByChild("eventId"),
-              equalTo(selectedEventId),
-            ),
-          ),
+          get(ref(db, "guests")),
+          get(ref(db, "checkins")),
         ]);
 
-        guestsCache = {};
+        allGuestsCache = {};
         if (guestsSnap.exists()) {
           guestsSnap.forEach((childSnap) => {
-            guestsCache[childSnap.key] = childSnap.val();
+            allGuestsCache[childSnap.key] = childSnap.val();
           });
         }
 
-        checkinsCache = {};
+        allCheckinsCache = {};
         if (checkinsSnap.exists()) {
           checkinsSnap.forEach((childSnap) => {
-            checkinsCache[childSnap.key] = childSnap.val();
+            allCheckinsCache[childSnap.key] = childSnap.val();
           });
         }
+
+        const ownedEventIds = new Set(Object.keys(eventsCache || {}));
+        guestsCache = {};
+        Object.entries(allGuestsCache).forEach(([guestId, guest]) => {
+          if (
+            guest &&
+            guest.eventId === selectedEventId &&
+            ownedEventIds.has(guest.eventId)
+          ) {
+            guestsCache[guestId] = guest;
+          }
+        });
+
+        checkinsCache = {};
+        Object.entries(allCheckinsCache).forEach(([checkinId, checkin]) => {
+          if (
+            checkin &&
+            checkin.eventId === selectedEventId &&
+            ownedEventIds.has(checkin.eventId)
+          ) {
+            checkinsCache[checkinId] = checkin;
+          }
+        });
 
         renderRoster();
       }
@@ -1109,6 +1192,88 @@
         }
       }
 
+      function handleScannedToken(scannedText) {
+        return (async () => {
+          const token = parseQrToken(scannedText);
+          if (!token) {
+            setScanStatus("Unable to read a QR token.", "error");
+            return;
+          }
+
+          const match = findGuestByQrToken(token);
+          if (!match) {
+            setScanStatus("No guest matched that QR code.", "error");
+            return;
+          }
+
+          selectedEventId = match.guest.eventId || selectedEventId;
+          if (selectedEventId) {
+            eventSelect.value = selectedEventId;
+          }
+          await loadRosterData();
+          await checkInGuest(match.guestId, match.guest);
+          setScanStatus(
+            `${match.guest.name || "Guest"} scanned successfully.`,
+            "success",
+          );
+        })();
+      }
+
+      async function stopQrScanner(silent = false) {
+        if (!qrScanner) return;
+        try {
+          await qrScanner.stop();
+        } catch (err) {}
+        try {
+          await qrScanner.clear();
+        } catch (err) {}
+        qrScanner = null;
+        scanInFlight = false;
+        if (!silent) {
+          setScanStatus("Camera scanner stopped.", "info");
+        }
+      }
+
+      async function startQrScanner() {
+        if (!window.Html5Qrcode) {
+          setScanStatus(
+            "Camera scanner is unavailable in this browser.",
+            "error",
+          );
+          return;
+        }
+        if (qrScanner) {
+          await stopQrScanner(true);
+        }
+
+        try {
+          qrScanner = new Html5Qrcode("qr-reader");
+          setScanStatus("Starting camera...", "info");
+          await qrScanner.start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: { width: 250, height: 250 } },
+            async (decodedText) => {
+              if (scanInFlight) return;
+              scanInFlight = true;
+              await stopQrScanner(true);
+              await handleScannedToken(decodedText);
+            },
+            () => {},
+          );
+          setScanStatus(
+            "Camera ready. Point it at a guest QR code.",
+            "success",
+          );
+        } catch (err) {
+          console.error("Failed to start QR scanner", err);
+          setScanStatus(
+            "Unable to start the camera. Make sure you are using HTTPS or localhost and allow camera access.",
+            "error",
+          );
+          await stopQrScanner(true);
+        }
+      }
+
       eventSelect.addEventListener("change", async () => {
         selectedEventId = eventSelect.value;
         searchTerm = guestSearch.value.trim().toLowerCase();
@@ -1127,6 +1292,15 @@
       });
 
       refreshBtn.addEventListener("click", refreshAll);
+
+      const startScanBtn = document.getElementById("start-scan-btn");
+      const stopScanBtn = document.getElementById("stop-scan-btn");
+      if (startScanBtn) {
+        startScanBtn.addEventListener("click", startQrScanner);
+      }
+      if (stopScanBtn) {
+        stopScanBtn.addEventListener("click", () => stopQrScanner());
+      }
 
       quickCheckinForm.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -1194,6 +1368,13 @@
         currentUid = user.uid;
         await loadEvents();
         await loadRosterData();
+
+        const initialToken = new URLSearchParams(window.location.search).get(
+          "token",
+        );
+        if (initialToken) {
+          await handleScannedToken(initialToken);
+        }
       });
     </script>
   </body>

@@ -287,255 +287,281 @@
     <title>Guest List | Velora</title>
     <link rel="stylesheet" href="assets/css/profile-cards.css" />
     <style>
-        body {
-          background: #0d1b2a;
-          color: #fff;
-          font-family: Arial, Helvetica, sans-serif;
-          min-height: 100vh;
-          margin: 0;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: flex-start;
-          padding: 40px 0;
-        }
-        .container {
-          background: #13263f;
-          border: 1px solid #2a3a52;
-          border-radius: 14px;
-          padding: 36px 32px;
-          max-width: 700px;
-          width: 98%;
-          margin-top: 40px;
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-        }
-        h1 {
-          text-align: center;
-          margin-bottom: 18px;
-          color: #ffffff;
-        }
-        .actions {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 18px;
-        }
-        .danger-btn {
-          display:inline-flex;
-          align-items:center;
-          justify-content:center;
-          gap:8px;
-          background: linear-gradient(180deg,#ef4444,#dc2626);
-          color: #ffffff;
-          border: none;
-          padding: 8px 12px;
-          border-radius: 10px;
-          font-weight:700;
-          cursor:pointer;
-          transition: transform 120ms ease, box-shadow 120ms ease;
-          box-shadow: 0 6px 18px rgba(220,38,38,0.12);
-        }
-        .danger-btn:hover {
-          transform: translateY(-1px) scale(1.01);
-          box-shadow: 0 8px 22px rgba(0,0,0,0.18);
-        }
-        }
-        .add-btn {
-           background: #374151;
-      color: #fff;
-      border: 1px solid #2a3a52;
-      border-radius: 8px;
-      padding: 8px 0;
-      font-size: 15px;
-      font-weight: bold;
-      cursor: pointer;
-      transition:
-        background 0.2s,
-        color 0.2s;
-        }
-        .add-btn svg { display: block; }
-        .add-btn:hover {
-           background: #f59e0b;
-      color: #131212;
-        }
+      body {
+        background: #0d1b2a;
+        color: #fff;
+        font-family: Arial, Helvetica, sans-serif;
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 40px 0;
+      }
+      .container {
+        background: #13263f;
+        border: 1px solid #2a3a52;
+        border-radius: 14px;
+        padding: 36px 32px;
+        max-width: 700px;
+        width: 98%;
+        margin-top: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 18px;
+        color: #ffffff;
+      }
+      .actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+      }
+      .danger-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: linear-gradient(180deg, #ef4444, #dc2626);
+        color: #ffffff;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        transition:
+          transform 120ms ease,
+          box-shadow 120ms ease;
+        box-shadow: 0 6px 18px rgba(220, 38, 38, 0.12);
+      }
+      .danger-btn:hover {
+        transform: translateY(-1px) scale(1.01);
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
+      }
+      .add-btn {
+        background: #374151;
+        color: #fff;
+        border: 1px solid #2a3a52;
+        border-radius: 8px;
+        padding: 8px 0;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+      .add-btn svg {
+        display: block;
+      }
+      .add-btn:hover {
+        background: #f59e0b;
+        color: #131212;
+      }
       .new-add-btn {
         width: 46px;
         height: 46px;
         padding: 0;
         border-radius: 12px;
         background: linear-gradient(180deg, #ffb86b 0%, #ff8a00 100%);
-        box-shadow: 0 6px 20px rgba(255,138,0,0.18), inset 0 -3px 6px rgba(0,0,0,0.06);
-        border: 1px solid rgba(255,255,255,0.06);
+        box-shadow:
+          0 6px 20px rgba(255, 138, 0, 0.18),
+          inset 0 -3px 6px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.06);
         display: inline-grid;
         place-items: center;
-        transition: transform 140ms ease, box-shadow 140ms ease, filter 120ms ease;
+        transition:
+          transform 140ms ease,
+          box-shadow 140ms ease,
+          filter 120ms ease;
       }
-      .new-add-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255,138,0,0.22); filter: brightness(1.02); }
-      .new-add-btn:active { transform: translateY(0); filter: brightness(0.98); }
-        .danger-btn {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          background: transparent;
-          color: #fff;
-          border: 1px solid rgba(255, 255, 255, 0.06);
-          padding: 8px 14px;
+      .new-add-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(255, 138, 0, 0.22);
+        filter: brightness(1.02);
+      }
+      .new-add-btn:active {
+        transform: translateY(0);
+        filter: brightness(0.98);
+      }
+      .danger-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: transparent;
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        padding: 8px 14px;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        transition:
+          background 120ms ease,
+          transform 120ms ease;
+      }
+      .danger-btn:hover {
+        background: rgba(225, 29, 72, 0.12);
+        transform: translateY(-1px);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #1e293b;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      th,
+      td {
+        padding: 13px 10px;
+        text-align: left;
+      }
+      th {
+        background: #22324b;
+        color: #f59e0b;
+        font-size: 15px;
+      }
+      th.name-label,
+      th.phone-label {
+        color: #fff;
+      }
+      tr:nth-child(even) {
+        background: #192133;
+      }
+      tr:nth-child(odd) {
+        background: #1e293b;
+      }
+      td {
+        color: #fff;
+        font-size: 15px;
+      }
+      #guest-table-body tr {
+        cursor: pointer;
+      }
+      #guest-table-body tr .delete-guest-btn {
+        cursor: pointer;
+      }
+      .empty-row td {
+        text-align: center;
+        color: #94a3b8;
+        font-style: italic;
+      }
+      .back-btn {
+        display: inline-block;
+        background: #374151;
+        color: #fff;
+        border: 1px solid #2a3a52;
+        border-radius: 8px;
+        padding: 8px 22px;
+        font-size: 15px;
+        font-weight: bold;
+        text-decoration: none;
+        margin-bottom: 0;
+        margin-right: 0;
+        height: 40px;
+        line-height: 1.2;
+        transition:
+          background 0.2s,
+          color 0.2s;
+        cursor: pointer;
+        box-sizing: border-box;
+      }
+      .back-btn:hover {
+        background: #f59e0b;
+        color: #131212;
+      }
+      @media (max-width: 720px) {
+        .container {
+          padding: 20px 16px;
+          max-width: 100%;
+          width: 100%;
+          margin-top: 18px;
           border-radius: 10px;
-          font-weight: 700;
-          cursor: pointer;
-          transition:
-            background 120ms ease,
-            transform 120ms ease;
         }
-        .danger-btn:hover {
-          background: rgba(225, 29, 72, 0.12);
-          transform: translateY(-1px);
+        .actions {
+          flex-direction: column;
+          align-items: center;
+          gap: 10px;
+        }
+        #guest-search {
+          min-width: 0 !important;
+          width: 100% !important;
+          margin: 0 !important;
+        }
+        #add-guest-btn {
+          margin-right: 0 !important;
+          margin-left: 0 !important;
+          width: 100% !important;
+          height: 46px !important;
+          align-self: center !important;
+          margin: 0 !important;
+          display: block !important;
+          border-radius: 10px !important;
+          padding: 8px 12px !important;
+          box-sizing: border-box !important;
+        }
+        #add-guest-btn.new-add-btn {
+          background: linear-gradient(
+            180deg,
+            #ffb86b 0%,
+            #ff8a00 100%
+          ) !important;
+          box-shadow: 0 6px 20px rgba(255, 138, 0, 0.18) !important;
+          border: 1px solid rgba(255, 255, 255, 0.06) !important;
+        }
+        .danger-btn {
+          width: 100% !important;
+        }
+        .back-btn {
+          display: block !important;
+          width: 100% !important;
+          text-align: center !important;
+          box-sizing: border-box !important;
+        }
+        .danger-btn {
+          width: 100%;
+          justify-content: center;
+          margin-left: 0;
         }
         table {
-          width: 100%;
-          border-collapse: collapse;
-          background: #1e293b;
           border-radius: 8px;
           overflow: hidden;
         }
-        th,
-        td {
-          padding: 13px 10px;
-          text-align: left;
+        thead {
+          display: none;
         }
-        th {
-          background: #22324b;
-          color: #f59e0b;
-          font-size: 15px;
+        tbody tr {
+          display: block;
+          padding: 12px 10px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.03);
         }
-        th.name-label,
-        th.phone-label {
+        tbody tr td {
+          display: flex;
+          justify-content: space-between;
+          padding: 6px 0;
+          align-items: center;
+        }
+        tbody tr td:nth-child(1) {
+          padding-bottom: 8px;
+        }
+        tbody tr td:nth-child(2) {
+          font-weight: 700;
           color: #fff;
+          flex: 1 1 auto;
+          margin-right: 8px;
         }
-        tr:nth-child(even) {
-          background: #192133;
+        tbody tr td:nth-child(3),
+        tbody tr td:nth-child(5) {
+          display: none;
         }
-        tr:nth-child(odd) {
-          background: #1e293b;
-        }
-        td {
-          color: #fff;
-          font-size: 15px;
-        }
-        #guest-table-body tr {
-          cursor: pointer;
-        }
-        #guest-table-body tr .delete-guest-btn {
-          cursor: pointer;
-        }
-        .empty-row td {
-          text-align: center;
+        tbody tr td:nth-child(4) {
           color: #94a3b8;
-          font-style: italic;
+          white-space: nowrap;
+          margin-left: 8px;
         }
-        .back-btn {
-          display: inline-block;
-          background: #374151;
-          color: #fff;
-          border: 1px solid #2a3a52;
-          border-radius: 8px;
-          padding: 8px 22px;
-          font-size: 15px;
-          font-weight: bold;
-          text-decoration: none;
-          margin-bottom: 0;
-          margin-right: 0;
-          height: 40px;
-          line-height: 1.2;
-          transition:
-            background 0.2s,
-            color 0.2s;
-          cursor: pointer;
-          box-sizing: border-box;
-        }
-        .back-btn:hover {
-          background: #f59e0b;
-          color: #131212;
-        }
-        @media (max-width: 720px) {
-          .container {
-            padding: 20px 16px;
-            max-width: 100%;
-            width: 100%;
-            margin-top: 18px;
-            border-radius: 10px;
-          }
-          .actions {
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-          }
-          #guest-search {
-            min-width: 0 !important;
-            width: 100% !important;
-            margin: 0 !important;
-          }
-          #add-guest-btn {
-            margin-right: 0 !important;
-            margin-left: 0 !important;
-            width: 100% !important;
-            height: 46px !important;
-            align-self: center !important;
-            margin: 0 !important;
-            display: block !important;
-            border-radius: 10px !important;
-            padding: 8px 12px !important;
-            box-sizing: border-box !important;
-          }
-          #add-guest-btn.new-add-btn {
-            background: linear-gradient(180deg, #ffb86b 0%, #ff8a00 100%) !important;
-            box-shadow: 0 6px 20px rgba(255,138,0,0.18) !important;
-            border: 1px solid rgba(255,255,255,0.06) !important;
-          }
-          .danger-btn { width: 100% !important; }
-          .back-btn { display: block !important; width: 100% !important; text-align: center !important; box-sizing: border-box !important; }
-          .danger-btn {
-            width: 100%;
-            justify-content: center;
-            margin-left: 0;
-          }
-          table {
-            border-radius: 8px;
-            overflow: hidden;
-          }
-          thead {
-            display: none;
-          }
-          tbody tr {
-            display: block;
-            padding: 12px 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
-          }
-          tbody tr td {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 0;
-            align-items: center;
-          }
-          tbody tr td:nth-child(1) {
-            padding-bottom: 8px;
-          }
-          tbody tr td:nth-child(2) {
-            font-weight: 700;
-            color: #fff;
-            flex: 1 1 auto;
-            margin-right: 8px;
-          }
-          tbody tr td:nth-child(3),
-          tbody tr td:nth-child(5) {
-            display: none;
-          }
-          tbody tr td:nth-child(4) {
-            color: #94a3b8;
-            white-space: nowrap;
-            margin-left: 8px;
-          }
-        }
+      }
     </style>
   </head>
   <body>
@@ -582,6 +608,16 @@
               stroke-linejoin="round"
             />
           </svg>
+        </button>
+        <button
+          id="email-qr-btn"
+          type="button"
+          class="danger-btn"
+          style="background: linear-gradient(180deg, #2563eb, #1d4ed8)"
+          title="Email QR codes"
+          aria-label="Email QR codes for selected event"
+        >
+          Email QR Codes
         </button>
         <style>
           #guest-search::placeholder {
@@ -642,6 +678,11 @@
         </button>
       </div>
       <div
+        id="qr-email-status"
+        class="modal-status"
+        style="margin-top: -6px; margin-bottom: 10px; min-height: 20px"
+      ></div>
+      <div
         id="events-container"
         style="display: flex; gap: 8px; margin: 12px 0 18px 0; flex-wrap: wrap"
       ></div>
@@ -663,6 +704,7 @@
         </tbody>
       </table>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script type="module">
       import { db, auth } from "./assets/js/firebase-app.js";
       import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
@@ -675,6 +717,7 @@
         query,
         orderByChild,
         equalTo,
+        update,
       } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
       import { set } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
 
@@ -689,8 +732,163 @@
         "batch-import-confirm",
       );
       const batchImportCancel = document.getElementById("batch-import-cancel");
+      const emailQrBtn = document.getElementById("email-qr-btn");
+      const qrEmailStatus = document.getElementById("qr-email-status");
       let batchContacts = [];
       let batchSkippedCount = 0;
+
+      const EMAILJS_SERVICE_ID = "service_rlee7ve";
+      const EMAILJS_TEMPLATE_ID = "template_5f9cpqk";
+      const EMAILJS_PUBLIC_KEY = "zf8kj5NeO73OuDJWI";
+
+      if (window.emailjs) {
+        window.emailjs.init(EMAILJS_PUBLIC_KEY);
+      }
+
+      function generateQrToken() {
+        const randomPart =
+          window.crypto && window.crypto.randomUUID
+            ? window.crypto.randomUUID()
+            : Math.random().toString(36).slice(2) + Date.now().toString(36);
+        return `qr_${randomPart}`;
+      }
+
+      function getBaseUrl() {
+        return new URL(".", window.location.href).href.replace(/\/$/, "");
+      }
+
+      function getCheckinUrl(token) {
+        return `${getBaseUrl()}/checkin.html?token=${encodeURIComponent(token)}`;
+      }
+
+      function getEventMetaText(event) {
+        const parts = [];
+        if (event && event.date) {
+          const date = new Date(event.date);
+          if (!Number.isNaN(date.getTime())) {
+            parts.push(date.toLocaleDateString());
+          }
+        }
+        if (event && event.time) parts.push(event.time);
+        return parts.length ? parts.join(" • ") : "Event details";
+      }
+
+      function setQrEmailStatus(message, kind = "info") {
+        if (!qrEmailStatus) return;
+        qrEmailStatus.textContent = message || "";
+        qrEmailStatus.style.color =
+          kind === "success"
+            ? "#a7f3d0"
+            : kind === "error"
+              ? "#fecaca"
+              : "#f59e0b";
+      }
+
+      async function ensureGuestQrToken(guestId, guest) {
+        if (!guest || guest.qrToken)
+          return guest && guest.qrToken ? guest.qrToken : "";
+        const qrToken = generateQrToken();
+        await update(ref(db, `guests/${guestId}`), { qrToken });
+        if (guestsCache && guestsCache[guestId]) {
+          guestsCache[guestId].qrToken = qrToken;
+        }
+        return qrToken;
+      }
+
+      async function sendEventQrEmails() {
+        setQrEmailStatus("");
+        if (!selectedEventId) {
+          setQrEmailStatus("Select an event first.", "error");
+          return;
+        }
+
+        const event = eventsCache[selectedEventId];
+        if (!event) {
+          setQrEmailStatus("Selected event is not available.", "error");
+          return;
+        }
+
+        const targets = Object.entries(guestsCache || {}).filter(
+          ([, guest]) =>
+            guest && guest.eventId === selectedEventId && guest.email,
+        );
+
+        if (!targets.length) {
+          setQrEmailStatus(
+            "No guests with email addresses were found for this event.",
+            "error",
+          );
+          return;
+        }
+
+        const payloadGuests = [];
+        for (const [guestId, guest] of targets) {
+          const qrToken = await ensureGuestQrToken(guestId, guest);
+          payloadGuests.push({
+            id: guestId,
+            name: guest.name || "",
+            email: guest.email || "",
+            phone: guest.phone || "",
+            role: guest.role || "Guest",
+            qrToken,
+          });
+        }
+
+        if (emailQrBtn) emailQrBtn.disabled = true;
+        setQrEmailStatus(
+          `Sending QR codes to ${payloadGuests.length} guest(s)...`,
+        );
+
+        try {
+          const eventMetaText = getEventMetaText(event);
+          let sentCount = 0;
+          for (const guest of payloadGuests) {
+            const checkinUrl = getCheckinUrl(guest.qrToken);
+            const qrImageUrl = `https://quickchart.io/qr?size=280&margin=2&text=${encodeURIComponent(checkinUrl)}`;
+            await window.emailjs.send(
+              EMAILJS_SERVICE_ID,
+              EMAILJS_TEMPLATE_ID,
+              {
+                to_name: guest.name || "Guest",
+                to_email: guest.email,
+                subject: `Your QR code for ${event.name || "Velora event"}`,
+                event_name: event.name || "",
+                event_meta: eventMetaText,
+                guest_role: guest.role || "Guest",
+                guest_phone: guest.phone || "",
+                qr_token: guest.qrToken,
+                checkin_url: checkinUrl,
+                qr_image_url: qrImageUrl,
+                message_html: `
+                  <div style="font-family:Arial,sans-serif;background:#0d1b2a;color:#fff;padding:24px">
+                    <div style="max-width:620px;margin:0 auto;background:#13263f;border:1px solid #2a3a52;border-radius:16px;padding:28px">
+                      <h2 style="margin:0 0 12px;color:#f59e0b">Your event QR code</h2>
+                      <p style="margin:0 0 18px;color:#cbd5e1;line-height:1.6">Hello ${guest.name || "Guest"}, your unique QR code for <strong>${event.name || "Velora event"}</strong> is below. Present it at check-in or let the host scan it from the Velora check-in page.</p>
+                      <img src="${qrImageUrl}" alt="QR code" style="width:240px;height:240px;border-radius:12px;background:#fff;padding:10px" />
+                      <p style="margin:18px 0 0;color:#94a3b8;font-size:12px;line-height:1.5">Token: ${guest.qrToken}</p>
+                    </div>
+                  </div>
+                `,
+              },
+              EMAILJS_PUBLIC_KEY,
+            );
+            sentCount++;
+          }
+
+          setQrEmailStatus(
+            `Sent QR codes to ${sentCount} guest(s).`,
+            "success",
+          );
+        } catch (err) {
+          console.error("Failed to send guest QR codes", err);
+          setQrEmailStatus(
+            err && err.message ? err.message : "Failed to send QR codes.",
+            "error",
+          );
+        } finally {
+          if (emailQrBtn) emailQrBtn.disabled = false;
+        }
+      }
 
       function hasMultiplePhones(s) {
         if (!s) return false;
@@ -773,6 +971,7 @@
                 email: c.email || "",
                 phone,
                 role: c.role || "Other",
+                qrToken: generateQrToken(),
               });
             });
           } else if (file.name.endsWith(".csv")) {
@@ -806,6 +1005,7 @@
                 email,
                 phone,
                 role: batchImportRole.value || "Other",
+                qrToken: generateQrToken(),
               });
             }
           } else if (file.name.endsWith(".csv")) {
@@ -1087,7 +1287,8 @@
             : "display:inline-flex;align-items:center;justify-content:center;margin-left:6px;border:1px solid #f59e0b;color:#f59e0b;border-radius:999px;padding:2px 6px;font-weight:700;font-size:11px;line-height:1;min-width:20px;";
           const badgeText =
             expected !== null ? `${current}/${expected}` : String(current);
-          btn.innerHTML = `${ev.name || "Unnamed"} <span class="event-badge" style="${badgeStyle}">${badgeText}</span>`;
+          const timeText = ev.time ? ` • ${ev.time}` : "";
+          btn.innerHTML = `${ev.name || "Unnamed"}${timeText} <span class="event-badge" style="${badgeStyle}">${badgeText}</span>`;
           btn.dataset.id = id;
           btn.style.cssText =
             "background:#1f2937;color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;";
@@ -1264,6 +1465,10 @@
         });
       }
 
+      if (emailQrBtn) {
+        emailQrBtn.addEventListener("click", sendEventQrEmails);
+      }
+
       if (cancelModalBtn && guestModal) {
         cancelModalBtn.addEventListener("click", () => {
           try {
@@ -1295,6 +1500,8 @@
           return;
         }
         const editId = guestModal.getAttribute("data-edit-id");
+        const existingGuest =
+          editId && guestsCache[editId] ? guestsCache[editId] : null;
         try {
           if (editId) {
             await import("https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js").then(
@@ -1304,11 +1511,21 @@
                   email,
                   phone,
                   role,
+                  qrToken:
+                    existingGuest && existingGuest.qrToken
+                      ? existingGuest.qrToken
+                      : generateQrToken(),
                 }),
             );
             guestModal.removeAttribute("data-edit-id");
           } else {
-            const payload = { name, email, phone, role };
+            const payload = {
+              name,
+              email,
+              phone,
+              role,
+              qrToken: generateQrToken(),
+            };
             const hiddenField = document.getElementById("guest-event-id");
             const eventIdToAttach =
               hiddenField && hiddenField.value
