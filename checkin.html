@@ -748,6 +748,7 @@
         push,
         query,
         ref,
+        remove,
         update,
         serverTimestamp,
       } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
@@ -842,6 +843,49 @@
         return null;
       }
 
+      function findCheckinRecordForGuest(guestId, guestData) {
+        const key = getGuestKey({ ...guestData, id: guestId });
+        for (const [checkinId, checkin] of Object.entries(
+          checkinsCache || {},
+        )) {
+          if (!checkin || checkin.eventId !== selectedEventId) continue;
+          if (checkin.guestId && checkin.guestId === guestId) {
+            return { checkinId, checkin };
+          }
+          if (getCheckinKey(checkin) === key) {
+            return { checkinId, checkin };
+          }
+        }
+        return null;
+      }
+
+      async function uncheckGuest(guestId, guestData) {
+        if (!selectedEventId) {
+          setStatus("Select an event before changing a check-in.", "error");
+          return false;
+        }
+
+        const record = findCheckinRecordForGuest(guestId, guestData);
+        if (!record) {
+          setStatus("That guest is not currently checked in.", "info");
+          return false;
+        }
+
+        try {
+          await remove(ref(db, `checkins/${record.checkinId}`));
+          setStatus(
+            `${guestData.name || "Guest"} was set back to unchecked.`,
+            "success",
+          );
+          await loadRosterData();
+          return true;
+        } catch (error) {
+          console.error("Failed to uncheck guest", error);
+          setStatus("Failed to update the guest check-in.", "error");
+          return false;
+        }
+      }
+
       async function expireGuestQrToken(guestId) {
         if (!guestId) return;
         await update(ref(db, `guests/${guestId}`), { qrToken: "" });
@@ -926,7 +970,7 @@
           return;
         }
 
-        recent.forEach(([, checkin]) => {
+        recent.forEach(([checkinId, checkin]) => {
           const item = document.createElement("div");
           item.className = "recent-item";
           item.innerHTML = `
@@ -934,6 +978,27 @@
             <span>${escapeText(checkin.guestEmail || "No email")}${checkin.guestPhone ? " • " + escapeText(checkin.guestPhone) : ""}</span>
             <span>${escapeText(checkin.guestRole || "Guest")} • ${formatDateTime(checkin.checkedInAt || checkin.createdAt)}</span>
           `;
+          if (checkin.guestId) {
+            const actions = document.createElement("div");
+            actions.className = "guest-actions";
+            actions.style.alignItems = "flex-start";
+            actions.style.marginTop = "10px";
+
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "button-secondary";
+            button.textContent = "Uncheck";
+            button.addEventListener("click", () =>
+              uncheckGuest(checkin.guestId, {
+                name: checkin.guestName || "",
+                email: checkin.guestEmail || "",
+                phone: checkin.guestPhone || "",
+                role: checkin.guestRole || "Guest",
+              }),
+            );
+            actions.appendChild(button);
+            item.appendChild(actions);
+          }
           recentList.appendChild(item);
         });
       }
@@ -1024,6 +1089,15 @@
             button.disabled = true;
             button.style.opacity = "0.75";
             actions.appendChild(button);
+
+            const uncheckButton = document.createElement("button");
+            uncheckButton.type = "button";
+            uncheckButton.className = "button-secondary";
+            uncheckButton.textContent = "Uncheck";
+            uncheckButton.addEventListener("click", () =>
+              uncheckGuest(id, guest),
+            );
+            actions.appendChild(uncheckButton);
           } else {
             const button = document.createElement("button");
             button.type = "button";
