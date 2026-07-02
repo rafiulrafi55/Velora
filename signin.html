@@ -797,6 +797,17 @@
         <a href="privacy-policy.html">Terms of Service</a>
       </div>
 
+    <script>
+      (function normalizeLocalAuthOrigin() {
+        var hostname = window.location.hostname;
+        if (hostname === "127.0.0.1" || hostname === "[::1]") {
+          var target = new URL(window.location.href);
+          target.hostname = "localhost";
+          window.location.replace(target.toString());
+        }
+      })();
+    </script>
+
     <script type="module">
       import { auth, db } from "./assets/js/firebase-app.js";
       import {
@@ -811,6 +822,8 @@
         ref,
         set,
       } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+
+      const currentAuthHost = window.location.hostname;
 
       window.handleSocialSignin = function handleSocialSignin(provider) {
         if (provider !== "google" && provider !== "github") {
@@ -834,7 +847,7 @@
             let authProvider;
             if (provider === "google") {
               authProvider = new GoogleAuthProvider();
-              authProvider.setCustomParameters({ prompt: "select account" });
+              authProvider.setCustomParameters({ prompt: "select_account" });
             } else {
               authProvider = new GithubAuthProvider();
               try {
@@ -876,6 +889,11 @@
             } else if (error && error.code === "auth/popup-blocked") {
               msg =
                 "Popup was blocked by your browser. Allow popups and try again";
+            } else if (error && error.code === "auth/unauthorized-domain") {
+              msg =
+                "This host is not authorized for Firebase social sign-in. Use localhost for local testing or add " +
+                currentAuthHost +
+                " in Firebase Authentication > Settings > Authorized domains.";
             } else if (
               error &&
               error.code === "auth/account-exists-with-different-credential"

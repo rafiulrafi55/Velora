@@ -94,6 +94,11 @@
     <div class="container">
       <h1>Manage Your Events</h1>
       <p>Here are events you created. Edit or delete as needed.</p>
+      <div
+        id="qr-email-status"
+        class="empty"
+        style="display: none; margin-top: 10px"
+      ></div>
       <div id="events-root">
         <div class="empty">Loading...</div>
       </div>
@@ -104,6 +109,7 @@
         >Dashboard</a
       >
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
     <div id="edit-modal" class="modal">
       <div class="modal-card">
@@ -116,6 +122,10 @@
           <div style="margin-bottom: 8px">
             <label>Date</label>
             <input id="edit-date" type="date" required />
+          </div>
+          <div style="margin-bottom: 8px">
+            <label>Time</label>
+            <input id="edit-time" type="time" required />
           </div>
           <div style="margin-bottom: 8px">
             <label>Guest count</label>
@@ -145,6 +155,9 @@
         child,
         update,
         remove,
+        query,
+        orderByChild,
+        equalTo,
       } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
       import { showConfirmModal } from "./assets/js/confirm-modal.js";
 
@@ -153,12 +166,150 @@
       const editForm = document.getElementById("edit-form");
       const editName = document.getElementById("edit-name");
       const editDate = document.getElementById("edit-date");
+      const editTime = document.getElementById("edit-time");
       const editGuest = document.getElementById("edit-guest");
       const editCancel = document.getElementById("edit-cancel");
+      const qrEmailStatus = document.getElementById("qr-email-status");
 
       let uid = null;
       let eventsMap = {};
       let editingKey = null;
+
+      const EMAILJS_SERVICE_ID = "service_rlee7ve";
+      const EMAILJS_TEMPLATE_ID = "template_5f9cpqk";
+      const EMAILJS_PUBLIC_KEY = "zf8kj5NeO73OuDJWI";
+
+      if (window.emailjs) {
+        window.emailjs.init(EMAILJS_PUBLIC_KEY);
+      }
+
+      function generateQrToken() {
+        const randomPart =
+          window.crypto && window.crypto.randomUUID
+            ? window.crypto.randomUUID()
+            : Math.random().toString(36).slice(2) + Date.now().toString(36);
+        return `qr_${randomPart}`;
+      }
+
+      function getBaseUrl() {
+        return new URL(".", window.location.href).href.replace(/\/$/, "");
+      }
+
+      function getEventMetaText(eventData) {
+        const parts = [];
+        if (eventData && eventData.date) {
+          const date = new Date(eventData.date);
+          if (!Number.isNaN(date.getTime())) {
+            parts.push(date.toLocaleDateString());
+          }
+        }
+        if (eventData && eventData.time) parts.push(eventData.time);
+        return parts.length ? parts.join(" • ") : "Event details";
+      }
+
+      function setQrEmailStatus(message, kind = "info") {
+        if (!qrEmailStatus) return;
+        qrEmailStatus.style.display = message ? "block" : "none";
+        qrEmailStatus.textContent = message || "";
+        qrEmailStatus.style.color =
+          kind === "success"
+            ? "#a7f3d0"
+            : kind === "error"
+              ? "#fecaca"
+              : "#fbbf24";
+      }
+
+      async function sendEventQrEmails(eventKey, eventData) {
+        setQrEmailStatus("");
+        try {
+          const guestSnap = await get(
+            query(
+              ref(db, "guests"),
+              orderByChild("eventId"),
+              equalTo(eventKey),
+            ),
+          );
+          const guests = [];
+          const updates = [];
+          if (guestSnap.exists()) {
+            guestSnap.forEach((childSnap) => {
+              const guest = childSnap.val() || {};
+              if (!guest.email) return;
+              if (!guest.qrToken) {
+                const qrToken = generateQrToken();
+                updates.push(
+                  update(ref(db, `guests/${childSnap.key}`), { qrToken }),
+                );
+                guest.qrToken = qrToken;
+              }
+              guests.push({
+                id: childSnap.key,
+                name: guest.name || "",
+                email: guest.email || "",
+                phone: guest.phone || "",
+                role: guest.role || "Guest",
+                qrToken: guest.qrToken,
+              });
+            });
+          }
+
+          if (!guests.length) {
+            setQrEmailStatus(
+              "No guest email addresses were found for this event.",
+              "error",
+            );
+            return;
+          }
+
+          if (updates.length) await Promise.all(updates);
+
+          setQrEmailStatus(`Sending QR codes to ${guests.length} guest(s)...`);
+          const eventMetaText = getEventMetaText(eventData);
+          let sentCount = 0;
+          for (const guest of guests) {
+            const checkinUrl = `${getBaseUrl()}/checkin.html?token=${encodeURIComponent(guest.qrToken)}`;
+            const qrImageUrl = `https://quickchart.io/qr?size=280&margin=2&text=${encodeURIComponent(checkinUrl)}`;
+            await window.emailjs.send(
+              EMAILJS_SERVICE_ID,
+              EMAILJS_TEMPLATE_ID,
+              {
+                to_name: guest.name || "Guest",
+                to_email: guest.email,
+                subject: `Your QR code for ${eventData.name || "Velora event"}`,
+                event_name: eventData.name || "",
+                event_meta: eventMetaText,
+                guest_role: guest.role || "Guest",
+                guest_phone: guest.phone || "",
+                qr_token: guest.qrToken,
+                checkin_url: checkinUrl,
+                qr_image_url: qrImageUrl,
+                message_html: `
+                  <div style="font-family:Arial,sans-serif;background:#0d1b2a;color:#fff;padding:24px">
+                    <div style="max-width:620px;margin:0 auto;background:#13263f;border:1px solid #2a3a52;border-radius:16px;padding:28px">
+                      <h2 style="margin:0 0 12px;color:#f59e0b">Your event QR code</h2>
+                      <p style="margin:0 0 18px;color:#cbd5e1;line-height:1.6">Hello ${guest.name || "Guest"}, your unique QR code for <strong>${eventData.name || "Velora event"}</strong> is below. Present it at check-in or let the host scan it from the Velora check-in page.</p>
+                      <img src="${qrImageUrl}" alt="QR code" style="width:240px;height:240px;border-radius:12px;background:#fff;padding:10px" />
+                      <p style="margin:18px 0 0;color:#94a3b8;font-size:12px;line-height:1.5">Token: ${guest.qrToken}</p>
+                    </div>
+                  </div>
+                `,
+              },
+              EMAILJS_PUBLIC_KEY,
+            );
+            sentCount++;
+          }
+          setQrEmailStatus(
+            `Sent QR codes to ${sentCount} guest(s).`,
+            "success",
+          );
+        } catch (err) {
+          console.error("Failed to send event QR codes", err);
+          setQrEmailStatus(
+            err && err.message ? err.message : "Failed to send QR codes.",
+            "error",
+          );
+        }
+      }
 
       onAuthStateChanged(auth, async (user) => {
         if (!user) {
@@ -195,25 +346,34 @@
           const table = document.createElement("table");
           table.className = "events-table";
           table.innerHTML =
-            "<thead><tr><th>Name</th><th>Date</th><th>Guests</th><th>Actions</th></tr></thead>";
+            "<thead><tr><th>Name</th><th>Date</th><th>Time</th><th>Guests</th><th>Actions</th></tr></thead>";
           const tbody = document.createElement("tbody");
           rows.sort((a, b) =>
-            (a.data.date || "").localeCompare(b.data.date || ""),
+            `${a.data.date || ""} ${a.data.time || ""}`.localeCompare(
+              `${b.data.date || ""} ${b.data.time || ""}`,
+            ),
           );
           rows.forEach((r) => {
             const tr = document.createElement("tr");
-            tr.innerHTML = `<td>${escapeHtml(r.data.name || "")}</td><td>${r.data.date ? new Date(r.data.date).toLocaleDateString() : "—"}</td><td>${r.data.guestCount || 0}</td>`;
+            tr.innerHTML = `<td>${escapeHtml(r.data.name || "")}</td><td>${r.data.date ? new Date(r.data.date).toLocaleDateString() : "—"}</td><td>${r.data.time || "—"}</td><td>${r.data.guestCount || 0}</td>`;
             const actionTd = document.createElement("td");
             actionTd.className = "actions";
             const editBtn = document.createElement("button");
             editBtn.className = "btn";
             editBtn.textContent = "Edit";
             editBtn.addEventListener("click", () => openEdit(r.key));
+            const qrBtn = document.createElement("button");
+            qrBtn.className = "btn";
+            qrBtn.textContent = "QR Email";
+            qrBtn.addEventListener("click", () =>
+              sendEventQrEmails(r.key, r.data),
+            );
             const delBtn = document.createElement("button");
             delBtn.className = "btn danger";
             delBtn.textContent = "Delete";
             delBtn.addEventListener("click", () => confirmDelete(r.key));
             actionTd.appendChild(editBtn);
+            actionTd.appendChild(qrBtn);
             actionTd.appendChild(delBtn);
             tr.appendChild(actionTd);
             tbody.appendChild(tr);
@@ -233,6 +393,7 @@
         editingKey = key;
         editName.value = data.name || "";
         editDate.value = data.date || "";
+        editTime.value = data.time || "";
         editGuest.value = data.guestCount || "";
         editModal.classList.add("open");
       }
@@ -248,6 +409,7 @@
         const upd = {
           name: editName.value.trim(),
           date: editDate.value,
+          time: editTime.value,
           guestCount: Number(editGuest.value) || 0,
         };
         try {

@@ -748,6 +748,17 @@
         function isDesktop() {
           return window.matchMedia("(min-width: 769px)").matches;
         }
+
+        function formatEventDateTime(ev) {
+          const date = ev && ev.date ? new Date(ev.date) : null;
+          const dateText =
+            date && !Number.isNaN(date.getTime())
+              ? date.toLocaleDateString()
+              : "No date";
+          const timeText = ev && ev.time ? ev.time : "No time";
+          return `${dateText} • ${timeText}`;
+        }
+
         let latestUpcoming = [];
         window.addEventListener("updateUpcomingPopupList", function (e) {
           latestUpcoming = e.detail.upcoming || [];
@@ -757,7 +768,7 @@
           if (latestUpcoming.length > 0) {
             latestUpcoming.forEach((ev) => {
               const li = document.createElement("li");
-              li.innerHTML = `<strong>${ev.name || "Event"}</strong><span style='display:block;font-size:13px;color:#94a3b8;'>${ev.date ? new Date(ev.date).toLocaleDateString() : "No date"} • ${ev.guestCount || 0} Guests</span>`;
+              li.innerHTML = `<strong>${ev.name || "Event"}</strong><span style='display:block;font-size:13px;color:#94a3b8;'>${formatEventDateTime(ev)} • ${ev.guestCount || 0} Guests</span>`;
               popupList.appendChild(li);
             });
           } else {
@@ -868,6 +879,16 @@
         orderByChild,
         equalTo,
       } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+
+      function formatEventDateTime(ev) {
+        const date = ev && ev.date ? new Date(ev.date) : null;
+        const dateText =
+          date && !Number.isNaN(date.getTime())
+            ? date.toLocaleDateString()
+            : "No date";
+        const timeText = ev && ev.time ? ev.time : "No time";
+        return `${dateText} • ${timeText}`;
+      }
 
       const logoutOverlay = document.getElementById("logout-overlay");
       document.getElementById("logout-btn").addEventListener("click", () => {
@@ -1054,7 +1075,20 @@
           const now = new Date();
           let upcoming = events.filter((ev) => {
             if (!ev.date) return false;
-            return new Date(ev.date) > now;
+            const eventDate = new Date(ev.date);
+            if (Number.isNaN(eventDate.getTime())) return false;
+            if (ev.time) {
+              const [hours, minutes] = String(ev.time).split(":").map(Number);
+              eventDate.setHours(
+                Number.isFinite(hours) ? hours : 0,
+                Number.isFinite(minutes) ? minutes : 0,
+                0,
+                0,
+              );
+            } else {
+              eventDate.setHours(23, 59, 59, 999);
+            }
+            return eventDate > now;
           });
           document.getElementById("stat-upcoming").textContent =
             upcoming.length;
@@ -1094,7 +1128,7 @@
             const eventsToShow = isMobile ? upcoming : upcoming.slice(0, 3);
             eventsToShow.forEach((ev) => {
               const li = document.createElement("li");
-              li.innerHTML = `<strong>${ev.name || "Event"}</strong><span>${ev.date ? new Date(ev.date).toLocaleDateString() : "No date"} • ${ev.guestCount || 0} Guests</span>`;
+              li.innerHTML = `<strong>${ev.name || "Event"}</strong><span>${formatEventDateTime(ev)} • ${ev.guestCount || 0} Guests</span>`;
               eventList.appendChild(li);
             });
           } else {

@@ -1,0 +1,1381 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Guest Check-In | Velora</title>
+    <link rel="stylesheet" href="assets/css/profile-cards.css" />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      body {
+        min-height: 100vh;
+        background:
+          radial-gradient(
+            circle at top left,
+            rgba(245, 158, 11, 0.08),
+            transparent 30%
+          ),
+          radial-gradient(
+            circle at top right,
+            rgba(59, 130, 246, 0.08),
+            transparent 28%
+          ),
+          #0d1b2a;
+        color: #fff;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .page-shell {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 24px 0 36px;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 16px 20px;
+        border: 1px solid rgba(42, 58, 82, 0.9);
+        border-radius: 18px;
+        background: rgba(19, 38, 63, 0.92);
+        box-shadow: 0 12px 34px rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(10px);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .brand-mark {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(180deg, #ffb86b 0%, #f59e0b 100%);
+        color: #131212;
+        font-weight: 800;
+        font-size: 18px;
+        box-shadow: 0 10px 24px rgba(245, 158, 11, 0.22);
+      }
+
+      .brand-copy h1 {
+        font-size: 18px;
+        line-height: 1.2;
+        color: #fff;
+      }
+
+      .brand-copy p {
+        font-size: 13px;
+        color: #94a3b8;
+        margin-top: 3px;
+      }
+
+      .top-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: flex-end;
+      }
+
+      .nav-link,
+      .nav-cta {
+        border-radius: 999px;
+        padding: 10px 14px;
+        font-size: 13px;
+        font-weight: 700;
+        border: 1px solid rgba(42, 58, 82, 0.9);
+        background: rgba(17, 24, 39, 0.5);
+        transition:
+          transform 120ms ease,
+          background 120ms ease,
+          border-color 120ms ease;
+      }
+
+      .nav-link:hover,
+      .nav-cta:hover {
+        transform: translateY(-1px);
+        border-color: rgba(245, 158, 11, 0.6);
+      }
+
+      .nav-cta {
+        background: linear-gradient(180deg, #ffb86b 0%, #f59e0b 100%);
+        color: #131212;
+        border: none;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.4fr 0.9fr;
+        gap: 18px;
+        margin-top: 18px;
+      }
+
+      .hero-card,
+      .panel {
+        background: rgba(19, 38, 63, 0.96);
+        border: 1px solid rgba(42, 58, 82, 0.95);
+        border-radius: 18px;
+        box-shadow: 0 14px 34px rgba(0, 0, 0, 0.24);
+      }
+
+      .hero-card {
+        padding: 28px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        background: rgba(245, 158, 11, 0.12);
+        color: #fbbf24;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .hero-card h2 {
+        margin-top: 16px;
+        font-size: clamp(30px, 4vw, 46px);
+        line-height: 1.02;
+        letter-spacing: -0.03em;
+      }
+
+      .hero-card p {
+        margin-top: 14px;
+        max-width: 64ch;
+        color: #cbd5e1;
+        line-height: 1.6;
+        font-size: 15px;
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 22px;
+      }
+
+      .button,
+      .button-secondary,
+      .button-ghost {
+        appearance: none;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition:
+          transform 120ms ease,
+          background 120ms ease,
+          color 120ms ease,
+          border-color 120ms ease;
+      }
+
+      .button {
+        background: linear-gradient(180deg, #ffb86b 0%, #f59e0b 100%);
+        color: #131212;
+      }
+
+      .button:hover,
+      .button-secondary:hover,
+      .button-ghost:hover {
+        transform: translateY(-1px);
+      }
+
+      .button-secondary {
+        background: #22324b;
+        color: #fff;
+        border: 1px solid #2a3a52;
+      }
+
+      .button-secondary:hover {
+        background: #2b3d57;
+      }
+
+      .button-ghost {
+        background: transparent;
+        color: #cbd5e1;
+        border: 1px solid rgba(148, 163, 184, 0.22);
+      }
+
+      .hero-side {
+        display: grid;
+        gap: 14px;
+      }
+
+      .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .metric {
+        padding: 18px;
+      }
+
+      .metric .label {
+        font-size: 12px;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .metric .value {
+        margin-top: 10px;
+        font-size: 28px;
+        font-weight: 800;
+        color: #fff;
+      }
+
+      .metric .subtext {
+        margin-top: 8px;
+        color: #cbd5e1;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 1.35fr 0.85fr;
+        gap: 18px;
+        margin-top: 18px;
+      }
+
+      .panel {
+        padding: 22px;
+      }
+
+      .panel h3 {
+        font-size: 20px;
+        color: #fbbf24;
+        margin-bottom: 10px;
+      }
+
+      .panel p {
+        color: #cbd5e1;
+        line-height: 1.5;
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .field.full {
+        grid-column: 1 / -1;
+      }
+
+      .field label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #e2e8f0;
+      }
+
+      .field input,
+      .field select {
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid #2a3a52;
+        background: #1e293b;
+        color: #fff;
+        padding: 12px 14px;
+        font-size: 14px;
+        outline: none;
+      }
+
+      .field input:focus,
+      .field select:focus {
+        border-color: #f59e0b;
+      }
+
+      .search-row {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 12px;
+        margin-top: 14px;
+      }
+
+      .status {
+        margin-top: 14px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        font-size: 13px;
+        line-height: 1.5;
+        border: 1px solid transparent;
+        min-height: 46px;
+        display: flex;
+        align-items: center;
+      }
+
+      .status.hidden {
+        display: none;
+      }
+
+      .status.success {
+        background: rgba(16, 185, 129, 0.12);
+        border-color: rgba(16, 185, 129, 0.35);
+        color: #a7f3d0;
+      }
+
+      .status.error {
+        background: rgba(239, 68, 68, 0.12);
+        border-color: rgba(239, 68, 68, 0.35);
+        color: #fecaca;
+      }
+
+      .status.info {
+        background: rgba(59, 130, 246, 0.12);
+        border-color: rgba(59, 130, 246, 0.35);
+        color: #bfdbfe;
+      }
+
+      .roster {
+        margin-top: 16px;
+        display: grid;
+        gap: 12px;
+      }
+
+      .guest-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 14px 16px;
+        border-radius: 14px;
+        border: 1px solid #22324b;
+        background: linear-gradient(
+          180deg,
+          rgba(15, 31, 51, 0.9),
+          rgba(17, 24, 39, 0.88)
+        );
+      }
+
+      .guest-main {
+        min-width: 0;
+      }
+
+      .guest-name {
+        font-size: 16px;
+        font-weight: 800;
+        color: #fff;
+      }
+
+      .guest-meta {
+        margin-top: 5px;
+        font-size: 13px;
+        color: #94a3b8;
+        line-height: 1.5;
+      }
+
+      .guest-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        border: 1px solid transparent;
+      }
+
+      .badge.role {
+        background: rgba(245, 158, 11, 0.1);
+        color: #fbbf24;
+        border-color: rgba(245, 158, 11, 0.22);
+      }
+
+      .badge.checked {
+        background: rgba(16, 185, 129, 0.1);
+        color: #a7f3d0;
+        border-color: rgba(16, 185, 129, 0.22);
+      }
+
+      .badge.pending {
+        background: rgba(148, 163, 184, 0.08);
+        color: #cbd5e1;
+        border-color: rgba(148, 163, 184, 0.18);
+      }
+
+      .guest-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+
+      .guest-actions small {
+        color: #94a3b8;
+        font-size: 12px;
+        text-align: right;
+      }
+
+      .recent-list {
+        margin-top: 14px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .recent-item {
+        padding: 12px 14px;
+        border-radius: 12px;
+        background: #0f1f33;
+        border: 1px solid #22354d;
+      }
+
+      .recent-item strong {
+        display: block;
+        color: #fff;
+        font-size: 14px;
+      }
+
+      .recent-item span {
+        display: block;
+        margin-top: 4px;
+        color: #94a3b8;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .empty-state {
+        padding: 18px 14px;
+        border-radius: 14px;
+        border: 1px dashed rgba(148, 163, 184, 0.25);
+        color: #cbd5e1;
+        text-align: center;
+        background: rgba(15, 31, 51, 0.45);
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      @media (max-width: 980px) {
+        .hero,
+        .layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .page-shell {
+          width: min(100% - 18px, 1180px);
+          padding-top: 12px;
+        }
+
+        .topbar {
+          padding: 14px;
+          border-radius: 16px;
+        }
+
+        .hero-card,
+        .panel {
+          padding: 18px;
+          border-radius: 16px;
+        }
+
+        .top-links {
+          display: none;
+        }
+
+        .controls,
+        .search-row,
+        .metric-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .guest-card {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .guest-actions {
+          width: 100%;
+          align-items: stretch;
+        }
+
+        .guest-actions .button,
+        .guest-actions .button-secondary {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">V</div>
+          <div class="brand-copy">
+            <h1>Guest Check-In</h1>
+            <p>Fast, event-aware check-in for Velora hosts.</p>
+          </div>
+        </div>
+        <div class="top-links">
+          <a class="nav-link" href="dashboard.html">Dashboard</a>
+          <a class="nav-link" href="guests.html">Guest List</a>
+          <a class="nav-cta" href="create-event.html">Create Event</a>
+        </div>
+      </header>
+
+      <section class="hero">
+        <div class="hero-card">
+          <span class="eyebrow">Live check-in desk</span>
+          <h2>Move guests through the door without losing the roster.</h2>
+          <p>
+            Select an event, search the guest list, and mark arrivals in one
+            tap. You can also record a walk-in guest manually when someone shows
+            up off the list.
+          </p>
+          <div class="hero-actions">
+            <button class="button" type="button" id="refresh-btn">
+              Refresh roster
+            </button>
+            <button
+              class="button-secondary"
+              type="button"
+              onclick="location.href = 'dashboard.html'"
+            >
+              Back to dashboard
+            </button>
+            <button
+              class="button-ghost"
+              type="button"
+              onclick="location.href = 'guests.html'"
+            >
+              Open guest list
+            </button>
+          </div>
+        </div>
+
+        <div class="hero-side">
+          <div class="metric-grid">
+            <div class="panel metric">
+              <div class="label">Guests</div>
+              <div class="value" id="metric-total">0</div>
+              <div class="subtext">Matching the selected event roster.</div>
+            </div>
+            <div class="panel metric">
+              <div class="label">Checked in</div>
+              <div class="value" id="metric-checked">0</div>
+              <div class="subtext">Recorded in the check-ins table.</div>
+            </div>
+          </div>
+
+          <div class="panel metric">
+            <div class="label">Remaining</div>
+            <div class="value" id="metric-remaining">0</div>
+            <div class="subtext">Guests still waiting to be marked.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="layout">
+        <section class="panel">
+          <h3>Event roster</h3>
+          <p>
+            Choose an event, search the roster, and check people in from the
+            list.
+          </p>
+
+          <div class="controls">
+            <div class="field full">
+              <label for="event-select">Active event</label>
+              <select id="event-select"></select>
+            </div>
+          </div>
+
+          <div class="search-row">
+            <div class="field">
+              <label for="guest-search">Search guest</label>
+              <input
+                type="search"
+                id="guest-search"
+                placeholder="Search by name, email, phone, or role"
+              />
+            </div>
+            <div class="field">
+              <label>&nbsp;</label>
+              <button
+                class="button-secondary"
+                type="button"
+                id="clear-search-btn"
+              >
+                Clear search
+              </button>
+            </div>
+          </div>
+
+          <div id="roster-status" class="status info">
+            Loading event roster...
+          </div>
+
+          <div id="roster-list" class="roster"></div>
+        </section>
+
+        <aside class="panel">
+          <h3>Quick check-in</h3>
+          <p>Use this for walk-ins or guests who are not on the roster yet.</p>
+
+          <form id="quick-checkin-form" autocomplete="off">
+            <div class="controls">
+              <div class="field full">
+                <label for="manual-name">Guest name</label>
+                <input
+                  id="manual-name"
+                  type="text"
+                  maxlength="60"
+                  placeholder="Full name"
+                />
+              </div>
+              <div class="field full">
+                <label for="manual-email">Email</label>
+                <input
+                  id="manual-email"
+                  type="email"
+                  maxlength="80"
+                  placeholder="guest@example.com"
+                />
+              </div>
+              <div class="field">
+                <label for="manual-phone">Phone</label>
+                <input
+                  id="manual-phone"
+                  type="tel"
+                  maxlength="20"
+                  placeholder="Phone number"
+                />
+              </div>
+              <div class="field">
+                <label for="manual-role">Role</label>
+                <select id="manual-role">
+                  <option value="Chief guest">Chief guest</option>
+                  <option value="Friend">Friend</option>
+                  <option value="Family">Family</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-top: 14px">
+              <button class="button" type="submit">Check in walk-in</button>
+            </div>
+          </form>
+
+          <div
+            id="checkin-status"
+            class="status hidden"
+            aria-live="polite"
+          ></div>
+
+          <div style="margin-top: 18px">
+            <h3 style="margin-bottom: 10px">Recent check-ins</h3>
+            <div id="recent-list" class="recent-list"></div>
+          </div>
+
+          <div style="margin-top: 18px">
+            <h3 style="margin-bottom: 10px">Scan QR code</h3>
+            <p style="margin-bottom: 12px">
+              Use your camera to scan a guest QR code and check them in
+              instantly.
+            </p>
+            <div
+              id="qr-reader"
+              style="width: 100%; overflow: hidden; border-radius: 14px"
+            ></div>
+            <div class="hero-actions" style="margin-top: 12px">
+              <button class="button" type="button" id="start-scan-btn">
+                Start camera
+              </button>
+              <button class="button-secondary" type="button" id="stop-scan-btn">
+                Stop camera
+              </button>
+            </div>
+            <div
+              id="scan-status"
+              class="status hidden"
+              aria-live="polite"
+            ></div>
+          </div>
+        </aside>
+      </section>
+    </div>
+
+    <script src="https://unpkg.com/html5-qrcode@2.3.10/html5-qrcode.min.js"></script>
+
+    <script type="module">
+      import { auth, db } from "./assets/js/firebase-app.js";
+      import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+      import {
+        child,
+        equalTo,
+        get,
+        orderByChild,
+        push,
+        query,
+        ref,
+        serverTimestamp,
+      } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+
+      const eventSelect = document.getElementById("event-select");
+      const guestSearch = document.getElementById("guest-search");
+      const clearSearchBtn = document.getElementById("clear-search-btn");
+      const rosterStatus = document.getElementById("roster-status");
+      const rosterList = document.getElementById("roster-list");
+      const recentList = document.getElementById("recent-list");
+      const checkinStatus = document.getElementById("checkin-status");
+      const refreshBtn = document.getElementById("refresh-btn");
+      const quickCheckinForm = document.getElementById("quick-checkin-form");
+      const metricTotal = document.getElementById("metric-total");
+      const metricChecked = document.getElementById("metric-checked");
+      const metricRemaining = document.getElementById("metric-remaining");
+
+      let currentUid = null;
+      let eventsCache = {};
+      let allGuestsCache = {};
+      let allCheckinsCache = {};
+      let guestsCache = {};
+      let checkinsCache = {};
+      let selectedEventId = "";
+      let searchTerm = "";
+      let qrScanner = null;
+      let scanInFlight = false;
+
+      function escapeText(value) {
+        return String(value ?? "");
+      }
+
+      function formatDateTime(value) {
+        if (!value) return "Just now";
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return "Just now";
+        return date.toLocaleString();
+      }
+
+      function setStatus(message, kind = "info") {
+        checkinStatus.classList.remove("hidden", "info", "success", "error");
+        checkinStatus.classList.add(kind);
+        checkinStatus.textContent = message;
+      }
+
+      function setScanStatus(message, kind = "info") {
+        const scanStatus = document.getElementById("scan-status");
+        if (!scanStatus) return;
+        scanStatus.classList.remove("hidden", "info", "success", "error");
+        if (!message) {
+          scanStatus.classList.add("hidden");
+          scanStatus.textContent = "";
+          return;
+        }
+        scanStatus.classList.add(kind);
+        scanStatus.textContent = message;
+      }
+
+      function clearStatus() {
+        checkinStatus.classList.add("hidden");
+        checkinStatus.textContent = "";
+      }
+
+      function getActiveEvent() {
+        if (!selectedEventId) return null;
+        return eventsCache[selectedEventId] || null;
+      }
+
+      function parseQrToken(scannedText) {
+        const raw = String(scannedText || "").trim();
+        if (!raw) return "";
+        try {
+          const parsedUrl = new URL(raw);
+          return parsedUrl.searchParams.get("token") || raw;
+        } catch (err) {
+          return raw;
+        }
+      }
+
+      function findGuestByQrToken(token) {
+        const normalized = String(token || "").trim();
+        if (!normalized) return null;
+        for (const [guestId, guest] of Object.entries(allGuestsCache || {})) {
+          if (
+            guest &&
+            guest.qrToken &&
+            String(guest.qrToken).trim() === normalized
+          ) {
+            return { guestId, guest };
+          }
+        }
+        return null;
+      }
+
+      function getGuestKey(guest) {
+        if (!guest) return "";
+        if (guest.id) return `guest:${guest.id}`;
+        const email = guest.email
+          ? String(guest.email).trim().toLowerCase()
+          : "";
+        if (email) return `email:${email}`;
+        const name = guest.name ? String(guest.name).trim().toLowerCase() : "";
+        return name ? `name:${name}` : "";
+      }
+
+      function getCheckinKey(checkin) {
+        if (!checkin) return "";
+        if (checkin.guestId) return `guest:${checkin.guestId}`;
+        const email = checkin.guestEmail
+          ? String(checkin.guestEmail).trim().toLowerCase()
+          : "";
+        if (email) return `email:${email}`;
+        const name = checkin.guestName
+          ? String(checkin.guestName).trim().toLowerCase()
+          : "";
+        return name ? `name:${name}` : "";
+      }
+
+      function getCheckinsForSelectedEvent() {
+        return Object.entries(checkinsCache)
+          .filter(
+            ([, checkin]) => checkin && checkin.eventId === selectedEventId,
+          )
+          .sort((a, b) => {
+            const aTime = Number(a[1].checkedInAt || a[1].createdAt || 0);
+            const bTime = Number(b[1].checkedInAt || b[1].createdAt || 0);
+            return bTime - aTime;
+          });
+      }
+
+      function getCheckedInSet() {
+        const set = new Set();
+        getCheckinsForSelectedEvent().forEach(([, checkin]) => {
+          const key = getCheckinKey(checkin);
+          if (key) set.add(key);
+        });
+        return set;
+      }
+
+      function updateMetrics() {
+        const guests = Object.values(guestsCache).filter(
+          (guest) => guest && guest.eventId === selectedEventId,
+        );
+        const checked = getCheckinsForSelectedEvent();
+        metricTotal.textContent = String(guests.length);
+        metricChecked.textContent = String(checked.length);
+        metricRemaining.textContent = String(
+          Math.max(guests.length - checked.length, 0),
+        );
+      }
+
+      function renderRecentCheckins() {
+        const recent = getCheckinsForSelectedEvent().slice(0, 6);
+        recentList.innerHTML = "";
+
+        if (!selectedEventId) {
+          recentList.innerHTML =
+            '<div class="empty-state">Pick an event to see recent check-ins.</div>';
+          return;
+        }
+
+        if (!recent.length) {
+          recentList.innerHTML =
+            '<div class="empty-state">No one has been checked in yet.</div>';
+          return;
+        }
+
+        recent.forEach(([, checkin]) => {
+          const item = document.createElement("div");
+          item.className = "recent-item";
+          item.innerHTML = `
+            <strong>${escapeText(checkin.guestName || "Walk-in guest")}</strong>
+            <span>${escapeText(checkin.guestEmail || "No email")}${checkin.guestPhone ? " • " + escapeText(checkin.guestPhone) : ""}</span>
+            <span>${escapeText(checkin.guestRole || "Guest")} • ${formatDateTime(checkin.checkedInAt || checkin.createdAt)}</span>
+          `;
+          recentList.appendChild(item);
+        });
+      }
+
+      function renderRoster() {
+        rosterList.innerHTML = "";
+
+        if (!selectedEventId) {
+          rosterStatus.className = "status info";
+          rosterStatus.textContent =
+            "Create or select an event to begin checking guests in.";
+          rosterList.innerHTML =
+            '<div class="empty-state">No event selected.</div>';
+          updateMetrics();
+          renderRecentCheckins();
+          return;
+        }
+
+        const roster = Object.entries(guestsCache)
+          .filter(([, guest]) => guest && guest.eventId === selectedEventId)
+          .map(([id, guest]) => ({ id, guest }))
+          .filter(({ guest }) => {
+            if (!searchTerm) return true;
+            const haystack = [guest.name, guest.email, guest.phone, guest.role]
+              .filter(Boolean)
+              .join(" ")
+              .toLowerCase();
+            return haystack.includes(searchTerm);
+          })
+          .sort((a, b) => {
+            const left = String(a.guest.name || "").toLowerCase();
+            const right = String(b.guest.name || "").toLowerCase();
+            return left.localeCompare(right);
+          });
+
+        const checkedSet = getCheckedInSet();
+        const event = getActiveEvent();
+
+        rosterStatus.className = "status info";
+        rosterStatus.textContent = event
+          ? `Ready for ${event.name || "this event"}. ${roster.length} guest(s) currently shown.`
+          : "Loading event data...";
+
+        if (!roster.length) {
+          rosterList.innerHTML =
+            '<div class="empty-state">No guests match this event or search filter.</div>';
+          updateMetrics();
+          renderRecentCheckins();
+          return;
+        }
+
+        roster.forEach(({ id, guest }) => {
+          const key = getGuestKey({ ...guest, id });
+          const checked = key ? checkedSet.has(key) : false;
+          const card = document.createElement("div");
+          card.className = "guest-card";
+          card.innerHTML = `
+            <div class="guest-main">
+              <div class="guest-name">${escapeText(guest.name || "Unnamed guest")}</div>
+              <div class="guest-meta">
+                ${escapeText(guest.email || "No email")}
+                ${guest.phone ? " • " + escapeText(guest.phone) : ""}
+              </div>
+              <div class="guest-badges">
+                <span class="badge role">${escapeText(guest.role || "Guest")}</span>
+                <span class="badge ${checked ? "checked" : "pending"}">${checked ? "Checked in" : "Awaiting check-in"}</span>
+              </div>
+            </div>
+          `;
+
+          const actions = document.createElement("div");
+          actions.className = "guest-actions";
+
+          if (checked) {
+            const lastCheckin = getCheckinsForSelectedEvent().find(
+              ([, checkin]) => getCheckinKey(checkin) === key,
+            );
+            const info = document.createElement("small");
+            info.textContent = lastCheckin
+              ? `Checked in at ${formatDateTime(lastCheckin[1].checkedInAt || lastCheckin[1].createdAt)}`
+              : "Already checked in";
+            actions.appendChild(info);
+
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "button-secondary";
+            button.textContent = "Checked";
+            button.disabled = true;
+            button.style.opacity = "0.75";
+            actions.appendChild(button);
+          } else {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "button";
+            button.textContent = "Check in";
+            button.addEventListener("click", () => checkInGuest(id, guest));
+            actions.appendChild(button);
+
+            const info = document.createElement("small");
+            info.textContent = "Tap to mark arrival";
+            actions.appendChild(info);
+          }
+
+          card.appendChild(actions);
+          rosterList.appendChild(card);
+        });
+
+        updateMetrics();
+        renderRecentCheckins();
+      }
+
+      async function loadEvents() {
+        eventSelect.innerHTML = '<option value="">Loading events...</option>';
+        const snap = await get(
+          query(
+            ref(db, "events"),
+            orderByChild("createdBy"),
+            equalTo(currentUid),
+          ),
+        );
+        eventsCache = {};
+
+        if (snap.exists()) {
+          snap.forEach((childSnap) => {
+            eventsCache[childSnap.key] = childSnap.val();
+          });
+        }
+
+        const entries = Object.entries(eventsCache).sort((a, b) => {
+          const left = String(a[1].date || "");
+          const right = String(b[1].date || "");
+          return left.localeCompare(right);
+        });
+
+        eventSelect.innerHTML = "";
+        if (!entries.length) {
+          const option = document.createElement("option");
+          option.value = "";
+          option.textContent = "No events available";
+          eventSelect.appendChild(option);
+          selectedEventId = "";
+          return;
+        }
+
+        entries.forEach(([id, event]) => {
+          const option = document.createElement("option");
+          option.value = id;
+          option.textContent = `${event.name || "Unnamed event"}${event.date ? ` • ${new Date(event.date).toLocaleDateString()}` : ""}`;
+          eventSelect.appendChild(option);
+        });
+
+        if (!selectedEventId || !eventsCache[selectedEventId]) {
+          selectedEventId = entries[0][0];
+        }
+
+        eventSelect.value = selectedEventId;
+      }
+
+      async function loadRosterData() {
+        if (!selectedEventId) {
+          allGuestsCache = {};
+          allCheckinsCache = {};
+          guestsCache = {};
+          checkinsCache = {};
+          renderRoster();
+          return;
+        }
+
+        rosterStatus.className = "status info";
+        rosterStatus.textContent = "Loading guests and check-ins...";
+
+        const [guestsSnap, checkinsSnap] = await Promise.all([
+          get(ref(db, "guests")),
+          get(ref(db, "checkins")),
+        ]);
+
+        allGuestsCache = {};
+        if (guestsSnap.exists()) {
+          guestsSnap.forEach((childSnap) => {
+            allGuestsCache[childSnap.key] = childSnap.val();
+          });
+        }
+
+        allCheckinsCache = {};
+        if (checkinsSnap.exists()) {
+          checkinsSnap.forEach((childSnap) => {
+            allCheckinsCache[childSnap.key] = childSnap.val();
+          });
+        }
+
+        const ownedEventIds = new Set(Object.keys(eventsCache || {}));
+        guestsCache = {};
+        Object.entries(allGuestsCache).forEach(([guestId, guest]) => {
+          if (
+            guest &&
+            guest.eventId === selectedEventId &&
+            ownedEventIds.has(guest.eventId)
+          ) {
+            guestsCache[guestId] = guest;
+          }
+        });
+
+        checkinsCache = {};
+        Object.entries(allCheckinsCache).forEach(([checkinId, checkin]) => {
+          if (
+            checkin &&
+            checkin.eventId === selectedEventId &&
+            ownedEventIds.has(checkin.eventId)
+          ) {
+            checkinsCache[checkinId] = checkin;
+          }
+        });
+
+        renderRoster();
+      }
+
+      async function refreshAll() {
+        clearStatus();
+        rosterStatus.className = "status info";
+        rosterStatus.textContent = "Refreshing roster...";
+        await loadEvents();
+        await loadRosterData();
+      }
+
+      async function checkInGuest(guestId, guestData) {
+        const event = getActiveEvent();
+        if (!event || !selectedEventId) {
+          setStatus("Select an event before checking in guests.", "error");
+          return;
+        }
+
+        const payload = {
+          eventId: selectedEventId,
+          eventName: event.name || "",
+          guestId,
+          guestName: guestData.name || "",
+          guestEmail: guestData.email || "",
+          guestPhone: guestData.phone || "",
+          guestRole: guestData.role || "Guest",
+          checkedInBy: currentUid,
+          checkedInAt: serverTimestamp(),
+          status: "checked-in",
+          source: "roster",
+        };
+
+        const key = getGuestKey({ ...guestData, id: guestId });
+        const alreadyChecked = getCheckinsForSelectedEvent().some(
+          ([, checkin]) => getCheckinKey(checkin) === key,
+        );
+        if (alreadyChecked) {
+          setStatus(
+            `${guestData.name || "Guest"} is already checked in.`,
+            "info",
+          );
+          return;
+        }
+
+        try {
+          await push(ref(db, "checkins"), payload);
+          setStatus(
+            `${guestData.name || "Guest"} checked in successfully.`,
+            "success",
+          );
+          await loadRosterData();
+        } catch (error) {
+          console.error("Failed to check in guest", error);
+          setStatus("Failed to check in guest. Please try again.", "error");
+        }
+      }
+
+      function handleScannedToken(scannedText) {
+        return (async () => {
+          const token = parseQrToken(scannedText);
+          if (!token) {
+            setScanStatus("Unable to read a QR token.", "error");
+            return;
+          }
+
+          const match = findGuestByQrToken(token);
+          if (!match) {
+            setScanStatus("No guest matched that QR code.", "error");
+            return;
+          }
+
+          selectedEventId = match.guest.eventId || selectedEventId;
+          if (selectedEventId) {
+            eventSelect.value = selectedEventId;
+          }
+          await loadRosterData();
+          await checkInGuest(match.guestId, match.guest);
+          setScanStatus(
+            `${match.guest.name || "Guest"} scanned successfully.`,
+            "success",
+          );
+        })();
+      }
+
+      async function stopQrScanner(silent = false) {
+        if (!qrScanner) return;
+        try {
+          await qrScanner.stop();
+        } catch (err) {}
+        try {
+          await qrScanner.clear();
+        } catch (err) {}
+        qrScanner = null;
+        scanInFlight = false;
+        if (!silent) {
+          setScanStatus("Camera scanner stopped.", "info");
+        }
+      }
+
+      async function startQrScanner() {
+        if (!window.Html5Qrcode) {
+          setScanStatus(
+            "Camera scanner is unavailable in this browser.",
+            "error",
+          );
+          return;
+        }
+        if (qrScanner) {
+          await stopQrScanner(true);
+        }
+
+        try {
+          qrScanner = new Html5Qrcode("qr-reader");
+          setScanStatus("Starting camera...", "info");
+          await qrScanner.start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: { width: 250, height: 250 } },
+            async (decodedText) => {
+              if (scanInFlight) return;
+              scanInFlight = true;
+              await stopQrScanner(true);
+              await handleScannedToken(decodedText);
+            },
+            () => {},
+          );
+          setScanStatus(
+            "Camera ready. Point it at a guest QR code.",
+            "success",
+          );
+        } catch (err) {
+          console.error("Failed to start QR scanner", err);
+          setScanStatus(
+            "Unable to start the camera. Make sure you are using HTTPS or localhost and allow camera access.",
+            "error",
+          );
+          await stopQrScanner(true);
+        }
+      }
+
+      eventSelect.addEventListener("change", async () => {
+        selectedEventId = eventSelect.value;
+        searchTerm = guestSearch.value.trim().toLowerCase();
+        await loadRosterData();
+      });
+
+      guestSearch.addEventListener("input", () => {
+        searchTerm = guestSearch.value.trim().toLowerCase();
+        renderRoster();
+      });
+
+      clearSearchBtn.addEventListener("click", () => {
+        guestSearch.value = "";
+        searchTerm = "";
+        renderRoster();
+      });
+
+      refreshBtn.addEventListener("click", refreshAll);
+
+      const startScanBtn = document.getElementById("start-scan-btn");
+      const stopScanBtn = document.getElementById("stop-scan-btn");
+      if (startScanBtn) {
+        startScanBtn.addEventListener("click", startQrScanner);
+      }
+      if (stopScanBtn) {
+        stopScanBtn.addEventListener("click", () => stopQrScanner());
+      }
+
+      quickCheckinForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const event = getActiveEvent();
+        if (!event || !selectedEventId) {
+          setStatus("Select an event before recording a walk-in.", "error");
+          return;
+        }
+
+        const guestName = document.getElementById("manual-name").value.trim();
+        const guestEmail = document.getElementById("manual-email").value.trim();
+        const guestPhone = document.getElementById("manual-phone").value.trim();
+        const guestRole = document.getElementById("manual-role").value;
+
+        if (!guestName && !guestEmail && !guestPhone) {
+          setStatus(
+            "Enter at least a name, email, or phone for the walk-in guest.",
+            "error",
+          );
+          return;
+        }
+
+        const manualPayload = {
+          eventId: selectedEventId,
+          eventName: event.name || "",
+          guestId: null,
+          guestName,
+          guestEmail,
+          guestPhone,
+          guestRole,
+          checkedInBy: currentUid,
+          checkedInAt: serverTimestamp(),
+          status: "checked-in",
+          source: "manual",
+        };
+
+        const manualKey = getGuestKey({ name: guestName, email: guestEmail });
+        const alreadyChecked = getCheckinsForSelectedEvent().some(
+          ([, checkin]) => getCheckinKey(checkin) === manualKey,
+        );
+        if (alreadyChecked) {
+          setStatus("That guest is already checked in for this event.", "info");
+          return;
+        }
+
+        try {
+          await push(ref(db, "checkins"), manualPayload);
+          quickCheckinForm.reset();
+          document.getElementById("manual-role").value = "Chief guest";
+          setStatus("Walk-in guest checked in successfully.", "success");
+          await loadRosterData();
+        } catch (error) {
+          console.error("Manual check-in failed", error);
+          setStatus("Failed to record the walk-in check-in.", "error");
+        }
+      });
+
+      onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+          window.location.replace("signin.html");
+          return;
+        }
+
+        currentUid = user.uid;
+        await loadEvents();
+        await loadRosterData();
+
+        const initialToken = new URLSearchParams(window.location.search).get(
+          "token",
+        );
+        if (initialToken) {
+          await handleScannedToken(initialToken);
+        }
+      });
+    </script>
+  </body>
+</html>
