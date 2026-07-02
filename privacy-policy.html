@@ -3,125 +3,319 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-      Privacy Policy & Terms of Condition - Wedding Guest Management System
-    </title>
+    <title>Privacy Policy & Terms of Service - Velora</title>
     <style>
-      @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap");
-
       :root {
-        --ink: #0f172a;
-        --muted: #475569;
-        --card: rgba(255, 255, 255, 0.88);
-        --line: #dbe4f2;
-        --accent: #0ea5a4;
-        --accent-strong: #0f766e;
-        --shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
+        --bg: #0d1b2a;
+        --bg-elevated: #111111;
+        --panel: #13263f;
+        --panel-alt: #0f1f33;
+        --line: #2a3a52;
+        --text: #e5eefc;
+        --muted: #9ca3af;
+        --accent: #f59e0b;
+        --accent-soft: rgba(245, 158, 11, 0.18);
+        --shadow: 0 18px 42px rgba(0, 0, 0, 0.32);
       }
 
       * {
         box-sizing: border-box;
       }
 
+      html {
+        scroll-behavior: smooth;
+      }
+
       body {
-        font-family: "Manrope", "Segoe UI", sans-serif;
-        line-height: 1.6;
         margin: 0;
         min-height: 100vh;
-        padding: 40px 18px;
-        color: var(--ink);
-        background: linear-gradient(120deg, #081420, #0f2740);
-        position: relative;
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.65;
+        color: var(--text);
+        background:
+          radial-gradient(
+            circle at top left,
+            rgba(245, 158, 11, 0.18),
+            transparent 26%
+          ),
+          radial-gradient(
+            circle at bottom right,
+            rgba(37, 99, 235, 0.18),
+            transparent 30%
+          ),
+          linear-gradient(180deg, #0b1623 0%, var(--bg) 55%, #09111c 100%);
         overflow-x: hidden;
-        overflow-y: auto;
       }
 
       body::before,
       body::after {
-        content: none;
+        content: "";
+        position: fixed;
+        inset: auto;
+        border-radius: 999px;
+        pointer-events: none;
+        z-index: 0;
+        filter: blur(6px);
+      }
+
+      body::before {
+        width: 220px;
+        height: 220px;
+        top: -60px;
+        right: -70px;
+        background: rgba(245, 158, 11, 0.12);
+      }
+
+      body::after {
+        width: 260px;
+        height: 260px;
+        bottom: -90px;
+        left: -110px;
+        background: rgba(14, 165, 233, 0.09);
+      }
+
+      a {
+        color: inherit;
       }
 
       .page {
-        max-width: 980px;
-        margin: 0 auto;
         position: relative;
         z-index: 1;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 22px 18px 36px;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 18px;
+        padding: 18px 22px;
+        background: rgba(17, 17, 17, 0.82);
+        border: 1px solid rgba(42, 58, 82, 0.95);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(10px);
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 8px;
+        text-decoration: none;
+        font-size: 1.05rem;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+      }
+
+      .brand span {
+        color: var(--accent);
+      }
+
+      .top-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .top-actions a {
+        text-decoration: none;
+        border-radius: 999px;
+        padding: 10px 16px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        border: 1px solid transparent;
+        transition:
+          transform 0.18s ease,
+          border-color 0.18s ease,
+          background 0.18s ease;
+      }
+
+      .top-actions a:hover {
+        transform: translateY(-1px);
+      }
+
+      .top-actions .ghost {
+        background: rgba(255, 255, 255, 0.03);
+        border-color: rgba(42, 58, 82, 0.95);
+        color: #cbd5e1;
+      }
+
+      .top-actions .primary {
+        background: var(--accent);
+        color: #1f1300;
       }
 
       .hero {
-        padding: 28px 28px 22px;
+        display: grid;
+        gap: 16px;
+        padding: 28px;
+        background: linear-gradient(
+          180deg,
+          rgba(19, 38, 63, 0.98),
+          rgba(15, 31, 51, 0.98)
+        );
         border: 1px solid var(--line);
-        border-radius: 18px;
-        background: var(--card);
-        backdrop-filter: blur(8px);
+        border-radius: 24px;
         box-shadow: var(--shadow);
-        margin-bottom: 18px;
-        animation: policyFadeUp 0.6s ease-out both;
+        margin-bottom: 16px;
+        animation: rise 0.55s ease-out both;
+      }
+
+      .eyebrow {
+        margin: 0;
+        color: var(--accent);
+        font-size: 0.82rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
       }
 
       h1 {
-        margin: 0;
-        font-size: clamp(1.8rem, 3vw, 2.5rem);
-        line-height: 1.2;
-        letter-spacing: -0.02em;
-        color: var(--ink);
+        font-size: clamp(2rem, 4vw, 3.2rem);
+        line-height: 1.12;
+        letter-spacing: -0.03em;
       }
 
-      .effective-date {
-        margin-top: 10px;
+      .hero-copy {
+        max-width: 760px;
+        color: #cbd5e1;
+        font-size: 1rem;
+      }
+
+      .hero-meta {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .meta-chip {
+        padding: 14px 16px;
+        background: rgba(15, 31, 51, 0.8);
+        border: 1px solid rgba(42, 58, 82, 0.85);
+        border-radius: 14px;
+      }
+
+      .meta-chip span {
+        display: block;
         color: var(--muted);
-        font-size: 0.95rem;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        margin-bottom: 6px;
+      }
+
+      .meta-chip strong {
+        color: #ffffff;
+        font-size: 0.98rem;
       }
 
       .content {
         display: grid;
-        gap: 14px;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 16px;
       }
 
-      h2 {
-        margin: 0 0 14px;
+      .card {
+        padding: 24px;
+        background: rgba(19, 38, 63, 0.96);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        animation: rise 0.55s ease-out both;
+      }
+
+      .card h2 {
+        margin-bottom: 14px;
         font-size: 1.25rem;
-        color: var(--accent-strong);
+        color: #fff;
         letter-spacing: -0.01em;
       }
 
-      h3 {
-        margin: 18px 0 6px;
+      .card h3 {
+        margin-top: 16px;
+        margin-bottom: 6px;
         font-size: 1rem;
-        color: #1e293b;
-        font-weight: 700;
+        color: #f3f4f6;
       }
 
-      p {
+      .card p,
+      .card li {
+        color: #cbd5e1;
+      }
+
+      .card strong {
+        color: #fff;
+      }
+
+      .policy {
+        grid-column: span 8;
+      }
+
+      .terms {
+        grid-column: span 4;
+      }
+
+      .notice,
+      .contact {
+        grid-column: span 12;
+      }
+
+      .note-box {
+        margin-top: 16px;
+        padding: 16px;
+        background: rgba(245, 158, 11, 0.08);
+        border: 1px solid rgba(245, 158, 11, 0.22);
+        border-radius: 14px;
+      }
+
+      .note-box p {
+        color: #fde68a;
+      }
+
+      .compact-list {
         margin: 0;
-        color: #334155;
+        padding-left: 18px;
+        display: grid;
+        gap: 10px;
       }
 
-      .section {
-        border: 1px solid var(--line);
-        border-radius: 16px;
-        background: var(--card);
-        box-shadow: var(--shadow);
-        padding: 22px;
-        animation: policyFadeUp 0.55s ease-out both;
+      .contact-row {
+        display: grid;
+        gap: 10px;
+        padding-top: 2px;
       }
 
-      .section:nth-of-type(1) {
-        animation-delay: 0.1s;
+      .contact-row a {
+        color: #93c5fd;
+        text-decoration: none;
       }
 
-      .section:nth-of-type(2) {
-        animation-delay: 0.18s;
+      .contact-row a:hover {
+        text-decoration: underline;
       }
 
-      .section:nth-of-type(3) {
-        animation-delay: 0.26s;
+      .footer-bar {
+        margin-top: 16px;
+        padding: 18px 4px 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+        text-align: center;
       }
 
-      @keyframes policyFadeUp {
+      @keyframes rise {
         from {
           opacity: 0;
-          transform: translateY(18px);
+          transform: translateY(16px);
         }
 
         to {
@@ -130,95 +324,194 @@
         }
       }
 
-      .section strong {
-        color: var(--ink);
+      .card:nth-of-type(1),
+      .hero {
+        animation-delay: 0.04s;
+      }
+
+      .card:nth-of-type(2) {
+        animation-delay: 0.1s;
+      }
+
+      .card:nth-of-type(3) {
+        animation-delay: 0.16s;
+      }
+
+      @media (max-width: 900px) {
+        .policy,
+        .terms {
+          grid-column: span 12;
+        }
+
+        .hero-meta {
+          grid-template-columns: 1fr;
+        }
       }
 
       @media (max-width: 640px) {
-        body {
-          padding: 24px 12px;
+        .page {
+          padding: 14px 12px 24px;
         }
 
+        .topbar,
         .hero,
-        .section {
+        .card {
+          border-radius: 16px;
+        }
+
+        .topbar,
+        .hero,
+        .card {
           padding: 18px;
-          border-radius: 14px;
+        }
+
+        .topbar {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .top-actions {
+          width: 100%;
+        }
+
+        .top-actions a {
+          flex: 1 1 auto;
+          text-align: center;
         }
       }
     </style>
   </head>
   <body>
     <main class="page">
-      <header class="hero">
-        <h1>Privacy Policy & Terms of Condition</h1>
-        <p class="effective-date">
-          <strong>Effective Date:</strong> March 2026
-        </p>
+      <header class="topbar">
+        <a class="brand" href="index.html">Velora <span>Privacy</span></a>
+        <div class="top-actions">
+          <a class="ghost" href="index.html">Home</a>
+          <a class="primary" href="dashboard.html">Dashboard</a>
+        </div>
       </header>
 
+      <section class="hero">
+        <p class="eyebrow">Privacy Policy & Terms of Service</p>
+        <h1>How Velora handles your information</h1>
+        <p class="hero-copy">
+          Velora only collects the data needed to manage events, guests, and
+          check-ins. Recent app changes also adjusted account-deletion and
+          data-cleanup behavior, so this page reflects the current handling of
+          user data.
+        </p>
+        <div class="hero-meta">
+          <div class="meta-chip">
+            <span>Effective Date</span>
+            <strong>July 2026</strong>
+          </div>
+          <div class="meta-chip">
+            <span>Applies To</span>
+            <strong>Velora web app</strong>
+          </div>
+          <div class="meta-chip">
+            <span>Support Email</span>
+            <strong>rafiulrafi55@gmail.com</strong>
+          </div>
+        </div>
+      </section>
+
       <section class="content">
-        <div class="section">
+        <article class="card policy">
           <h2>1. Privacy Policy</h2>
+
           <h3>1.1 Information We Collect</h3>
           <p>
-            We collect guest names, contact information, dietary preferences,
-            RSVP status, and seating preferences.
+            We collect guest names, contact details, RSVP status, dietary
+            preferences, seating preferences, and account information required
+            to authenticate users and manage their events.
           </p>
 
-          <h3>1.2 Use of Information</h3>
+          <h3>1.2 How We Use Information</h3>
           <p>
-            Your data is used solely to manage guest information and coordinate
-            wedding logistics.
+            Your data is used to create, manage, and organize events; track
+            guest lists and check-ins; support account access; and keep the app
+            secure.
           </p>
 
           <h3>1.3 Data Protection</h3>
           <p>
-            We implement industry-standard security measures to protect your
-            personal information from unauthorized access.
+            We use access controls and app-level safeguards to reduce
+            unauthorized access to personal information. Sensitive actions such
+            as account deletion require confirmation before they proceed.
           </p>
 
           <h3>1.4 Third-Party Sharing</h3>
           <p>
-            We do not share your information with third parties without explicit
-            consent, except as required by law.
+            We do not sell personal information. We only share data with third
+            parties when required to provide the service, support a requested
+            feature, or comply with legal obligations.
           </p>
-        </div>
+        </article>
 
-        <div class="section">
-          <h2>2. Terms of Condition</h2>
+        <article class="card terms">
+          <h2>2. Terms of Service</h2>
+
           <h3>2.1 User Responsibilities</h3>
           <p>
-            Users agree to provide accurate information and use the system only
-            for wedding planning purposes.
+            Users must provide accurate information and use Velora only for
+            legitimate event-planning purposes.
           </p>
 
           <h3>2.2 Acceptable Use</h3>
           <p>
-            Prohibited activities include unauthorized access, data
-            manipulation, or misuse of guest information.
+            You must not attempt unauthorized access, alter data you do not own,
+            or misuse guest information.
           </p>
 
-          <h3>2.3 Limitation of Liability</h3>
+          <h3>2.3 Service Availability</h3>
           <p>
-            We are not liable for indirect damages or losses resulting from
-            system use or unavailability.
+            We aim to keep the service available, but uninterrupted uptime is
+            not guaranteed.
           </p>
 
-          <h3>2.4 Service Availability</h3>
+          <h3>2.4 Limitation of Liability</h3>
           <p>
-            We strive for continuous availability but do not guarantee
-            uninterrupted service.
+            Velora is not liable for indirect losses caused by service
+            interruptions, data-entry mistakes, or misuse of the system.
           </p>
-        </div>
+        </article>
 
-        <div class="section">
-          <h2>3. Contact Us</h2>
-          <p>
-            For privacy concerns, email us at:
-            <strong>rafiulrafi55@gmail.com</strong>
-          </p>
-        </div>
+        <article class="card notice">
+          <h2>3. Recent Privacy-Related Changes</h2>
+          <ul class="compact-list">
+            <li>
+              Account deletion now removes the signed-in user’s profile and
+              related records from the app.
+            </li>
+            <li>
+              Guest deletion and cleanup flows are limited to data owned by the
+              current user.
+            </li>
+            <li>
+              The changes above affect how Velora handles personal data, but
+              they do not introduce new third-party sharing or tracking.
+            </li>
+          </ul>
+        </article>
+
+        <article class="card contact">
+          <h2>4. Contact Us</h2>
+          <div class="contact-row">
+            <p>
+              For privacy questions, corrections, or deletion requests, email us
+              at <strong>rafiulrafi55@gmail.com</strong>.
+            </p>
+            <p>
+              If we make future changes that materially affect data collection,
+              deletion, or sharing, this page will be updated to match the new
+              behavior.
+            </p>
+          </div>
+        </article>
       </section>
+
+      <div class="footer-bar">Last updated July 3, 2026.</div>
     </main>
 
     <script>
@@ -230,7 +523,7 @@
         .then((r) => (r.ok ? r.json() : null))
         .then((data) => {
           if (data && data.loggedIn === true) {
-            window.location.replace("dashboard.php");
+            window.location.replace("dashboard.html");
           }
         })
         .catch(() => {});
