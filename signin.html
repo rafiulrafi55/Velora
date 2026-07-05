@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sign In</title>
     <style>
+      /* ... existing styles ... */
       * {
         margin: 0;
         padding: 0;
@@ -175,7 +176,7 @@
         justify-content: space-between;
         align-items: center;
         gap: 12px;
-        margin-top: -2px;
+        margin-top: 6px;
       }
 
       .remember-me {
@@ -574,6 +575,11 @@
         display: none;
       }
 
+      button:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+      }
+
       @media (max-width: 520px) {
         body {
           padding: 16px;
@@ -787,7 +793,16 @@
           >Forgot password?</a>
         </div>
 
-        <button type="submit">Sign In</button>
+        <div
+          class="cf-turnstile"
+          data-sitekey="0x4AAAAAADv4fic39zGNzYle"
+          data-callback="onTurnstileSuccess"
+          data-expired-callback="onTurnstileExpired"
+          data-error-callback="onTurnstileError"
+          data-theme="dark"
+        ></div>
+
+        <button type="submit" id="signin-btn">Sign In</button>
       </form>
       <div class="footer">
         Don't have an account? <a href="signup.html">Sign Up</a>
@@ -796,6 +811,8 @@
         <a href="privacy-policy.html">Privacy Policy</a> |
         <a href="privacy-policy.html">Terms of Service</a>
       </div>
+
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
     <script>
       (function normalizeLocalAuthOrigin() {
@@ -956,14 +973,6 @@
         }
       });
 
-      
-      document.getElementById("signin-form").addEventListener("keydown", function(e) {
-        if (e.key === "Enter" && e.target.tagName !== "TEXTAREA") {
-          e.preventDefault();
-          document.getElementById("signin-form").dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
-        }
-      });
-
       const forgotForm = document.getElementById("forgot-form");
       const forgotOverlay = document.getElementById("forgot-overlay");
       const forgotStatus = document.getElementById("forgot-status");
@@ -1018,6 +1027,23 @@
           }
         }
       });
+
+      const signinBtn = document.getElementById("signin-btn");
+      if (signinBtn) {
+        signinBtn.disabled = true;
+      }
+
+      window.onTurnstileSuccess = function (token) {
+        if (signinBtn) signinBtn.disabled = false;
+      };
+
+      window.onTurnstileExpired = function () {
+        if (signinBtn) signinBtn.disabled = true;
+      };
+
+      window.onTurnstileError = function () {
+        if (signinBtn) signinBtn.disabled = true;
+      };
     </script>
   </body>
 </html>
